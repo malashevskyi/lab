@@ -7,9 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "docker-compose up --build",
-    "types:gen": "node scripts/generate-types.js",
-    "sync:schemas": "node scripts/sync-schemas-with-extension.js"
+    "dev": "docker-compose up --build"
   },
   "keywords": [],
   "author": "Vitalii Malashevskyi",

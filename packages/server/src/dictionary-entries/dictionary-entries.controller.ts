@@ -11,7 +11,7 @@ import {
   CreateEntryWithExampleResponseType,
   FindOrCreateDictionaryEntryResponseType,
   GetDictionaryEntryWithExamplesByTextResponseType,
-} from '@malashevsky/types/deep-read/dictionary-entries/index.js';
+} from '@lap/types/deep-read/dictionary-entries/index.js';
 
 @ApiTags('Dictionary')
 @Controller('dictionary')

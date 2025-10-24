@@ -25,8 +25,8 @@
     "noUncheckedSideEffectImports": true,
 
     "paths": {
-      "@malashevsky/types/*": ["../../types/dist/*"],
-      "@malashevsky/types": ["../../types/dist/index"]
+      "@lap/types/*": ["../../types/dist/*"],
+      "@lap/types": ["../../types/dist/index"]
     }
   },
   "include": ["vite.config.ts"]

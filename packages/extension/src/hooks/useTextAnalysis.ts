@@ -7,7 +7,7 @@ import { useAppStore } from '../store';
 import {
   analysisResponseSchema,
   type AnalysisResponse,
-} from '@malashevsky/types/deep-read/ai';
+} from '@lap/types/deep-read/ai';
 
 export function useTextAnalysis(): {
   analysisData: AnalysisResponse | null;

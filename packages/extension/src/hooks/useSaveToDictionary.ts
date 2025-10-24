@@ -11,7 +11,7 @@ import {
   createDictionaryEntryWithExampleResponseSchema,
   type CreateDictionaryEntryWithExampleBodyType,
   type CreateEntryWithExampleResponseType,
-} from '@malashevsky/types/deep-read/dictionary-entries';
+} from '@lap/types/deep-read/dictionary-entries';
 
 export function useSaveToDictionary() {
   const queryClient = useQueryClient();

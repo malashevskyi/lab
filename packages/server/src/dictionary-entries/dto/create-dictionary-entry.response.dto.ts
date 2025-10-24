@@ -6,7 +6,7 @@ import {
   TranscriptionProperty,
 } from '../decorators/dictionary-entry-fields.decorators.js';
 import z from 'zod';
-import { findOrCreateDictionaryEntryResponseSchema } from '@malashevsky/types/deep-read/dictionary-entries/index.js';
+import { findOrCreateDictionaryEntryResponseSchema } from '@lap/types/deep-read/dictionary-entries/index.js';
 
 export class FindOrCreateDictionaryEntryResponseDto extends createZodDto(
   findOrCreateDictionaryEntryResponseSchema,

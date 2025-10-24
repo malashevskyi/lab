@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import {
   generateAudioResponseSchema,
   type GenerateAudioResponse,
-} from '@malashevsky/types/deep-read/tts';
+} from '@lap/types/deep-read/tts';
 
 export function useAudioGeneration(text: string | undefined): {
   audioUrl: string | undefined;

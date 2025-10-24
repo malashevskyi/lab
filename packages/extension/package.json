@@ -36,7 +36,7 @@
     "ts-case-convert": "^2.1.0",
     "typescript": "~5.8.3",
     "vite": "^7.1.7",
-    "@malashevsky/types": "workspace:*",
+    "@lap/types": "workspace:*",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

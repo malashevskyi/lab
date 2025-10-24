@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import {
   getDictionaryEntryWithExamplesByTextResponseSchema,
   type GetDictionaryEntryWithExamplesByTextResponseType,
-} from '@malashevsky/types/deep-read/dictionary-entries';
+} from '@lap/types/deep-read/dictionary-entries';
 
 export function useWordHistory(): {
   historyData: GetDictionaryEntryWithExamplesByTextResponseType | null;

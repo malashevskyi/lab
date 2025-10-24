@@ -8,7 +8,7 @@ import {
   TranscriptionProperty,
   TranslationProperty,
 } from '../decorators/dictionary-entry-fields.decorators.js';
-import { getDictionaryEntryWithExamplesByTextResponseSchema } from '@malashevsky/types/deep-read/dictionary-entries/index.js';
+import { getDictionaryEntryWithExamplesByTextResponseSchema } from '@lap/types/deep-read/dictionary-entries/index.js';
 
 export class GetEntryWithExamplesByTextResponseDto extends createZodDto(
   getDictionaryEntryWithExamplesByTextResponseSchema,

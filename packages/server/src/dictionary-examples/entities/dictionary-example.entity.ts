@@ -21,7 +21,7 @@ import {
   TranslationProperty,
   UpdatedAtProperty,
 } from '../decorators/dictionary-example-fields.decorators.js';
-import type { DictionaryExampleType } from '@malashevsky/types/deep-read/dictionary-examples/index.js';
+import type { DictionaryExampleType } from '@lap/types/deep-read/dictionary-examples/index.js';
 import { DictionaryEntry } from '../../dictionary-entries/entities/dictionary-entry.entity.js';
 
 @Entity('dictionary_examples')

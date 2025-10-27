@@ -24,10 +24,10 @@ BEGIN {
     print "[";
 }
 {
-    # 1. Get the full input path (e.g., types/src/lib/deep-read/...)
+    # 1. Get the full input path (e.g., types/src/deep-read/...)
     input_path = $0;
 
-    # Remove the defined prefix to make paths relative to the config file (e.g., src/lib/...)
+    # Remove the defined prefix to make paths relative to the config file (e.g., src/...)
     # This is crucial for running the generator from within the types directory.
     gsub(prefix, "", input_path); 
 

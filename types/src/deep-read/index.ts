@@ -3,3 +3,4 @@ export * as audioRecords from './audio-records/index.js';
 export * as dictionaryEntries from './dictionary-entries/index.js';
 export * as dictionaryExamples from './dictionary-examples/index.js';
 export * as tts from './tts/index.js';
+export * as flashcards from './flashcards/index.js';

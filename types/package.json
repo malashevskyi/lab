@@ -39,10 +39,10 @@
       "require": "./dist/deep-read/audio-records/index.cjs",
       "import": "./dist/deep-read/audio-records/index.js"
     },
-    "./deep-read/flashcard/index.js": {
-      "types": "./dist/deep-read/flashcard/index.d.ts",
-      "require": "./dist/deep-read/flashcard/index.cjs",
-      "import": "./dist/deep-read/flashcard/index.js"
+    "./deep-read/flashcards/index.js": {
+      "types": "./dist/deep-read/flashcards/index.d.ts",
+      "require": "./dist/deep-read/flashcards/index.cjs",
+      "import": "./dist/deep-read/flashcards/index.js"
     }
   },
   "dependencies": {

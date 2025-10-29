@@ -9,7 +9,7 @@ import type {
   FlashcardType,
   KnowledgeLevel,
   UsageContext,
-} from '@lap/types/deep-read/flashcards/index.js';
+} from '@lab/types/deep-read/flashcards/index.js';
 
 @Entity('flashcards')
 export class FlashcardEntity implements FlashcardType {

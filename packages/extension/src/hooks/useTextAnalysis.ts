@@ -7,7 +7,7 @@ import { useAppStore } from '../store';
 import {
   analysisResponseSchema,
   type AnalysisResponse,
-} from '@lap/types/deep-read/ai';
+} from '@lab/types/deep-read/ai';
 
 export function useTextAnalysis(): {
   analysisData: AnalysisResponse | null;

@@ -17,8 +17,8 @@
     "noFallthroughCasesInSwitch": false,
     "strictPropertyInitialization": false,
     "paths": {
-      "@lap/types/*": ["../../types/dist/*"],
-      "@lap/types": ["../../types/dist/index"]
+      "@lab/types/*": ["../../types/dist/*"],
+      "@lab/types": ["../../types/dist/index"]
     }
   },
   "include": ["src/**/*"],

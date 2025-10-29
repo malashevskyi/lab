@@ -1,4 +1,4 @@
-import type { AnalysisResponse } from '@lap/types/deep-read/ai';
+import type { AnalysisResponse } from '@lab/types/deep-read/ai';
 import { useAudioGeneration } from '../../../hooks/useAudioGeneration';
 import { AudioPlayer } from '../../ui/AudioPlayer';
 

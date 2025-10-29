@@ -1,4 +1,4 @@
-import type { AudioRecordType } from '@lap/types/deep-read/audio-records/index.js';
+import type { AudioRecordType } from '@lab/types/deep-read/audio-records/index.js';
 import {
   Entity,
   Column,

@@ -11,7 +11,7 @@ import {
   CreateEntryWithExampleResponseType,
   FindOrCreateDictionaryEntryResponseType,
   GetDictionaryEntryWithExamplesByTextResponseType,
-} from '@lap/types/deep-read/dictionary-entries/index.js';
+} from '@lab/types/deep-read/dictionary-entries/index.js';
 
 @ApiTags('Dictionary')
 @Controller('dictionary')

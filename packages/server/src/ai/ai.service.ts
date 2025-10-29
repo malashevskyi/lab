@@ -1,11 +1,18 @@
 import { Injectable, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AiAnalysisPort } from './ports/ai-analysis.port.js';
-import { AnalysisResponse } from '@lap/types/deep-read/ai/index.js';
+import {
+  AnalysisResponse,
+  GenerateFlashcardResponse,
+} from '@lab/types/deep-read/ai/index.js';
+import { AiFlashcardGeneratorPort } from './ports/ai-generate-flashcard.port.js';
 
 @Injectable()
 @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class AiService {
-  constructor(private readonly aiAnalysisPort: AiAnalysisPort) {}
+  constructor(
+    private readonly aiAnalysisPort: AiAnalysisPort,
+    private readonly aiFlashcardGeneratorPort: AiFlashcardGeneratorPort,
+  ) {}
 
   /**
    * Analyzes selected text in context and returns structured analysis with audio.
@@ -35,8 +42,10 @@ export class AiService {
       },
     };
 
-    // TODO: Зберігаємо в базу даних в supabase
-
     return analysisResult;
+  }
+
+  generateFlashcard(chunks: string[]): Promise<GenerateFlashcardResponse> {
+    return this.aiFlashcardGeneratorPort.generateFlashcardFromChunks(chunks);
   }
 }

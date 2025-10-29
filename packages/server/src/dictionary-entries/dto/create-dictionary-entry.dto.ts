@@ -4,7 +4,7 @@ import {
   TextProperty,
   TranscriptionProperty,
 } from '../decorators/dictionary-entry-fields.decorators.js';
-import { createDictionaryEntrySchema } from '@lap/types/deep-read/dictionary-entries/index.js';
+import { createDictionaryEntrySchema } from '@lab/types/deep-read/dictionary-entries/index.js';
 
 export class CreateDictionaryEntryDto extends createZodDto(
   createDictionaryEntrySchema,

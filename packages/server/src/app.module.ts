@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AudioRecordsModule } from './audio-records/audio-records.module.js';
 import { DictionaryEntriesModule } from './dictionary-entries/dictionary-entries.module.js';
 import { DictionaryExamplesModule } from './dictionary-examples/dictionary-examples.module.js';
+import { FlashcardsModule } from './flashcards/flashcards.module';
 import ormConfig from './shared/configs/orm.config.js';
 
 @Module({
@@ -38,6 +39,7 @@ import ormConfig from './shared/configs/orm.config.js';
     AudioRecordsModule,
     DictionaryEntriesModule,
     DictionaryExamplesModule,
+    FlashcardsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -85,3 +85,6 @@ vitest.config.*.timestamp*
 *.tsbuildinfo
 *.d.ts.map
 dist/
+
+vendor
+dummy-non-existing-folder

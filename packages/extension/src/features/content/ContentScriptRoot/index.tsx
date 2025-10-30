@@ -5,6 +5,7 @@ import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseConte
 import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { captureError } from '../../../utils/sentry';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
+import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -68,26 +69,20 @@ const ContentScriptRoot: React.FC = () => {
 
     if (!selection) return;
 
-    // analyze text with Alt key
-    if (event.altKey) {
-      selection = expandSelectionToFullWords(selection);
-
-      setCurrentRange(selection.getRangeAt(0).cloneRange());
-
-      const selectedText = selection.toString().trim();
-
-      const context = getWordOrPhraseContextForSelection(selection);
-
-      if (context && selectedText) {
-        openSidebar(selectedText, context);
-      }
-
-      return true;
+    const range = selection.getRangeAt(0);
+    if (
+      range.startContainer.nodeType !== Node.TEXT_NODE ||
+      range.endContainer.nodeType !== Node.TEXT_NODE
+    ) {
+      console.warn('[DeepRead] Ignored non-text selection.');
+      selection.removeAllRanges();
+      return;
     }
 
-    // add flashcard chunk with Shift key
-    if (event.shiftKey) {
-      selection = expandSelectionToFullWords(selection);
+    // add flashcard chunk with, multiple selection support
+    if (event.metaKey && event.altKey) {
+      selection = expandSelectionAcrossNodes(selection);
+      console.log('🚀 ~ flashcardChunks:', flashcardChunks);
 
       const newRange = selection.getRangeAt(0).cloneRange();
       const newText = selection.toString().trim();
@@ -102,6 +97,23 @@ const ContentScriptRoot: React.FC = () => {
         addFlashcardChunk({ text: newText, range: newRange });
       }
       selection.removeAllRanges();
+    }
+
+    // analyze text with Alt key
+    if (!event.metaKey && event.altKey) {
+      selection = expandSelectionToFullWords(selection);
+
+      setCurrentRange(selection.getRangeAt(0).cloneRange());
+
+      const selectedText = selection.toString().trim();
+
+      const context = getWordOrPhraseContextForSelection(selection);
+
+      if (context && selectedText) {
+        openSidebar(selectedText, context);
+      }
+
+      return true;
     }
   };
 

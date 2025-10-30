@@ -42,6 +42,7 @@ export interface AppActions {
   // flashcards
   addFlashcardChunk: (chunk: FlashcardChunk) => void;
   clearFlashcardChunks: () => void;
+  removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
 }
 
 const initialState: AppState = {
@@ -106,4 +107,23 @@ export const useAppStore = create<AppState & AppActions>((set) => ({
     set((state) => ({
       flashcard: { ...state.flashcard, chunks: [] },
     })),
+
+  /**
+   * @function removeFlashcardChunks
+   * @description Removes multiple chunks from the flashcard state.
+   * @param {FlashcardChunk[]} chunksToRemove - An array of chunks to be removed.
+   */
+  removeFlashcardChunks: (chunksToRemove) =>
+    set((state) => {
+      const rangesToRemove = chunksToRemove.map((chunk) =>
+        chunk.range.toString()
+      );
+      return {
+        flashcard: {
+          chunks: state.flashcard.chunks.filter(
+            (chunk) => !rangesToRemove.includes(chunk.range.toString())
+          ),
+        },
+      };
+    }),
 }));

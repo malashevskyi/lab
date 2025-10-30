@@ -6,6 +6,7 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc -b tsconfig.lib.json",
     "generate:zod": "ts-to-zod --all"
   },
   "exports": {

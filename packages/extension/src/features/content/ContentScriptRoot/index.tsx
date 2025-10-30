@@ -4,6 +4,7 @@ import { useAppStore } from '../../../store';
 import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
 import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { captureError } from '../../../utils/sentry';
+import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -32,6 +33,9 @@ const ContentScriptRoot: React.FC = () => {
   const openSidebar = useAppStore((state) => state.openSidebar);
   const addFlashcardChunk = useAppStore((state) => state.addFlashcardChunk);
   const flashcardChunks = useAppStore((state) => state.flashcard.chunks);
+  const removeFlashcardChunks = useAppStore(
+    (state) => state.removeFlashcardChunks
+  );
 
   const selectedTextFromStore = useAppStore(
     (state) => state.sidebar.selectedText
@@ -52,7 +56,6 @@ const ContentScriptRoot: React.FC = () => {
    * based on the modifier key pressed (`Alt` for analysis, `Shift` for flashcard chunking).
    */
   const handleMouseUp = (event: MouseEvent) => {
-    console.log('🚀 ~ event:', event);
     if (!event.altKey && !event.shiftKey) return;
 
     event.preventDefault();
@@ -86,11 +89,17 @@ const ContentScriptRoot: React.FC = () => {
     if (event.shiftKey) {
       selection = expandSelectionToFullWords(selection);
 
-      const range = selection.getRangeAt(0).cloneRange();
-      const text = selection.toString().trim();
+      const newRange = selection.getRangeAt(0).cloneRange();
+      const newText = selection.toString().trim();
 
-      if (text) {
-        addFlashcardChunk({ text, range });
+      const intersectingChunks = flashcardChunks.filter((chunk) => {
+        return doRangesIntersect(chunk.range, newRange);
+      });
+
+      if (intersectingChunks.length) {
+        removeFlashcardChunks(intersectingChunks);
+      } else if (newText) {
+        addFlashcardChunk({ text: newText, range: newRange });
       }
       selection.removeAllRanges();
     }

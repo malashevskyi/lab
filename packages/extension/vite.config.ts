@@ -21,4 +21,9 @@ export default defineConfig({
     crx({ manifest }),
     tailwindcss(),
   ],
+  test: {
+    globals: true, // use describe, it, expect without import
+    environment: 'jsdom', // Встановлюємо середовище для DOM-тестів
+    include: ['src/**/*.test.{ts,tsx}'], // Вказуємо, де шукати тести
+  },
 });

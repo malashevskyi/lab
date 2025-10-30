@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from "react";
-import ReactH5AudioPlayer from "react-h5-audio-player";
-import { FaPlay, FaPause } from "react-icons/fa";
+import React, { useRef, useEffect } from 'react';
+import ReactH5AudioPlayer from 'react-h5-audio-player';
+import { FaPlay, FaPause } from 'react-icons/fa';
 
-import "react-h5-audio-player/lib/styles.css";
+import 'react-h5-audio-player/lib/styles.css';
 
 interface AudioPlayerProps {
   url?: string;
@@ -11,7 +11,7 @@ interface AudioPlayerProps {
 }
 
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
-  url = "",
+  url = '',
   isLoading,
   autoPlay = false,
 }) => {
@@ -44,7 +44,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           pause: <FaPause />,
         }}
         className={`bg-transparent shadow-none border-gray-600 ${
-          !url ? "opacity-50 pointer-events-none" : ""
+          !url ? 'opacity-50 pointer-events-none' : ''
         }`}
         layout="stacked-reverse"
       />

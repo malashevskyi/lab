@@ -8,6 +8,8 @@ import { captureError } from '../../../utils/sentry';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 import { FlashcardCreator } from '../../../components/ui/FlashcardCreator';
+import { serializeRange } from '../../../utils/serializeRange';
+import { ApiError } from '../../../services/ApiError';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -100,10 +102,25 @@ const ContentScriptRoot: React.FC = () => {
         return doRangesIntersect(chunk.range, newRange);
       });
 
+      let parentElement = newRange.commonAncestorContainer;
+      if (parentElement.nodeType === Node.TEXT_NODE) {
+        parentElement = parentElement.parentNode!;
+      }
+      let tag = 'div';
+
+      if (parentElement instanceof Element) {
+        tag = parentElement.tagName.toLowerCase();
+      } else {
+        // to detect unexpected parent element
+        ApiError.fromUnknown('Unexpected parent element', {
+          details: serializeRange(newRange),
+        }).notify();
+      }
+
       if (intersectingChunks.length) {
         removeFlashcardChunks(intersectingChunks);
       } else if (newText) {
-        addFlashcardChunk({ text: newText, range: newRange });
+        addFlashcardChunk({ text: newText, range: newRange, tag });
       }
       selection.removeAllRanges();
     }

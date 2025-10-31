@@ -6,7 +6,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client", "chrome"],
+    "types": ["vite/client", "chrome", "vitest/globals"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -16,6 +16,8 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+
+    "noImplicitAny": false,
 
     /* Linting */
     "strict": true,

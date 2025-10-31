@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { usePrevious } from 'react-use';
 import { Sidebar } from '../../../components/Layout/Sidebar';
 import { useAppStore } from '../../../store';
 import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
@@ -6,6 +7,7 @@ import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { captureError } from '../../../utils/sentry';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
+import { FlashcardCreator } from '../../../components/ui/FlashcardCreator';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -29,6 +31,9 @@ if (highlightApiSupported) {
   CSS.highlights.set('deepread-flashcard-chunks-highlight', new Highlight());
 }
 
+const FLASHCARD_CREATOR_HEIGHT = 150;
+const POPUP_OFFSET = 10;
+
 const ContentScriptRoot: React.FC = () => {
   const isSidebarVisible = useAppStore((state) => state.sidebar.isVisible);
   const openSidebar = useAppStore((state) => state.openSidebar);
@@ -37,6 +42,10 @@ const ContentScriptRoot: React.FC = () => {
   const removeFlashcardChunks = useAppStore(
     (state) => state.removeFlashcardChunks
   );
+  const setFlashcardCreatorPosition = useAppStore(
+    (state) => state.setFlashcardCreatorPosition
+  );
+  const prevChunksCount = usePrevious(flashcardChunks.length);
 
   const selectedTextFromStore = useAppStore(
     (state) => state.sidebar.selectedText
@@ -152,13 +161,37 @@ const ContentScriptRoot: React.FC = () => {
     }
   }, [flashcardChunks]);
 
-  if (!isSidebarVisible) return null;
+  /**
+   * We need to position the flashcard creator popup above the first chunk when it's added.
+   */
+  useEffect(() => {
+    if (flashcardChunks.length > 0 && prevChunksCount === 0) {
+      console.log('🚀 ~ ----------:', flashcardChunks);
+      const firstChunkRange = flashcardChunks[0].range;
+      const rect = firstChunkRange.getBoundingClientRect();
 
-  return (
-    <>
-      <Sidebar />
-    </>
-  );
+      const newPosition = {
+        x: rect.left + window.scrollX,
+        y: rect.top + window.scrollY - FLASHCARD_CREATOR_HEIGHT - POPUP_OFFSET,
+      };
+
+      setFlashcardCreatorPosition(newPosition);
+    }
+  }, [flashcardChunks, prevChunksCount, setFlashcardCreatorPosition]);
+
+  if (flashcardChunks.length) {
+    return <FlashcardCreator />;
+  }
+
+  if (isSidebarVisible) {
+    return (
+      <>
+        <Sidebar />
+      </>
+    );
+  }
+
+  return null;
 };
 
 export default ContentScriptRoot;

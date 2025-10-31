@@ -11,10 +11,15 @@ export interface AnalysisState {
   normalizedText: string;
 }
 
+export interface FlashcardCreatorState {
+  position: { x: number; y: number };
+}
+
 export interface AppState {
   sidebar: SidebarState;
   analysis: AnalysisState;
   flashcard: FlashcardState;
+  flashcardCreator: FlashcardCreatorState;
 }
 
 /**
@@ -43,6 +48,7 @@ export interface AppActions {
   addFlashcardChunk: (chunk: FlashcardChunk) => void;
   clearFlashcardChunks: () => void;
   removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
+  setFlashcardCreatorPosition: (position: { x: number; y: number }) => void;
 }
 
 const initialState: AppState = {
@@ -57,6 +63,9 @@ const initialState: AppState = {
   },
   flashcard: {
     chunks: [],
+  },
+  flashcardCreator: {
+    position: { x: 0, y: 0 },
   },
 };
 
@@ -126,4 +135,14 @@ export const useAppStore = create<AppState & AppActions>((set) => ({
         },
       };
     }),
+
+  /**
+   * @function setFlashcardCreatorPosition
+   * @description Updates the position of the flashcard creator popup.
+   * @param {object} position - The new {x, y} coordinates.
+   */
+  setFlashcardCreatorPosition: (position) =>
+    set((state) => ({
+      flashcardCreator: { ...state.flashcardCreator, position },
+    })),
 }));

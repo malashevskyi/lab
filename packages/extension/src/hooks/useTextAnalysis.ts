@@ -35,10 +35,9 @@ export function useTextAnalysis(): {
   });
 
   if (query.error) {
-    ApiError.fromUnknown(
-      query.error,
-      'Failed to analyze the selected text.'
-    ).notify();
+    ApiError.fromUnknown(query.error, {
+      clientMessage: 'Failed to analyze the selected text.',
+    }).notify();
   }
 
   return {

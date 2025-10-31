@@ -66,7 +66,9 @@ export const expandSelectionAcrossNodes = (selection: Selection): Selection => {
     selection.removeAllRanges();
     selection.addRange(newRange);
   } catch (error) {
-    ApiError.fromUnknown(error, 'Error creating expanded range.').notify();
+    ApiError.fromUnknown(error, {
+      clientMessage: 'Error creating expanded range.',
+    }).notify();
     selection.removeAllRanges();
     selection.addRange(range);
   }

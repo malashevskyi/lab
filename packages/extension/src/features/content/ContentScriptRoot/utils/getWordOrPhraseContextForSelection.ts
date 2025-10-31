@@ -1,11 +1,11 @@
-import { toast } from "sonner";
+import { toast } from 'sonner';
 import {
   ALLOWED_COPY_NODE_TYPES,
   MAX_CONTEXT_LENGTH,
   PHRASE_OR_WORD_LENGTH_THRESHOLD,
-} from "../../../../config/constants";
-import { refineLargeContext } from "./refineLargeContext";
-import getSentencesFromText from "./getSentencesFromText";
+} from '../../../../config/constants';
+import { refineLargeContext } from './refineLargeContext';
+import getSentencesFromText from './getSentencesFromText';
 
 const handleError = (message: string, selection: Selection): void => {
   // TODO: replace with sentry
@@ -18,13 +18,13 @@ const handleError = (message: string, selection: Selection): void => {
  * Extracts the most relevant and appropriately sized block of text surrounding a user's selection for AI analysis.
  */
 export const getWordOrPhraseContextForSelection = (
-  selection: Selection,
+  selection: Selection
 ): string | void => {
-  if (selection.rangeCount === 0) return "";
+  if (selection.rangeCount === 0) return '';
 
   const cleanText = (text: string | null | undefined): string => {
-    if (!text) return "";
-    return text.replace(/\s+/g, " ").trim();
+    if (!text) return '';
+    return text.replace(/\s+/g, ' ').trim();
   };
 
   const range = selection.getRangeAt(0);
@@ -33,18 +33,18 @@ export const getWordOrPhraseContextForSelection = (
     !ALLOWED_COPY_NODE_TYPES.includes(range.commonAncestorContainer.nodeType)
   ) {
     handleError(
-      "Selection is too complex. Please select plain text.",
-      selection,
+      'Selection is too complex. Please select plain text.',
+      selection
     );
     return;
   }
 
-  let startNode = range.startContainer.parentElement;
+  const startNode = range.startContainer.parentElement;
 
   if (!startNode) {
     handleError(
-      "Could not determine the start node of the selection.",
-      selection,
+      'Could not determine the start node of the selection.',
+      selection
     );
     return;
   }
@@ -52,7 +52,7 @@ export const getWordOrPhraseContextForSelection = (
   const selectedText = cleanText(selection.toString());
 
   const isPhraseOrWord =
-    selectedText.split(" ").length <= PHRASE_OR_WORD_LENGTH_THRESHOLD;
+    selectedText.split(' ').length <= PHRASE_OR_WORD_LENGTH_THRESHOLD;
   let currentNode = range.commonAncestorContainer;
   let contextText = cleanText(currentNode.textContent);
 
@@ -65,7 +65,7 @@ export const getWordOrPhraseContextForSelection = (
   while (parent && contextText.length < MAX_CONTEXT_LENGTH) {
     const parentText = cleanText(parent.textContent);
 
-    parent.querySelectorAll("style, script").forEach((el) => el.remove());
+    parent.querySelectorAll('style, script').forEach((el) => el.remove());
 
     const currentContextSentenceCount =
       getSentencesFromText(contextText).length;

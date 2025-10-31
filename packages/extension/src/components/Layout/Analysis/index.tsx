@@ -1,13 +1,11 @@
-import { useSaveToDictionary } from "../../../hooks/useSaveToDictionary";
-import { useTextAnalysis } from "../../../hooks/useTextAnalysis";
-import { FaRegBookmark } from "react-icons/fa";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import HighlightText from "../../ui/HighlightText";
-import Audio from "../Audio";
+import { useSaveToDictionary } from '../../../hooks/useSaveToDictionary';
+import { useTextAnalysis } from '../../../hooks/useTextAnalysis';
+import { FaRegBookmark } from 'react-icons/fa';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import HighlightText from '../../ui/HighlightText';
+import Audio from '../Audio';
 
-interface AnalysisProps {}
-
-const Analysis: React.FC<AnalysisProps> = () => {
+const Analysis: React.FC = () => {
   const { analysisData, isLoadingText } = useTextAnalysis();
 
   const { saveWordWithExample, isSaving } = useSaveToDictionary();
@@ -47,7 +45,7 @@ const Analysis: React.FC<AnalysisProps> = () => {
                 onClick={handleSaveClick}
                 disabled={isSaving}
                 className="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                title={isSaving ? "Saving..." : "Save to Dictionary"}
+                title={isSaving ? 'Saving...' : 'Save to Dictionary'}
               >
                 {isSaving ? (
                   <AiOutlineLoading3Quarters className="w-4 h-4 animate-spin" />

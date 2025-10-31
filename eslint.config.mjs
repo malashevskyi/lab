@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 export default tseslint.config(
   js.configs.recommended,
   {
-    ignores: ['*/**/dist/'],
+    ignores: ['*/**/dist/', '*/**/vendor', '*/**/dummy-non-existing-folder'],
   },
   {
     files: ['packages/extension/**/*.{ts,tsx}'],
@@ -45,6 +45,8 @@ export default tseslint.config(
       'react-hooks/exhaustive-deps': 'off',
       // ESLint parser bug: monorepo types detected as `any`
       '@typescript-eslint/no-redundant-type-constituents': 'off',
+
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 

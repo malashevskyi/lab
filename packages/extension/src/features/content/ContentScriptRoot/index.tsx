@@ -8,8 +8,6 @@ import { captureError } from '../../../utils/sentry';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 import { FlashcardCreator } from '../../../components/ui/FlashcardCreator';
-import { serializeRange } from '../../../utils/serializeRange';
-import { ApiError } from '../../../services/ApiError';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -93,7 +91,6 @@ const ContentScriptRoot: React.FC = () => {
     // add flashcard chunk with, multiple selection support
     if (event.metaKey && event.altKey) {
       selection = expandSelectionAcrossNodes(selection);
-      console.log('🚀 ~ flashcardChunks:', flashcardChunks);
 
       const newRange = selection.getRangeAt(0).cloneRange();
       const newText = selection.toString().trim();
@@ -106,21 +103,11 @@ const ContentScriptRoot: React.FC = () => {
       if (parentElement.nodeType === Node.TEXT_NODE) {
         parentElement = parentElement.parentNode!;
       }
-      let tag = 'div';
-
-      if (parentElement instanceof Element) {
-        tag = parentElement.tagName.toLowerCase();
-      } else {
-        // to detect unexpected parent element
-        ApiError.fromUnknown('Unexpected parent element', {
-          details: serializeRange(newRange),
-        }).notify();
-      }
 
       if (intersectingChunks.length) {
         removeFlashcardChunks(intersectingChunks);
       } else if (newText) {
-        addFlashcardChunk({ text: newText, range: newRange, tag });
+        addFlashcardChunk({ text: newText, range: newRange });
       }
       selection.removeAllRanges();
     }
@@ -183,12 +170,12 @@ const ContentScriptRoot: React.FC = () => {
    */
   useEffect(() => {
     if (flashcardChunks.length > 0 && prevChunksCount === 0) {
-      console.log('🚀 ~ ----------:', flashcardChunks);
       const firstChunkRange = flashcardChunks[0].range;
       const rect = firstChunkRange.getBoundingClientRect();
 
       const newPosition = {
-        x: rect.left + window.scrollX,
+        // x: rect.left + window.scrollX,
+        x: 0,
         y: rect.top + window.scrollY - FLASHCARD_CREATOR_HEIGHT - POPUP_OFFSET,
       };
 

@@ -28,18 +28,6 @@ export const ChunkInput: React.FC<ChunkInputRowProps> = ({
         )}
       </Field>
 
-      {/* tag field */}
-      <Field name={`chunks.${index}.tag`}>
-        {({ field }: FieldProps) => (
-          <input
-            {...field}
-            type="text"
-            placeholder="tag"
-            className="w-10 p-2 border border-gray-200 border-solid rounded-md text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        )}
-      </Field>
-
       <button
         type="button"
         onClick={onRemove}

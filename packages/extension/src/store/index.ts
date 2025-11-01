@@ -31,7 +31,6 @@ export interface AppState {
 export interface FlashcardChunk {
   text: string;
   range: Range;
-  tag: string;
 }
 
 export interface FlashcardState {

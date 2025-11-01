@@ -7,7 +7,7 @@ import { ChunkInput } from '../ChunkInput';
 import { CloseButton } from '../CloseButton';
 
 interface FormValues {
-  chunks: Array<{ tag: string; text: string }>;
+  chunks: Array<{ text: string }>;
 }
 
 /**
@@ -26,7 +26,7 @@ export const FlashcardCreator: React.FC = () => {
 
   const formik = useFormik<FormValues>({
     initialValues: {
-      chunks: rawChunks.map((c) => ({ text: c.text, tag: c.tag })),
+      chunks: rawChunks.map((c) => ({ text: c.text })),
     },
 
     enableReinitialize: true,
@@ -65,7 +65,7 @@ export const FlashcardCreator: React.FC = () => {
             <FieldArray name="chunks">
               {({ remove, push }) => (
                 <div className="space-y-3">
-                  <div className="max-h-60 overflow-y-auto space-y-3 pr-2">
+                  <div className="max-h-40 overflow-y-auto space-y-3 pr-2">
                     {formik.values.chunks.map((_, index) => (
                       <ChunkInput
                         key={index}
@@ -78,7 +78,7 @@ export const FlashcardCreator: React.FC = () => {
                   <div className="flex items-center justify-between gap-2 p-1 border-t border-gray-100">
                     <button
                       type="button"
-                      onClick={() => push({ tag: 'p', text: '' })}
+                      onClick={() => push({ text: '' })}
                       className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                       title="Add new chunk"
                     >

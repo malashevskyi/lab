@@ -2,12 +2,21 @@ import React, { useRef } from 'react';
 import Draggable from 'react-draggable';
 import { useAppStore } from '../../../store';
 import { FaPlus } from 'react-icons/fa';
-import { FieldArray, Form, FormikProvider, useFormik } from 'formik';
+import {
+  Field,
+  FieldArray,
+  Form,
+  FormikProvider,
+  useFormik,
+  type FieldProps,
+} from 'formik';
 import { ChunkInput } from '../ChunkInput';
 import { CloseButton } from '../CloseButton';
+import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
 
 interface FormValues {
   chunks: Array<{ text: string }>;
+  title: string;
 }
 
 /**
@@ -22,10 +31,12 @@ export const FlashcardCreator: React.FC = () => {
   const clearFlashcardChunks = useAppStore(
     (state) => state.clearFlashcardChunks
   );
+  const initialTitle = useAppStore((state) => state.flashcardCreator.title);
   const nodeRef = useRef<HTMLDivElement>({} as unknown as HTMLDivElement);
 
   const formik = useFormik<FormValues>({
     initialValues: {
+      title: initialTitle,
       chunks: rawChunks.map((c) => ({ text: c.text })),
     },
 
@@ -34,6 +45,7 @@ export const FlashcardCreator: React.FC = () => {
       console.log('Submitting form with values:', values.chunks);
     },
   });
+  usePersistedTitle(formik.values, formik.setFieldValue);
 
   if (rawChunks.length === 0) return null;
 
@@ -66,6 +78,16 @@ export const FlashcardCreator: React.FC = () => {
               {({ remove, push }) => (
                 <div className="space-y-3">
                   <div className="max-h-40 overflow-y-auto space-y-3 pr-2">
+                    <Field name="title">
+                      {({ field }: FieldProps) => (
+                        <input
+                          {...field}
+                          type="text"
+                          placeholder="Flashcard Title (Context)"
+                          className="w-full p-2 mb-3 border rounded-md text-sm font-semibold"
+                        />
+                      )}
+                    </Field>
                     {formik.values.chunks.map((_, index) => (
                       <ChunkInput
                         key={index}

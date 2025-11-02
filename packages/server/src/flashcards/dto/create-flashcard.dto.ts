@@ -1,35 +1,21 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { createFlashcardBodySchema } from '@lab/types/deep-read/flashcards';
+import { createZodDto } from 'nestjs-zod';
+import z from 'zod';
 import {
-  ArrayMinSize,
-  IsArray,
-  IsNotEmpty,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+  ChunksProperty,
+  SourceUrlProperty,
+  TitleProperty,
+} from '../decorators/flashcards-fields.decorators';
 
-export class CreateFlashcardDto {
-  @ApiProperty({
-    description: 'Title of the article from which the flashcard is generated.',
-    example: 'Geography of France',
-  })
-  @IsString()
-  @IsNotEmpty()
-  title: string;
+export class CreateFlashcardDto extends createZodDto(
+  createFlashcardBodySchema,
+) {
+  @TitleProperty()
+  title: z.infer<typeof createFlashcardBodySchema.shape.title>;
 
-  @ApiProperty({
-    description: 'Chunks of text used to generate the flashcard question.',
-    example: ['capital of France', 'largest city in France'],
-  })
-  @IsArray()
-  @ArrayMinSize(1)
-  @IsString({ each: true })
-  @IsNotEmpty({ each: true })
-  chunks: string[];
+  @ChunksProperty()
+  chunks: z.infer<typeof createFlashcardBodySchema.shape.chunks>;
 
-  @ApiPropertyOptional({
-    description: 'Source URL when the data were copied',
-    example: 'https://example.com/geography/france',
-  })
-  @IsUrl()
-  sourceUrl: string;
+  @SourceUrlProperty()
+  sourceUrl: z.infer<typeof createFlashcardBodySchema.shape.sourceUrl>;
 }

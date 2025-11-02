@@ -5,4 +5,4 @@ export const getLastFlashcardResponseSchema = flashcardTypeSchema;
 
 export type GetLastFlashcardResponseType = z.infer<
   typeof getLastFlashcardResponseSchema
->;
+> | null;

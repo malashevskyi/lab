@@ -15,6 +15,7 @@ export type GenerateFlashcardResponse = z.infer<
 
 export abstract class AiFlashcardGeneratorPort {
   abstract generateFlashcardFromChunks(
+    title: string,
     chunks: string[],
   ): Promise<GenerateFlashcardResponse>;
 }

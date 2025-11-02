@@ -12,7 +12,11 @@ import {
 const getFlashCardPrompt = () => `
 You are an expert assistant that generates high-quality study flashcards.
 
-You will receive an array of HTML chunks copied from various webpages.
+I want to create a lot of flashcards for an article based on its content chunks step by step.
+Your task to create only one flashcard at a time from the provided content chunks.
+You will receive the title of the article to understand the context better.
+
+You will also receive an array of HTML chunks copied from the article.
 Your task is to extract the meaning and rewrite the content using ONLY HTML formats compatible with the Quill rich-text editor.
 
 The generated HTML will be shown ONLY inside a flashcard editor, not as a full article.  
@@ -99,11 +103,14 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
   }
 
   async generateFlashcardFromChunks(
+    title: string,
     chunks: string[],
   ): Promise<GenerateFlashcardResponse> {
     try {
       const openAiModel = this.configService.getOrThrow<string>('OPENAI_MODEL');
-      const userPrompt = `Extracted content:\n${chunks
+      const userPrompt = `
+      Article title: ${title}
+      Extracted content:\n${chunks
         .map((chunk, index) => `Chunk ${index + 1}: ${chunk}`)
         .join('\n')}`;
 

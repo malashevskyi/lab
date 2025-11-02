@@ -19,10 +19,14 @@ export class FlashcardsService {
    * @returns The persisted {@link FlashcardEntity} instance.
    */
   async createFlashcard({
+    title,
     chunks,
     sourceUrl,
   }: CreateFlashcardDto): Promise<FlashcardEntity> {
-    const generatedFlashcard = await this.aiService.generateFlashcard(chunks);
+    const generatedFlashcard = await this.aiService.generateFlashcard(
+      title,
+      chunks,
+    );
 
     const newFlashcard = this.flashcardsRepository.create({
       ...generatedFlashcard,

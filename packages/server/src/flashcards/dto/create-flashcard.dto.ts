@@ -9,6 +9,14 @@ import {
 
 export class CreateFlashcardDto {
   @ApiProperty({
+    description: 'Title of the article from which the flashcard is generated.',
+    example: 'Geography of France',
+  })
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @ApiProperty({
     description: 'Chunks of text used to generate the flashcard question.',
     example: ['capital of France', 'largest city in France'],
   })

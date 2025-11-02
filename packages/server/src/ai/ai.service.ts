@@ -45,7 +45,13 @@ export class AiService {
     return analysisResult;
   }
 
-  generateFlashcard(chunks: string[]): Promise<GenerateFlashcardResponse> {
-    return this.aiFlashcardGeneratorPort.generateFlashcardFromChunks(chunks);
+  generateFlashcard(
+    title: string,
+    chunks: string[],
+  ): Promise<GenerateFlashcardResponse> {
+    return this.aiFlashcardGeneratorPort.generateFlashcardFromChunks(
+      title,
+      chunks,
+    );
   }
 }

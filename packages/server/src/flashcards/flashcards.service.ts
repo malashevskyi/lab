@@ -35,4 +35,22 @@ export class FlashcardsService {
 
     await this.flashcardsRepository.save(newFlashcard);
   }
+
+  /**
+   * Finds the most recently created flashcard.
+   * @returns {Promise<FlashcardEntity>} The last created flashcard entity.
+   * @throws {NotFoundException} If no flashcards are found in the database.
+   */
+  async findLast(): Promise<FlashcardEntity | null> {
+    const lastFlashcardArray = await this.flashcardsRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 1,
+    });
+
+    const [lastFlashcard] = lastFlashcardArray;
+
+    return lastFlashcard || null;
+  }
 }

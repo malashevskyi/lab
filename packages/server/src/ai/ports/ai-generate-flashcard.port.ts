@@ -1,4 +1,4 @@
-import { flashcardTypeSchema } from '@lab/types/deep-read/flashcards';
+import { flashcardTypeSchema } from '@lab/types/deep-read/flashcards/index.js';
 import { z } from 'zod';
 
 export const generateFlashcardResponseSchema = flashcardTypeSchema.pick({

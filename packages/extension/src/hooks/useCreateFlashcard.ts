@@ -5,7 +5,7 @@ import { ApiError } from '../services/ApiError';
 import {
   createFlashcardBodySchema,
   type CreateFlashcardBodyType,
-} from '@lab/types/deep-read/flashcards';
+} from '@lab/types/deep-read/flashcards/index.js';
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 

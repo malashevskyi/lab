@@ -1,14 +1,14 @@
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 import {
   MessageType,
   type ExtensionMessage,
-} from "../../types/sentry-messages";
+} from '../../types/sentry-messages';
 
 const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
 
 Sentry.init({
   dsn: SENTRY_DSN,
-  environment: "production",
+  environment: 'production',
   tracesSampleRate: 1.0,
   debug: false,
 });
@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(
         tags: message.tags,
         contexts: {
           chrome: {
-            sender: sender.tab?.url || sender.url || "unknown",
+            sender: sender.tab?.url || sender.url || 'unknown',
           },
         },
       });
@@ -41,6 +41,6 @@ chrome.runtime.onMessage.addListener(
       sendResponse({ success: true });
     }
 
-    return true; // Async response
-  },
+    return true;
+  }
 );

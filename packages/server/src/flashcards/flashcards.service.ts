@@ -22,7 +22,7 @@ export class FlashcardsService {
     title,
     chunks,
     sourceUrl,
-  }: CreateFlashcardDto): Promise<FlashcardEntity> {
+  }: CreateFlashcardDto): Promise<void> {
     const generatedFlashcard = await this.aiService.generateFlashcard(
       title,
       chunks,
@@ -33,6 +33,6 @@ export class FlashcardsService {
       sourceUrl,
     });
 
-    return this.flashcardsRepository.save(newFlashcard);
+    await this.flashcardsRepository.save(newFlashcard);
   }
 }

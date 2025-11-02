@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { FlashcardsService } from './flashcards.service';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
-import { FlashcardEntity } from './entities/flashcard.entity';
 
 @ApiTags('Flashcards')
 @UsePipes(ZodValidationPipe)
@@ -12,9 +11,7 @@ export class FlashcardsController {
   constructor(private readonly flashcardsService: FlashcardsService) {}
 
   @Post()
-  async createFlashcard(
-    @Body() createDto: CreateFlashcardDto,
-  ): Promise<FlashcardEntity> {
+  async createFlashcard(@Body() createDto: CreateFlashcardDto): Promise<void> {
     return this.flashcardsService.createFlashcard(createDto);
   }
 }

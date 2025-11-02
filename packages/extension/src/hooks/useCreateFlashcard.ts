@@ -4,28 +4,24 @@ import { deepReadAPI } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import {
   createFlashcardBodySchema,
-  createFlashcardResponseSchema,
   type CreateFlashcardBodyType,
-  type CreateFlashcardResponseType,
 } from '@lab/types/deep-read/flashcards';
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 
 export const useCreateFlashcard = () => {
   const mutation = useMutation<
-    CreateFlashcardResponseType,
+    null,
     ApiError | ZodError,
     CreateFlashcardBodyType
   >({
     mutationFn: async (flashcardData) => {
       const validatedData = createFlashcardBodySchema.parse(flashcardData);
       const response = await deepReadAPI.post('/flashcards', validatedData);
-      return createFlashcardResponseSchema.parse(response.data);
+      return response.data;
     },
-    onSuccess: (data) => {
-      toast.success(
-        `Flashcard "${data.question.substring(0, 20)}..." created successfully!`
-      );
+    onSuccess: () => {
+      toast.success(`Flashcard created successfully!`);
     },
   });
 
@@ -43,8 +39,7 @@ export const useCreateFlashcard = () => {
 
   const createFlashcard = (data: CreateFlashcardBodyType) => {
     try {
-      const validatedData = createFlashcardBodySchema.parse(data);
-      mutation.mutate(validatedData);
+      mutation.mutate(createFlashcardBodySchema.parse(data));
     } catch (error) {
       ApiError.fromUnknown(error, {
         clientMessage: 'Invalid data provided for flashcard creation.',

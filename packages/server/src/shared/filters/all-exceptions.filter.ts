@@ -78,6 +78,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
         `Caught a generic unhandled exception for path: ${request.url}`,
         (exception as Error).stack,
       );
+
+      if (
+        process.env['NODE_ENV'] !== 'production' &&
+        exception instanceof Error
+      ) {
+        message = exception.message;
+      }
     }
 
     response.status(status).json({

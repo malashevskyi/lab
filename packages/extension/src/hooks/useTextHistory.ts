@@ -38,10 +38,9 @@ export function useWordHistory(): {
 
   useEffect(() => {
     if (query.error) {
-      ApiError.fromUnknown(
-        query.error,
-        'Failed to fetch word history.'
-      ).notify();
+      ApiError.fromUnknown(query.error, {
+        clientMessage: 'Failed to fetch word history.',
+      }).notify();
     }
   }, [query.error]);
 

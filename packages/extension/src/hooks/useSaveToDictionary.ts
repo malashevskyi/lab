@@ -65,10 +65,9 @@ export function useSaveToDictionary() {
         body: createDictionaryEntryWithExampleBodySchema.parse(args),
       });
     } catch (error) {
-      ApiError.fromUnknown(
-        error,
-        'Failed to save the word with example.'
-      ).notify();
+      ApiError.fromUnknown(error, {
+        clientMessage: 'Failed to save the word with example.',
+      }).notify();
     }
   };
 

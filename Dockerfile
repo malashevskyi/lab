@@ -26,6 +26,7 @@ WORKDIR /app/types
 RUN pnpm run build
 
 WORKDIR /app/packages/server
+RUN pnpm install
 
 CMD ["/bin/bash", "-c", "export DOPPLER_TOKEN=\"$(cat /run/secrets/doppler_token)\" && doppler run -- pnpm run start:dev:docker"]
 

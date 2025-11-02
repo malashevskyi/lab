@@ -19,7 +19,7 @@
     }
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.sentry.io"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.sentry.io ws://localhost:5174"
   },
   "background": {
     "service_worker": "src/features/background/index.tsx",

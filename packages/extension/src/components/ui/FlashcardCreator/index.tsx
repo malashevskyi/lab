@@ -13,6 +13,7 @@ import {
 import { ChunkInput } from '../ChunkInput';
 import { CloseButton } from '../CloseButton';
 import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
+import { useCreateFlashcard } from '../../../hooks/useCreateFlashcard';
 
 interface FormValues {
   chunks: Array<{ text: string }>;
@@ -33,6 +34,7 @@ export const FlashcardCreator: React.FC = () => {
   );
   const initialTitle = useAppStore((state) => state.flashcardCreator.title);
   const nodeRef = useRef<HTMLDivElement>({} as unknown as HTMLDivElement);
+  const { createFlashcard, isCreating } = useCreateFlashcard();
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -42,7 +44,11 @@ export const FlashcardCreator: React.FC = () => {
 
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log('Submitting form with values:', values.chunks);
+      createFlashcard({
+        title: values.title,
+        chunks: values.chunks.map((c) => c.text),
+        sourceUrl: window.location.href,
+      });
     },
   });
   usePersistedTitle(formik.values, formik.setFieldValue);
@@ -110,8 +116,9 @@ export const FlashcardCreator: React.FC = () => {
                       type="submit"
                       className="p-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-2"
                       title="Create flashcard from selection"
+                      disabled={isCreating}
                     >
-                      <span>Create Card</span>
+                      <span>{isCreating ? 'Creating...' : 'Create Card'}</span>
                     </button>
                   </div>
                 </div>

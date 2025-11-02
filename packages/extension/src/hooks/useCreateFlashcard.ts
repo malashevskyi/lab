@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 
 export const useCreateFlashcard = () => {
   const mutation = useMutation<
-    null,
+    undefined,
     ApiError | ZodError,
     CreateFlashcardBodyType
   >({
@@ -29,7 +29,7 @@ export const useCreateFlashcard = () => {
     ? ApiError.fromUnknown(mutation.error, {
         clientMessage: 'Failed to create the flashcard.',
       })
-    : null;
+    : undefined;
 
   useEffect(() => {
     if (creationError) {

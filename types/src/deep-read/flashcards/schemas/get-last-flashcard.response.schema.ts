@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { flashcardTypeSchema } from './flashcard.schema';
+import { flashcardTypeSchema } from './flashcard.schema.js';
 
 export const getLastFlashcardResponseSchema = flashcardTypeSchema;
 

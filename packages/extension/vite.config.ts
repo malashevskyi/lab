@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 // import path from 'path';
 import react from '@vitejs/plugin-react';
@@ -25,5 +26,6 @@ export default defineConfig({
     globals: true, // use describe, it, expect without import
     environment: 'jsdom', // Встановлюємо середовище для DOM-тестів
     include: ['src/**/*.test.{ts,tsx}'], // Вказуємо, де шукати тести
+    setupFiles: ['./src/test/setup.ts'], // Файл для налаштування тестів
   },
 });

@@ -5,8 +5,8 @@
 export default [
   {
     name: 'flashcard',
-    input: 'src/deep-read/flashcard/interfaces/flashcard.interface.ts',
-    output: 'src/deep-read/flashcard/schemas/flashcard.schema.ts',
+    input: 'src/deep-read/flashcards/interfaces/flashcard.interface.ts',
+    output: 'src/deep-read/flashcards/schemas/flashcard.schema.ts',
   },
   {
     name: 'dictionaryExample',

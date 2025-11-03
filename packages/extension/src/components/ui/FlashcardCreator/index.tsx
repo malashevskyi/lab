@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Draggable from 'react-draggable';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../../store';
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 import {
@@ -11,7 +10,6 @@ import {
   type FieldProps,
 } from 'formik';
 import { ChunkInput } from '../ChunkInput';
-import { CloseButton } from '../CloseButton';
 import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
 import { useCreateFlashcard } from '../../../hooks/useCreateFlashcard';
 import { useGetLastFlashcard } from '../../../hooks/useGetLastFlashcard';
@@ -23,17 +21,11 @@ interface FormValues {
 }
 
 /**
- * @description A floating, draggable popup for managing and creating a flashcard from selected chunks.
+ * @description Form component for managing and creating a flashcard from selected chunks.
  */
 export const FlashcardCreator: React.FC = () => {
   const rawChunks = useAppStore((state) => state.flashcard.chunks);
-  const position = useAppStore((state) => state.flashcardCreator.position);
-  const setFlashcardCreatorPosition = useAppStore(
-    (state) => state.setFlashcardCreatorPosition
-  );
-  const closeFlashcardPopup = useAppStore((state) => state.closeFlashcardPopup);
   const initialTitle = useAppStore((state) => state.flashcardCreator.title);
-  const nodeRef = useRef<HTMLDivElement>({} as unknown as HTMLDivElement);
   const { createFlashcard, isCreating } = useCreateFlashcard();
   const { lastCardData, isLoading, fetchLastCard } = useGetLastFlashcard();
   const [isShowingLastCard, setIsShowingLastCard] = useState(false);
@@ -78,107 +70,83 @@ export const FlashcardCreator: React.FC = () => {
   };
 
   return (
-    <Draggable
-      nodeRef={nodeRef}
-      position={position}
-      onStop={(_, data) => {
-        setFlashcardCreatorPosition({ x: data.x, y: data.y });
-      }}
-      handle=".drag-handle"
-    >
-      <div
-        ref={nodeRef}
-        className="absolute top-0 left-0 bg-white rounded-lg shadow-lg flex flex-col p-2 z-[999999999] w-130"
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          border: '1px solid #c4c4c4',
-        }}
-      >
-        <div className="flex items-center flex-nowrap">
-          <div className="drag-handle cursor-move h-5 w-full flex-1  bg-gray-50"></div>
+    <FormikProvider value={formik}>
+      <Form className="h-full flex flex-col">
+        <FieldArray name="chunks">
+          {(arrayHelpers) => (
+            <div className="flex flex-col h-full space-y-3">
+              <LastFlashcard
+                flashcard={lastCardData}
+                isVisible={isShowingLastCard}
+              />
 
-          <CloseButton onClose={closeFlashcardPopup} />
-        </div>
-
-        <FormikProvider value={formik}>
-          <Form>
-            <FieldArray name="chunks">
-              {(arrayHelpers) => (
-                <div className="space-y-3">
-                  <LastFlashcard
-                    flashcard={lastCardData}
-                    isVisible={isShowingLastCard}
-                  />
-
-                  {!isShowingLastCard && (
-                    <div className="max-h-40 overflow-y-auto space-y-3 pr-2">
-                      <Field name="title">
-                        {({ field }: FieldProps) => (
-                          <input
-                            {...field}
-                            type="text"
-                            placeholder="Flashcard Title (Context)"
-                            className="w-full p-2 mb-3 border rounded-md text-sm font-semibold"
-                          />
-                        )}
-                      </Field>
-                      {formik.values.chunks.map((_, index) => (
-                        <ChunkInput
-                          key={index}
-                          index={index}
-                          onRemove={() => arrayHelpers.remove(index)}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between gap-2 p-1 border-t border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => arrayHelpers.push({ text: '' })}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded"
-                      title="Add new chunk"
-                    >
-                      <FaPlus />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleToggleShowLastCard}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded flex items-center gap-2"
-                      title={
-                        isShowingLastCard
-                          ? 'Hide last card'
-                          : 'Show last created card'
-                      }
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        'Loading...'
-                      ) : isShowingLastCard ? (
-                        <>
-                          <FaEyeSlash /> <span>Hide Last</span>
-                        </>
-                      ) : (
-                        <>
-                          <FaEye /> <span>Show Last</span>
-                        </>
-                      )}
-                    </button>
-                    <button
-                      type="submit"
-                      className="p-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-2"
-                      title="Create flashcard from selection"
-                      disabled={isCreating}
-                    >
-                      <span>{isCreating ? 'Creating...' : 'Create Card'}</span>
-                    </button>
-                  </div>
+              {!isShowingLastCard && (
+                <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                  <Field name="title">
+                    {({ field }: FieldProps) => (
+                      <input
+                        {...field}
+                        type="text"
+                        placeholder="Flashcard Title (Context)"
+                        className="w-full p-2 mb-3 border rounded-md text-sm font-semibold"
+                      />
+                    )}
+                  </Field>
+                  {formik.values.chunks.map((_, index) => (
+                    <ChunkInput
+                      key={index}
+                      index={index}
+                      onRemove={() => arrayHelpers.remove(index)}
+                    />
+                  ))}
                 </div>
               )}
-            </FieldArray>
-          </Form>
-        </FormikProvider>
-      </div>
-    </Draggable>
+
+              <div className="flex items-center justify-between gap-2 p-3 border-t border-gray-100 bg-gray-50 rounded-b-lg">
+                <button
+                  type="button"
+                  onClick={() => arrayHelpers.push({ text: '' })}
+                  className="p-2 text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                  title="Add new chunk"
+                >
+                  <FaPlus />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleToggleShowLastCard}
+                  className="p-2 text-gray-600 hover:bg-gray-200 rounded flex items-center gap-2 transition-colors"
+                  title={
+                    isShowingLastCard
+                      ? 'Hide last card'
+                      : 'Show last created card'
+                  }
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    'Loading...'
+                  ) : isShowingLastCard ? (
+                    <>
+                      <FaEyeSlash /> <span>Hide Last</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaEye /> <span>Show Last</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="submit"
+                  className="p-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-2 transition-colors"
+                  title="Create flashcard from selection"
+                  disabled={isCreating}
+                >
+                  <span>{isCreating ? 'Creating...' : 'Create Card'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </FieldArray>
+      </Form>
+    </FormikProvider>
   );
 };

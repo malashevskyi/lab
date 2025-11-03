@@ -7,7 +7,7 @@ import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { captureError } from '../../../utils/sentry';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
-import { FlashcardCreator } from '../../../components/ui/FlashcardCreator';
+import { MainPopup } from '../../../components/ui/MainPopup';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -44,9 +44,6 @@ const ContentScriptRoot: React.FC = () => {
   );
   const setFlashcardCreatorPosition = useAppStore(
     (state) => state.setFlashcardCreatorPosition
-  );
-  const isFlashcardPopupOpen = useAppStore(
-    (state) => state.flashcardCreator.isPopupOpen
   );
   const prevChunksCount = usePrevious(flashcardChunks.length);
 
@@ -188,7 +185,7 @@ const ContentScriptRoot: React.FC = () => {
 
   return (
     <>
-      {isFlashcardPopupOpen && <FlashcardCreator />}
+      <MainPopup />
       {isSidebarVisible && <Sidebar />}
     </>
   );

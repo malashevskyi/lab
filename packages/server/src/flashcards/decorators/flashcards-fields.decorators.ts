@@ -143,6 +143,28 @@ export function CreatedAtProperty() {
   );
 }
 
+export function NextReviewDateProperty() {
+  return applyDecorators(
+    ApiProperty({
+      description: 'The next scheduled review date for this flashcard.',
+      example: '2025-11-03T10:00:00.000Z',
+      type: Date,
+      nullable: true,
+    }),
+    IsDateString(),
+  );
+}
+
+export function LastIntervalProperty() {
+  return applyDecorators(
+    ApiProperty({
+      description: 'The last interval used for spaced repetition (in days).',
+      example: 2,
+      nullable: true,
+    }),
+  );
+}
+
 export function UpdatedAtProperty() {
   return applyDecorators(
     ApiProperty({

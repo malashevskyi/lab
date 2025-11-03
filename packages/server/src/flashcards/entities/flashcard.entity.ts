@@ -37,6 +37,12 @@ export class FlashcardEntity implements FlashcardType {
   @Column({ type: 'varchar', array: true, default: '{}' })
   contexts: UsageContext[];
 
+  @Column({ name: 'next_review_date', type: 'timestamptz', nullable: true })
+  nextReviewDate: string | null;
+
+  @Column({ name: 'last_interval', type: 'integer', nullable: true })
+  lastInterval: number | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: string;
 

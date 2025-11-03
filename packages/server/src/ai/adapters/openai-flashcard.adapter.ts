@@ -140,7 +140,9 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
         ...aiResponse,
         question: DOMPurify.sanitize(aiResponse.question || ''),
         answer: DOMPurify.sanitize(aiResponse.answer || ''),
-        context: DOMPurify.sanitize(aiResponse.context || '', { ALLOWED_TAGS: [] }), // Only text, no HTML
+        context: DOMPurify.sanitize(aiResponse.context || '', {
+          ALLOWED_TAGS: [],
+        }), // Only text, no HTML
       };
 
       return generateFlashcardResponseSchema.parse(sanitizedResponse);

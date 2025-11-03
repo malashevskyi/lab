@@ -6,7 +6,9 @@ import {
   ContextsProperty,
   CreatedAtProperty,
   IdProperty,
+  LastIntervalProperty,
   LevelProperty,
+  NextReviewDateProperty,
   QuestionProperty,
   SourceUrlProperty,
   TagsProperty,
@@ -40,6 +42,16 @@ export class GetLastFlashcardResponseDto extends createZodDto(
 
   @ContextsProperty()
   contexts: z.infer<typeof getLastFlashcardResponseSchema.shape.contexts>;
+
+  @NextReviewDateProperty()
+  nextReviewDate: z.infer<
+    typeof getLastFlashcardResponseSchema.shape.nextReviewDate
+  >;
+
+  @LastIntervalProperty()
+  lastInterval: z.infer<
+    typeof getLastFlashcardResponseSchema.shape.lastInterval
+  >;
 
   @CreatedAtProperty()
   createdAt: z.infer<typeof getLastFlashcardResponseSchema.shape.createdAt>;

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
-import { AiService } from 'src/ai/ai.service';
+import { AiService } from '../ai/ai.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -31,6 +31,8 @@ export class FlashcardsService {
     const newFlashcard = this.flashcardsRepository.create({
       ...generatedFlashcard,
       sourceUrl,
+      nextReviewDate: new Date().toISOString(),
+      lastInterval: null,
     });
 
     await this.flashcardsRepository.save(newFlashcard);

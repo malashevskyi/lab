@@ -34,6 +34,15 @@ export interface FlashcardType {
   contexts: UsageContext[];
   /**
    * @format 'date-time'
+   * @nullable true
+   */
+  nextReviewDate: string | null;
+  /**
+   * @nullable true
+   */
+  lastInterval: number | null;
+  /**
+   * @format 'date-time'
    */
   createdAt: string;
   /**

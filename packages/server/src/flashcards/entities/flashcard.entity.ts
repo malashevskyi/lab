@@ -22,6 +22,9 @@ export class FlashcardEntity implements FlashcardType {
   @Column({ type: 'text' })
   answer: string;
 
+  @Column({ type: 'varchar' })
+  context: string;
+
   @Column({ name: 'source_url', type: 'text', nullable: true })
   sourceUrl: string;
 

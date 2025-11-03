@@ -127,8 +127,15 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
           <div className="space-y-3">
             {/* Question Section */}
             <div className="bg-white p-3 rounded border-l-4 border-blue-400">
-              <div className="text-xs font-medium text-blue-600 mb-2 uppercase tracking-wide">
-                Question
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">
+                  Question
+                </div>
+                {flashcard.context && (
+                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                    {flashcard.context}
+                  </span>
+                )}
               </div>
               <SafeHTMLRenderer
                 html={flashcard.question}

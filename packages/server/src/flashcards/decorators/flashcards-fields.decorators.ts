@@ -78,6 +78,18 @@ export function AnswerProperty() {
   );
 }
 
+export function ContextProperty() {
+  return applyDecorators(
+    ApiProperty({
+      description: 'Context identifier for the flashcard (1-2 words max).',
+      example: 'JavaScript',
+      maxLength: 50,
+    }),
+    IsString(),
+    IsNotEmpty(),
+  );
+}
+
 export function TagsProperty() {
   return applyDecorators(
     ApiProperty({

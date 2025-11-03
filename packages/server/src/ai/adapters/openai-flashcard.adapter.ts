@@ -76,14 +76,6 @@ GENERAL RULES
 
 
 =====================
-CONTEXT TOPIC
-=====================
-- Extract a topic from the content chunks. What is the main subject? node.js / react / algorithms / networking / databases / postgresql / etc.
-- If you are not able to determine a clear topic, use the title I have provided.
-- Put this topic in the answer property as a first line in the <strong> tag.
-- Do NOT return the word "Topic" or "Subject", just the topic itself.
-
-=====================
 FLASHCARD STRUCTURE
 =====================
 
@@ -92,6 +84,7 @@ After producing the cleaned HTML, analyze the content and generate:
 {
   "question": string;      // clear and focused question built strictly from the content
   "answer": string;        // Quill-compatible sanitized HTML (only allowed tags)
+  "context": string;       // 1-2 words identifying unique context (e.g., "React", "Node.js", "PostgreSQL", "TypeScript")
   "tags": string[];        // lowercase topic labels
   "level": "junior" | "middle" | "senior"; // estimate knowledge level required
   "contexts": ("interview" | "general-knowledge" | "best-practice" | "deep-dive")[]; // where is this information useful?
@@ -142,11 +135,12 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
 
       const aiResponse = JSON.parse(responseContent);
 
-      // Sanitize HTML content in question and answer
+      // Sanitize HTML content in question, answer and context
       const sanitizedResponse = {
         ...aiResponse,
         question: DOMPurify.sanitize(aiResponse.question || ''),
         answer: DOMPurify.sanitize(aiResponse.answer || ''),
+        context: DOMPurify.sanitize(aiResponse.context || '', { ALLOWED_TAGS: [] }), // Only text, no HTML
       };
 
       return generateFlashcardResponseSchema.parse(sanitizedResponse);

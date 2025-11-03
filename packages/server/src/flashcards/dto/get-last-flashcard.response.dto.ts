@@ -2,6 +2,7 @@ import { getLastFlashcardResponseSchema } from '@lab/types/deep-read/flashcards/
 import { createZodDto } from 'nestjs-zod';
 import {
   AnswerProperty,
+  ContextProperty,
   ContextsProperty,
   CreatedAtProperty,
   IdProperty,
@@ -24,6 +25,9 @@ export class GetLastFlashcardResponseDto extends createZodDto(
 
   @AnswerProperty()
   answer: z.infer<typeof getLastFlashcardResponseSchema.shape.answer>;
+
+  @ContextProperty()
+  context: z.infer<typeof getLastFlashcardResponseSchema.shape.context>;
 
   @SourceUrlProperty()
   sourceUrl: z.infer<typeof getLastFlashcardResponseSchema.shape.sourceUrl>;

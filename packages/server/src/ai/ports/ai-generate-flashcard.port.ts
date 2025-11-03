@@ -4,6 +4,7 @@ import { z } from 'zod';
 export const generateFlashcardResponseSchema = flashcardTypeSchema.pick({
   question: true,
   answer: true,
+  context: true,
   tags: true,
   level: true,
   contexts: true,

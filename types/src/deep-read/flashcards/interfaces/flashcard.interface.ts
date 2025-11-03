@@ -21,6 +21,11 @@ export interface FlashcardType {
    */
   answer: string;
   /**
+   * @format 'string'
+   * @minLength 1 'Context cannot be empty.'
+   */
+  context: string;
+  /**
    * @format url
    */
   sourceUrl: string;

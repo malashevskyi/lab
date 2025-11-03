@@ -8,8 +8,13 @@ import {
 } from '@lab/types/deep-read/flashcards/index.js';
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
+import { useAppStore } from '../store';
 
 export const useCreateFlashcard = () => {
+  const clearFlashcardChunks = useAppStore(
+    (state) => state.clearFlashcardChunks
+  );
+
   const mutation = useMutation<
     undefined,
     ApiError | ZodError,
@@ -22,6 +27,7 @@ export const useCreateFlashcard = () => {
     },
     onSuccess: () => {
       toast.success(`Flashcard created successfully!`);
+      clearFlashcardChunks();
     },
   });
 

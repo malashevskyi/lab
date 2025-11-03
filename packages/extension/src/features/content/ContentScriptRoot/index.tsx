@@ -45,6 +45,9 @@ const ContentScriptRoot: React.FC = () => {
   const setFlashcardCreatorPosition = useAppStore(
     (state) => state.setFlashcardCreatorPosition
   );
+  const isFlashcardPopupOpen = useAppStore(
+    (state) => state.flashcardCreator.isPopupOpen
+  );
   const prevChunksCount = usePrevious(flashcardChunks.length);
 
   const selectedTextFromStore = useAppStore(
@@ -183,19 +186,12 @@ const ContentScriptRoot: React.FC = () => {
     }
   }, [flashcardChunks, prevChunksCount, setFlashcardCreatorPosition]);
 
-  if (flashcardChunks.length) {
-    return <FlashcardCreator />;
-  }
-
-  if (isSidebarVisible) {
-    return (
-      <>
-        <Sidebar />
-      </>
-    );
-  }
-
-  return null;
+  return (
+    <>
+      {isFlashcardPopupOpen && <FlashcardCreator />}
+      {isSidebarVisible && <Sidebar />}
+    </>
+  );
 };
 
 export default ContentScriptRoot;

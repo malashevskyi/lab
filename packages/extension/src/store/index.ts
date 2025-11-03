@@ -15,6 +15,7 @@ export interface AnalysisState {
 export interface FlashcardCreatorState {
   position: { x: number; y: number };
   title: string;
+  isPopupOpen: boolean;
 }
 
 export interface AppState {
@@ -52,6 +53,8 @@ export interface AppActions {
   removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
   setFlashcardCreatorPosition: (position: { x: number; y: number }) => void;
   setFlashcardCreatorTitle: (title: string) => void;
+  openFlashcardPopup: () => void;
+  closeFlashcardPopup: () => void;
 }
 
 const initialState: AppState = {
@@ -70,6 +73,7 @@ const initialState: AppState = {
   flashcardCreator: {
     position: { x: 0, y: 0 },
     title: '',
+    isPopupOpen: false,
   },
 };
 
@@ -113,13 +117,17 @@ export const useAppStore = create(
         flashcard: {
           chunks: [...state.flashcard.chunks, chunk],
         },
+        flashcardCreator: {
+          ...state.flashcardCreator,
+          // Автоматично відкриваємо попап при додаванні першого чанку
+          isPopupOpen: true,
+        },
       })),
 
     clearFlashcardChunks: () =>
       set((state) => {
         state.flashcard.chunks = [];
-        state.flashcardCreator.position =
-          initialState.flashcardCreator.position;
+        // НЕ закриваємо попап і НЕ скидаємо позицію
       }),
 
     /**
@@ -155,6 +163,26 @@ export const useAppStore = create(
     setFlashcardCreatorTitle: (title) =>
       set((state) => {
         state.flashcardCreator.title = title;
+      }),
+
+    /**
+     * @function openFlashcardPopup
+     * @description Opens the flashcard creator popup.
+     */
+    openFlashcardPopup: () =>
+      set((state) => {
+        state.flashcardCreator.isPopupOpen = true;
+      }),
+
+    /**
+     * @function closeFlashcardPopup
+     * @description Closes the flashcard creator popup and resets its state.
+     */
+    closeFlashcardPopup: () =>
+      set((state) => {
+        state.flashcardCreator.isPopupOpen = false;
+        state.flashcard.chunks = [];
+        // НЕ скидаємо позицію, щоб попап з'явився в тому ж місці при наступному відкритті
       }),
   }))
 );

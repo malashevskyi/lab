@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useAppStore } from '../../../store';
-import { FaPlus } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 import {
   Field,
   FieldArray,
@@ -14,6 +14,8 @@ import { ChunkInput } from '../ChunkInput';
 import { CloseButton } from '../CloseButton';
 import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
 import { useCreateFlashcard } from '../../../hooks/useCreateFlashcard';
+import { useGetLastFlashcard } from '../../../hooks/useGetLastFlashcard';
+import { LastFlashcard } from '../LastFlashcard';
 
 interface FormValues {
   chunks: Array<{ text: string }>;
@@ -29,12 +31,25 @@ export const FlashcardCreator: React.FC = () => {
   const setFlashcardCreatorPosition = useAppStore(
     (state) => state.setFlashcardCreatorPosition
   );
-  const clearFlashcardChunks = useAppStore(
-    (state) => state.clearFlashcardChunks
-  );
+  const closeFlashcardPopup = useAppStore((state) => state.closeFlashcardPopup);
   const initialTitle = useAppStore((state) => state.flashcardCreator.title);
   const nodeRef = useRef<HTMLDivElement>({} as unknown as HTMLDivElement);
   const { createFlashcard, isCreating } = useCreateFlashcard();
+  const { lastCardData, isLoading, fetchLastCard } = useGetLastFlashcard();
+  const [isShowingLastCard, setIsShowingLastCard] = useState(false);
+  // we show last card automatically if there are no chunks to create a new one
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!rawChunks.length) {
+        setIsShowingLastCard(true);
+        void fetchLastCard();
+      } else {
+        setIsShowingLastCard(false);
+      }
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, [rawChunks, fetchLastCard]);
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -53,7 +68,14 @@ export const FlashcardCreator: React.FC = () => {
   });
   usePersistedTitle(formik.values, formik.setFieldValue);
 
-  if (rawChunks.length === 0) return null;
+  const handleToggleShowLastCard = async () => {
+    if (isShowingLastCard) {
+      setIsShowingLastCard(false);
+    } else {
+      await fetchLastCard();
+      setIsShowingLastCard(true);
+    }
+  };
 
   return (
     <Draggable
@@ -66,7 +88,7 @@ export const FlashcardCreator: React.FC = () => {
     >
       <div
         ref={nodeRef}
-        className="absolute top-0 left-0 bg-white rounded-lg shadow-lg flex flex-col p-2 z-[999999999] w-80"
+        className="absolute top-0 left-0 bg-white rounded-lg shadow-lg flex flex-col p-2 z-[999999999] w-130"
         style={{
           transform: `translate(${position.x}px, ${position.y}px)`,
           border: '1px solid #c4c4c4',
@@ -75,42 +97,72 @@ export const FlashcardCreator: React.FC = () => {
         <div className="flex items-center flex-nowrap">
           <div className="drag-handle cursor-move h-5 w-full flex-1  bg-gray-50"></div>
 
-          <CloseButton onClose={clearFlashcardChunks} />
+          <CloseButton onClose={closeFlashcardPopup} />
         </div>
 
         <FormikProvider value={formik}>
           <Form>
             <FieldArray name="chunks">
-              {({ remove, push }) => (
+              {(arrayHelpers) => (
                 <div className="space-y-3">
-                  <div className="max-h-40 overflow-y-auto space-y-3 pr-2">
-                    <Field name="title">
-                      {({ field }: FieldProps) => (
-                        <input
-                          {...field}
-                          type="text"
-                          placeholder="Flashcard Title (Context)"
-                          className="w-full p-2 mb-3 border rounded-md text-sm font-semibold"
+                  <LastFlashcard
+                    flashcard={lastCardData}
+                    isVisible={isShowingLastCard}
+                  />
+
+                  {!isShowingLastCard && (
+                    <div className="max-h-40 overflow-y-auto space-y-3 pr-2">
+                      <Field name="title">
+                        {({ field }: FieldProps) => (
+                          <input
+                            {...field}
+                            type="text"
+                            placeholder="Flashcard Title (Context)"
+                            className="w-full p-2 mb-3 border rounded-md text-sm font-semibold"
+                          />
+                        )}
+                      </Field>
+                      {formik.values.chunks.map((_, index) => (
+                        <ChunkInput
+                          key={index}
+                          index={index}
+                          onRemove={() => arrayHelpers.remove(index)}
                         />
-                      )}
-                    </Field>
-                    {formik.values.chunks.map((_, index) => (
-                      <ChunkInput
-                        key={index}
-                        index={index}
-                        onRemove={() => remove(index)}
-                      />
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between gap-2 p-1 border-t border-gray-100">
                     <button
                       type="button"
-                      onClick={() => push({ text: '' })}
+                      onClick={() => arrayHelpers.push({ text: '' })}
                       className="p-2 text-gray-600 hover:bg-gray-100 rounded"
                       title="Add new chunk"
                     >
                       <FaPlus />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleToggleShowLastCard}
+                      className="p-2 text-gray-600 hover:bg-gray-100 rounded flex items-center gap-2"
+                      title={
+                        isShowingLastCard
+                          ? 'Hide last card'
+                          : 'Show last created card'
+                      }
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        'Loading...'
+                      ) : isShowingLastCard ? (
+                        <>
+                          <FaEyeSlash /> <span>Hide Last</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaEye /> <span>Show Last</span>
+                        </>
+                      )}
                     </button>
                     <button
                       type="submit"

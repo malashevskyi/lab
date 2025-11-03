@@ -11,11 +11,9 @@ interface Position {
  * @description Main popup container that can be dragged vertically and responds to page scroll
  */
 export const MainPopup: React.FC = () => {
-  const isPopupOpen = useAppStore(
-    (state) => state.flashcardCreator.isPopupOpen
-  );
-  const activeTab = useAppStore((state) => state.flashcardCreator.activeTab);
-  const closeFlashcardPopup = useAppStore((state) => state.closeFlashcardPopup);
+  const isPopupOpen = useAppStore((state) => state.popup.isOpen);
+  const activeTab = useAppStore((state) => state.popup.activeTab);
+  const closePopup = useAppStore((state) => state.closePopup);
   const setActiveTab = useAppStore((state) => state.setActiveTab);
 
   const [position, setPosition] = useState<Position>(() => {
@@ -186,7 +184,7 @@ export const MainPopup: React.FC = () => {
         </div>
 
         <button
-          onClick={closeFlashcardPopup}
+          onClick={closePopup}
           className="p-1 hover:bg-gray-200 rounded-full transition-colors"
           title="Close popup"
         >

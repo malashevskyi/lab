@@ -38,14 +38,14 @@ const ContentScriptRoot: React.FC = () => {
   const isSidebarVisible = useAppStore((state) => state.sidebar.isVisible);
   const openSidebar = useAppStore((state) => state.openSidebar);
   const addFlashcardChunk = useAppStore((state) => state.addFlashcardChunk);
-  const flashcardChunks = useAppStore((state) => state.flashcard.chunks);
+  const flashcardCreatorChunks = useAppStore(
+    (state) => state.flashcardCreator.chunks
+  );
   const removeFlashcardChunks = useAppStore(
     (state) => state.removeFlashcardChunks
   );
-  const setFlashcardCreatorPosition = useAppStore(
-    (state) => state.setFlashcardCreatorPosition
-  );
-  const prevChunksCount = usePrevious(flashcardChunks.length);
+  const setPopupPosition = useAppStore((state) => state.setPopupPosition);
+  const prevChunksCount = usePrevious(flashcardCreatorChunks.length);
 
   const selectedTextFromStore = useAppStore(
     (state) => state.sidebar.selectedText
@@ -95,7 +95,7 @@ const ContentScriptRoot: React.FC = () => {
       const newRange = selection.getRangeAt(0).cloneRange();
       const newText = selection.toString().trim();
 
-      const intersectingChunks = flashcardChunks.filter((chunk) => {
+      const intersectingChunks = flashcardCreatorChunks.filter((chunk) => {
         return doRangesIntersect(chunk.range, newRange);
       });
 
@@ -160,17 +160,19 @@ const ContentScriptRoot: React.FC = () => {
     if (!flashcardHighlight) return;
 
     flashcardHighlight.clear();
-    if (flashcardChunks.length > 0) {
-      flashcardChunks.forEach((chunk) => flashcardHighlight.add(chunk.range));
+    if (flashcardCreatorChunks.length > 0) {
+      flashcardCreatorChunks.forEach((chunk) =>
+        flashcardHighlight.add(chunk.range)
+      );
     }
-  }, [flashcardChunks]);
+  }, [flashcardCreatorChunks]);
 
   /**
    * We need to position the flashcard creator popup above the first chunk when it's added.
    */
   useEffect(() => {
-    if (flashcardChunks.length > 0 && prevChunksCount === 0) {
-      const firstChunkRange = flashcardChunks[0].range;
+    if (flashcardCreatorChunks.length > 0 && prevChunksCount === 0) {
+      const firstChunkRange = flashcardCreatorChunks[0].range;
       const rect = firstChunkRange.getBoundingClientRect();
 
       const newPosition = {
@@ -179,9 +181,9 @@ const ContentScriptRoot: React.FC = () => {
         y: rect.top + window.scrollY - FLASHCARD_CREATOR_HEIGHT - POPUP_OFFSET,
       };
 
-      setFlashcardCreatorPosition(newPosition);
+      setPopupPosition(newPosition);
     }
-  }, [flashcardChunks, prevChunksCount, setFlashcardCreatorPosition]);
+  }, [flashcardCreatorChunks, prevChunksCount, setPopupPosition]);
 
   return (
     <>

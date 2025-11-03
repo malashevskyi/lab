@@ -14,18 +14,17 @@ export interface AnalysisState {
 
 export type PopupTab = 'new-flashcard' | 'last-flashcard';
 
-export interface FlashcardCreatorState {
+export interface PopupState {
   position: { x: number; y: number };
-  title: string;
-  isPopupOpen: boolean;
+  isOpen: boolean;
   activeTab: PopupTab;
 }
 
 export interface AppState {
   sidebar: SidebarState;
   analysis: AnalysisState;
-  flashcard: FlashcardState;
-  flashcardCreator: FlashcardCreatorState;
+  flashcardCreator: FlashcardState;
+  popup: PopupState;
 }
 
 /**
@@ -41,6 +40,7 @@ export interface FlashcardChunk {
 
 export interface FlashcardState {
   chunks: FlashcardChunk[];
+  title: string;
 }
 
 export interface AppActions {
@@ -55,10 +55,10 @@ export interface AppActions {
   clearFlashcardChunks: () => void;
   removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
   removeFlashcardChunkByIndex: (index: number) => void;
-  setFlashcardCreatorPosition: (position: { x: number; y: number }) => void;
+  setPopupPosition: (position: { x: number; y: number }) => void;
   setFlashcardCreatorTitle: (title: string) => void;
-  openFlashcardPopup: () => void;
-  closeFlashcardPopup: () => void;
+  openPopup: () => void;
+  closePopup: () => void;
   setActiveTab: (tab: PopupTab) => void;
 }
 
@@ -72,13 +72,13 @@ const initialState: AppState = {
   analysis: {
     normalizedText: '',
   },
-  flashcard: {
-    chunks: [],
-  },
   flashcardCreator: {
-    position: { x: 0, y: 0 },
+    chunks: [],
     title: '',
-    isPopupOpen: false,
+  },
+  popup: {
+    position: { x: 0, y: 0 },
+    isOpen: false,
     activeTab: 'new-flashcard',
   },
 };
@@ -120,20 +120,21 @@ export const useAppStore = create(
 
     addFlashcardChunk: (chunk) =>
       set((state) => ({
-        flashcard: {
-          chunks: [...state.flashcard.chunks, chunk],
-        },
         flashcardCreator: {
-          ...state.flashcardCreator,
-
-          isPopupOpen: true,
+          chunks: [...state.flashcardCreator.chunks, chunk],
+          title: state.flashcardCreator.title,
+        },
+        popup: {
+          ...state.popup,
+          isOpen: true,
           activeTab: 'new-flashcard',
         },
       })),
 
     clearFlashcardChunks: () =>
       set((state) => {
-        state.flashcard.chunks = [];
+        state.flashcardCreator.chunks = [];
+        state.flashcardCreator.title = '';
       }),
 
     /**
@@ -146,7 +147,7 @@ export const useAppStore = create(
         const rangesToRemove = chunksToRemove.map((chunk) =>
           chunk.range.toString()
         );
-        state.flashcard.chunks = state.flashcard.chunks.filter(
+        state.flashcardCreator.chunks = state.flashcardCreator.chunks.filter(
           (chunk) => !rangesToRemove.includes(chunk.range.toString())
         );
       }),
@@ -158,22 +159,22 @@ export const useAppStore = create(
      */
     removeFlashcardChunkByIndex: (index) =>
       set((state) => {
-        state.flashcard.chunks.splice(index, 1);
+        state.flashcardCreator.chunks.splice(index, 1);
       }),
 
     /**
-     * @function setFlashcardCreatorPosition
-     * @description Updates the position of the flashcard creator popup.
+     * @function setPopupPosition
+     * @description Updates the position of the popup.
      * @param {object} position - The new {x, y} coordinates.
      */
-    setFlashcardCreatorPosition: (position) =>
+    setPopupPosition: (position) =>
       set((state) => {
-        state.flashcardCreator.position = position;
+        state.popup.position = position;
       }),
 
     /**
      * @function setFlashcardCreatorTitle
-     * @description Updates the title for the flashcard creator.
+     * @description Updates the flashcard title.
      * @param {string} title - The new title.
      */
     setFlashcardCreatorTitle: (title) =>
@@ -182,22 +183,23 @@ export const useAppStore = create(
       }),
 
     /**
-     * @function openFlashcardPopup
-     * @description Opens the flashcard creator popup.
+     * @function openPopup
+     * @description Opens the popup.
      */
-    openFlashcardPopup: () =>
+    openPopup: () =>
       set((state) => {
-        state.flashcardCreator.isPopupOpen = true;
+        state.popup.isOpen = true;
       }),
 
     /**
-     * @function closeFlashcardPopup
-     * @description Closes the flashcard creator popup and resets its state.
+     * @function closePopup
+     * @description Closes the popup and resets flashcard state.
      */
-    closeFlashcardPopup: () =>
+    closePopup: () =>
       set((state) => {
-        state.flashcardCreator.isPopupOpen = false;
-        state.flashcard.chunks = [];
+        state.popup.isOpen = false;
+        state.flashcardCreator.chunks = [];
+        state.flashcardCreator.title = '';
       }),
 
     /**
@@ -206,7 +208,7 @@ export const useAppStore = create(
      */
     setActiveTab: (tab) =>
       set((state) => {
-        state.flashcardCreator.activeTab = tab;
+        state.popup.activeTab = tab;
       }),
   }))
 );

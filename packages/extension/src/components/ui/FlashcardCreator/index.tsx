@@ -23,7 +23,7 @@ interface FormValues {
  * @description Simplified form component for creating a flashcard from selected chunks (Tab content).
  */
 export const FlashcardCreator: React.FC = () => {
-  const rawChunks = useAppStore((state) => state.flashcard.chunks);
+  const rawChunks = useAppStore((state) => state.flashcardCreator.chunks);
   const initialTitle = useAppStore((state) => state.flashcardCreator.title);
   const removeFlashcardChunkByIndex = useAppStore(
     (state) => state.removeFlashcardChunkByIndex

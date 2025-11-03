@@ -14,6 +14,7 @@ export const useCreateFlashcard = () => {
   const clearFlashcardChunks = useAppStore(
     (state) => state.clearFlashcardChunks
   );
+  const setActiveTab = useAppStore((state) => state.setActiveTab);
 
   const mutation = useMutation<
     undefined,
@@ -28,6 +29,8 @@ export const useCreateFlashcard = () => {
     onSuccess: () => {
       toast.success(`Flashcard created successfully!`);
       clearFlashcardChunks();
+      // Switch to last-flashcard tab after successful creation to check the new card
+      setActiveTab('last-flashcard');
     },
   });
 

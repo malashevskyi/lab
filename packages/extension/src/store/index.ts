@@ -12,10 +12,13 @@ export interface AnalysisState {
   normalizedText: string;
 }
 
+export type PopupTab = 'new-flashcard' | 'last-flashcard';
+
 export interface FlashcardCreatorState {
   position: { x: number; y: number };
   title: string;
   isPopupOpen: boolean;
+  activeTab: PopupTab;
 }
 
 export interface AppState {
@@ -55,6 +58,7 @@ export interface AppActions {
   setFlashcardCreatorTitle: (title: string) => void;
   openFlashcardPopup: () => void;
   closeFlashcardPopup: () => void;
+  setActiveTab: (tab: PopupTab) => void;
 }
 
 const initialState: AppState = {
@@ -74,6 +78,7 @@ const initialState: AppState = {
     position: { x: 0, y: 0 },
     title: '',
     isPopupOpen: false,
+    activeTab: 'new-flashcard',
   },
 };
 
@@ -119,15 +124,15 @@ export const useAppStore = create(
         },
         flashcardCreator: {
           ...state.flashcardCreator,
-          // Автоматично відкриваємо попап при додаванні першого чанку
+
           isPopupOpen: true,
+          activeTab: 'new-flashcard',
         },
       })),
 
     clearFlashcardChunks: () =>
       set((state) => {
         state.flashcard.chunks = [];
-        // НЕ закриваємо попап і НЕ скидаємо позицію
       }),
 
     /**
@@ -182,7 +187,15 @@ export const useAppStore = create(
       set((state) => {
         state.flashcardCreator.isPopupOpen = false;
         state.flashcard.chunks = [];
-        // НЕ скидаємо позицію, щоб попап з'явився в тому ж місці при наступному відкритті
+      }),
+
+    /**
+     * @function setActiveTab
+     * @description Sets the active tab in the popup.
+     */
+    setActiveTab: (tab) =>
+      set((state) => {
+        state.flashcardCreator.activeTab = tab;
       }),
   }))
 );

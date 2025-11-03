@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '../../../store';
 import { FlashcardCreator } from '../FlashcardCreator';
+import { LastFlashcardTab } from './LastFlashcardTab';
 
 interface Position {
   y: number;
@@ -13,16 +14,14 @@ export const MainPopup: React.FC = () => {
   const isPopupOpen = useAppStore(
     (state) => state.flashcardCreator.isPopupOpen
   );
+  const activeTab = useAppStore((state) => state.flashcardCreator.activeTab);
   const closeFlashcardPopup = useAppStore((state) => state.closeFlashcardPopup);
+  const setActiveTab = useAppStore((state) => state.setActiveTab);
 
   const [position, setPosition] = useState<Position>(() => {
-    // Initialize with correct bottom position immediately
+    // Initialize at bottom of viewport (33% of screen height)
     const viewportHeight = window.innerHeight;
-    const minHeight = 250;
-    const maxHeight = 500;
-    const calculatedHeight = Math.min(maxHeight, viewportHeight / 3);
-    const height = Math.max(minHeight, calculatedHeight);
-    return { y: viewportHeight - height };
+    return { y: viewportHeight * 0.67 }; // 67% from top = popup at bottom
   });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
@@ -35,36 +34,22 @@ export const MainPopup: React.FC = () => {
   const popupRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
-  // Calculate initial position and dimensions
-  const getPopupDimensions = useCallback(() => {
-    const viewportHeight = window.innerHeight;
-    const minHeight = 250;
-    const maxHeight = 500;
-    const calculatedHeight = Math.min(maxHeight, viewportHeight / 3);
-    const height = Math.max(minHeight, calculatedHeight);
-
-    return {
-      height,
-      initialY: viewportHeight - height,
-    };
-  }, []);
-
   // Initialize position when popup opens
   useEffect(() => {
     if (isPopupOpen && !isInitialized) {
-      const { initialY } = getPopupDimensions();
+      const initialY = window.innerHeight * 0.67; // Position at 67% from top
       setPosition({ y: initialY });
       setIsInitialized(true);
     } else if (isPopupOpen && isInitialized) {
       // If popup was already initialized, use normal position update
-      const { initialY } = getPopupDimensions();
+      const initialY = window.innerHeight * 0.67;
       setPosition({ y: initialY });
     } else if (!isPopupOpen) {
       // Reset initialization when popup closes
       setIsInitialized(false);
       setIsAtBottom(false);
     }
-  }, [isPopupOpen, getPopupDimensions, isInitialized]);
+  }, [isPopupOpen, isInitialized]);
 
   // Handle scroll behavior
   useEffect(() => {
@@ -90,7 +75,7 @@ export const MainPopup: React.FC = () => {
         if (scrollDiff >= 100) {
           // Move popup back to bottom
           setIsAtBottom(false);
-          const { initialY } = getPopupDimensions();
+          const initialY = window.innerHeight * 0.67;
           setPosition({ y: initialY });
         }
       }
@@ -100,7 +85,7 @@ export const MainPopup: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isDragging, isAtBottom, lastScrollY, scrollTriggerY, getPopupDimensions]);
+  }, [isDragging, isAtBottom, lastScrollY, scrollTriggerY]);
 
   // Mouse event handlers for dragging
   const handleMouseDown = useCallback(
@@ -125,15 +110,16 @@ export const MainPopup: React.FC = () => {
       const deltaY = e.clientY - dragStartY;
       const newY = dragStartPosition + deltaY;
 
-      // Constrain to viewport bounds
-      const { height: popupHeight } = getPopupDimensions();
+      // Constrain to viewport bounds (popup is 33% of viewport height)
+      const viewportHeight = window.innerHeight;
+      const popupHeight = viewportHeight * 0.33;
       const minY = 0;
-      const maxY = window.innerHeight - popupHeight;
+      const maxY = viewportHeight - popupHeight;
 
       const constrainedY = Math.max(minY, Math.min(maxY, newY));
       setPosition({ y: constrainedY });
     },
-    [isDragging, dragStartY, dragStartPosition, getPopupDimensions]
+    [isDragging, dragStartY, dragStartPosition]
   );
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -158,50 +144,42 @@ export const MainPopup: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       if (!isDragging && !isAtBottom) {
-        const { initialY } = getPopupDimensions();
+        const initialY = window.innerHeight * 0.67;
         setPosition({ y: initialY });
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isDragging, isAtBottom, getPopupDimensions]);
+  }, [isDragging, isAtBottom]);
 
   if (!isPopupOpen) return null;
-
-  const { height } = getPopupDimensions();
 
   return (
     <div
       ref={popupRef}
-      className="fixed left-1/2 bg-white rounded-lg shadow-xl border border-gray-300 z-[999999999]"
+      className={`fixed bg-white rounded-lg shadow-xl border border-gray-300 z-[999999999] w-[98%] max-w-[1000px] h-[33%] min-h-[300px] max-h-[600px] grid grid-rows-[auto_auto_1fr] ${
+        isDragging ? 'cursor-grabbing' : 'cursor-default'
+      } ${
+        isDragging || !isInitialized
+          ? ''
+          : 'transition-[top] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)]'
+      }`}
       style={{
-        width: '98%',
-        maxWidth: '1000px',
-        height: `${height}px`,
-        minHeight: '250px',
-        transform: `translate(-50%, 0)`,
+        left: '50%',
+        transform: 'translate(-50%, 0)',
         top: `${position.y}px`,
-        cursor: isDragging ? 'grabbing' : 'default',
-        transition:
-          isDragging || !isInitialized
-            ? 'none'
-            : 'top 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
       onMouseDown={handleMouseDown}
     >
       {/* Header - draggable area */}
       <div
         ref={headerRef}
-        className="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50 rounded-t-lg cursor-grab select-none"
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        className={`flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50 rounded-t-lg select-none ${
+          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        }`}
       >
         <div className="flex items-center space-x-2">
-          <div className="flex space-x-1">
-            <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-            <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-          </div>
           <h2 className="text-sm font-semibold text-gray-700">
             DeepRead Assistant
           </h2>
@@ -228,10 +206,36 @@ export const MainPopup: React.FC = () => {
         </button>
       </div>
 
-      {/* Content area */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full p-4">
-          <FlashcardCreator />
+      {/* Tabs Navigation */}
+      <div className="border-b border-gray-200 bg-gray-50">
+        <div className="flex">
+          <button
+            onClick={() => setActiveTab('new-flashcard')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'new-flashcard'
+                ? 'border-blue-500 text-blue-600 bg-white'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            New Flashcard
+          </button>
+          <button
+            onClick={() => setActiveTab('last-flashcard')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'last-flashcard'
+                ? 'border-blue-500 text-blue-600 bg-white'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Last Flashcard
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-hidden">
+        <div className="h-full overflow-y-auto p-4">
+          {activeTab === 'new-flashcard' && <FlashcardCreator />}
+          {activeTab === 'last-flashcard' && <LastFlashcardTab />}
         </div>
       </div>
     </div>

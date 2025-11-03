@@ -121,11 +121,8 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="max-h-80 w-130 overflow-y-auto space-y-3 pr-2">
+    <div className="overflow-y-auto space-y-3 pr-2">
       <div className="mb-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          Last Created Flashcard
-        </h3>
         {flashcard ? (
           <div className="space-y-3">
             {/* Question Section */}

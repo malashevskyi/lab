@@ -79,7 +79,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
         style={{
           fontFamily: '"Fira Code", "Fira Mono", monospace',
           fontSize: '14px',
-          minHeight: '120px',
         }}
       />
     </div>

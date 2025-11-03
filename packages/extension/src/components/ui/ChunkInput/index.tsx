@@ -25,6 +25,7 @@ export const ChunkInput: React.FC<ChunkInputRowProps> = ({
             placeholder="Text content"
             className="flex-1 p-2 border border-gray-200 border-solid rounded-md text-sm resize-none min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-400"
             minRows={1}
+            onChange={field.onChange}
           />
         )}
       </Field>

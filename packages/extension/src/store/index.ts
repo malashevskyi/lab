@@ -54,6 +54,7 @@ export interface AppActions {
   addFlashcardChunk: (chunk: FlashcardChunk) => void;
   clearFlashcardChunks: () => void;
   removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
+  removeFlashcardChunkByIndex: (index: number) => void;
   setFlashcardCreatorPosition: (position: { x: number; y: number }) => void;
   setFlashcardCreatorTitle: (title: string) => void;
   openFlashcardPopup: () => void;
@@ -148,6 +149,16 @@ export const useAppStore = create(
         state.flashcard.chunks = state.flashcard.chunks.filter(
           (chunk) => !rangesToRemove.includes(chunk.range.toString())
         );
+      }),
+
+    /**
+     * @function removeFlashcardChunkByIndex
+     * @description Removes a single chunk from the flashcard state by index.
+     * @param {number} index - The index of the chunk to be removed.
+     */
+    removeFlashcardChunkByIndex: (index) =>
+      set((state) => {
+        state.flashcard.chunks.splice(index, 1);
       }),
 
     /**

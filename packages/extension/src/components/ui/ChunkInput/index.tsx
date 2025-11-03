@@ -1,6 +1,7 @@
 import React from 'react';
 import { Field, type FieldProps } from 'formik';
 import { FaTimes } from 'react-icons/fa';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface ChunkInputRowProps {
   index: number;
@@ -19,11 +20,11 @@ export const ChunkInput: React.FC<ChunkInputRowProps> = ({
       {/* text area field */}
       <Field name={`chunks.${index}.text`}>
         {({ field }: FieldProps) => (
-          <textarea
+          <TextareaAutosize
             {...field}
             placeholder="Text content"
-            className="flex-1 p-2 border border-gray-200 border-solid rounded-md text-sm resize-y min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-400"
-            rows={1}
+            className="flex-1 p-2 border border-gray-200 border-solid rounded-md text-sm resize-none min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-400"
+            minRows={1}
           />
         )}
       </Field>

@@ -22,7 +22,6 @@ export const useGetLastFlashcard = () => {
     queryKey: [GET_LAST_FLASHCARD_QUERY_KEY],
     queryFn: async () => {
       const response = await deepReadAPI.get('/flashcards/last');
-      console.log('🚀 ~ response:', response);
       if (!response.data) return null;
       return getLastFlashcardResponseSchema.parse(response.data);
     },

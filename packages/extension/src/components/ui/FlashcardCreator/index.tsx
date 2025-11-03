@@ -12,6 +12,7 @@ import {
 import { ChunkInput } from '../ChunkInput';
 import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
 import { useCreateFlashcard } from '../../../hooks/useCreateFlashcard';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface FormValues {
   chunks: Array<{ text: string }>;
@@ -67,11 +68,11 @@ export const FlashcardCreator: React.FC = () => {
                 {/* Title field */}
                 <Field name="title">
                   {({ field }: FieldProps) => (
-                    <input
+                    <TextareaAutosize
                       {...field}
-                      type="text"
                       placeholder="Flashcard Title (Context)"
-                      className="w-full p-2 border rounded-md text-sm font-semibold"
+                      className="w-full p-2 border rounded-md text-sm font-semibold resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      minRows={1}
                     />
                   )}
                 </Field>

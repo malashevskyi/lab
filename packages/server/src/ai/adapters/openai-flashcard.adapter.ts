@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
+import DOMPurify from 'isomorphic-dompurify';
 import { ErrorService } from '../../errors/errors.service.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
 import {
@@ -18,6 +19,8 @@ You will receive the title of the article to understand the context better.
 
 You will also receive an array of HTML chunks copied from the article.
 Your task is to extract the meaning and rewrite the content using ONLY HTML formats compatible with the Quill rich-text editor.
+
+Do not change and do not refactor chunks with code snippets - keep them as they are. 
 
 The generated HTML will be shown ONLY inside a flashcard editor, not as a full article.  
 Therefore, the output must remain simple, minimal, and focused.
@@ -70,6 +73,15 @@ GENERAL RULES
 - Do NOT return Markdown.
 - Do NOT invent details not present in the input.
 - Final result must be clean, minimal, Quill-compatible HTML.
+
+
+=====================
+CONTEXT TOPIC
+=====================
+- Extract a topic from the content chunks. What is the main subject? node.js / react / algorithms / networking / databases / postgresql / etc.
+- If you are not able to determine a clear topic, use the title I have provided.
+- Put this topic in the answer property as a first line in the <strong> tag.
+- Do NOT return the word "Topic" or "Subject", just the topic itself.
 
 =====================
 FLASHCARD STRUCTURE
@@ -128,7 +140,16 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
         throw new Error('OpenAI returned an empty response content.');
       }
 
-      return generateFlashcardResponseSchema.parse(JSON.parse(responseContent));
+      const aiResponse = JSON.parse(responseContent);
+
+      // Sanitize HTML content in question and answer
+      const sanitizedResponse = {
+        ...aiResponse,
+        question: DOMPurify.sanitize(aiResponse.question || ''),
+        answer: DOMPurify.sanitize(aiResponse.answer || ''),
+      };
+
+      return generateFlashcardResponseSchema.parse(sanitizedResponse);
     } catch (error) {
       this.errorService.handle(
         AppErrorCode.AI_RESPONSE_INVALID,

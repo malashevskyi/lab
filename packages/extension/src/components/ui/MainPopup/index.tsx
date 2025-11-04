@@ -3,6 +3,7 @@ import { useAppStore } from '../../../store';
 import { FlashcardCreator } from '../FlashcardCreator';
 import { LastFlashcardTab } from './LastFlashcardTab';
 import { AnalysisTab } from './AnalysisTab';
+import { TabsNavigation } from '../TabsNavigation';
 
 interface Position {
   y: number;
@@ -205,40 +206,8 @@ export const MainPopup: React.FC = () => {
         </button>
       </div>
 
-      {/* Tabs Navigation */}
       <div className="border-b border-gray-200 bg-gray-50">
-        <div className="flex">
-          <button
-            onClick={() => setActiveTab('new-flashcard')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'new-flashcard'
-                ? 'border-blue-500 text-blue-600 bg-white'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            New Flashcard
-          </button>
-          <button
-            onClick={() => setActiveTab('last-flashcard')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'last-flashcard'
-                ? 'border-blue-500 text-blue-600 bg-white'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Last Flashcard
-          </button>
-          <button
-            onClick={() => setActiveTab('analysis')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'analysis'
-                ? 'border-blue-500 text-blue-600 bg-white'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Analysis
-          </button>
-        </div>
+        <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
       <div className="overflow-hidden">

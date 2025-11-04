@@ -1,4 +1,5 @@
 import { ApiError } from '../../services/ApiError';
+import { insertTextIntoGeminiInput } from '../../utils/gemini-input';
 
 console.log('DeepRead: Gemini content script loaded on', window.location.href);
 
@@ -43,28 +44,11 @@ const getStoredPrompt = async (): Promise<string | null> => {
 };
 
 const findAndFillInput = (prompt: string) => {
-  const inputSelectors = [
-    '.ql-editor[contenteditable="true"]',
-    'rich-textarea .ql-editor',
-    '[aria-label*="Enter a prompt"]',
-    '[data-placeholder*="Ask Gemini"]',
-  ];
-
-  let inputElement: Element | null = null;
-
-  for (const selector of inputSelectors) {
-    inputElement = document.querySelector(selector);
-    if (inputElement) break;
+  // Try to insert text using the utility function
+  if (!insertTextIntoGeminiInput(prompt, false)) {
+    // input element is not loaded yet
+    return false;
   }
-
-  // input element is not loaded yet
-  if (!inputElement) return false;
-
-  inputElement.textContent = prompt;
-
-  // Trigger events to make sure Gemini recognizes the input
-  inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-  inputElement.dispatchEvent(new Event('change', { bubbles: true }));
 
   const findAndClickSendButton = () => {
     const sendButton = document.querySelector('button.send-button');

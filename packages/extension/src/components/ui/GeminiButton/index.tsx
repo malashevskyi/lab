@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageType } from '../../../types/sentry-messages';
+import { insertTextIntoGeminiInput } from '../../../utils/gemini-input';
 
 interface GeminiButtonProps {
   isVisible: boolean;
@@ -20,18 +21,30 @@ export const GeminiButton: React.FC<GeminiButtonProps> = ({
   onHide,
 }) => {
   const handleGeminiClick = () => {
-    const prompt = `Article: "${pageTitle}"
+    const isGeminiPage = window.location.hostname === 'gemini.google.com';
+
+    if (isGeminiPage) {
+      // We're already on Gemini page - insert text directly into input
+      const followUpPrompt = `Part from your response: ${selectedText}
+
+Explain this in details.`;
+
+      insertTextIntoGeminiInput(followUpPrompt);
+    } else {
+      // We're on a different page - open new Gemini tab
+      const prompt = `Article: "${pageTitle}"
 
 Selected excerpt: "${selectedText}"
 
 I don't understand this, please explain in more detail what this is and what it means?`;
 
-    // Send message to background script to open new tab
-    // Background script will store the prompt in chrome.storage.local
-    void chrome.runtime.sendMessage({
-      type: MessageType.AI_CHAT_PROMPT,
-      prompt: prompt,
-    });
+      // Send message to background script to open new tab
+      // Background script will store the prompt in chrome.storage.local
+      void chrome.runtime.sendMessage({
+        type: MessageType.AI_CHAT_PROMPT,
+        prompt: prompt,
+      });
+    }
 
     onHide();
   };

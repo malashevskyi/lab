@@ -99,8 +99,15 @@ export class ApiError extends Error {
       details,
     });
 
+    let message = 'Unknown error';
+    if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === 'string') {
+      message = error;
+    }
+
     return new ApiError(
-      error instanceof Error ? error.message : 'Unknown error',
+      message,
       statusCode,
       errorCode,
       error,

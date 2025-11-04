@@ -1,6 +1,6 @@
 import type { AnalysisResponse } from '@lab/types/deep-read/ai';
 import { useAudioGeneration } from '../../../hooks/useAudioGeneration';
-import { AudioPlayer } from '../../ui/AudioPlayer';
+import { AudioPlayer } from '../AudioPlayer';
 
 interface AudioProps {
   analysisData: AnalysisResponse | null;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { usePrevious } from 'react-use';
-import { Sidebar } from '../../../components/Layout/Sidebar';
+
 import { ExplainSelection } from '../../../components/ui/ExplainSelection';
 import { MainPopup } from '../../../components/ui/MainPopup';
 import { useAppStore } from '../../../store';
@@ -9,8 +9,6 @@ import { captureError } from '../../../utils/sentry';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
-
-const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
 window.addEventListener('error', (event) => {
   captureError(event.error, {
@@ -28,7 +26,7 @@ window.addEventListener('unhandledrejection', (event) => {
 const highlightApiSupported = CSS.highlights !== undefined;
 
 if (highlightApiSupported) {
-  CSS.highlights.set('deepread-highlight', new Highlight());
+  CSS.highlights.set('deepread-selected-text-highlight', new Highlight());
   CSS.highlights.set('deepread-flashcard-chunks-highlight', new Highlight());
 }
 
@@ -36,8 +34,7 @@ const FLASHCARD_CREATOR_HEIGHT = 150;
 const POPUP_OFFSET = 10;
 
 const ContentScriptRoot: React.FC = () => {
-  const isSidebarVisible = useAppStore((state) => state.sidebar.isVisible);
-  const openSidebar = useAppStore((state) => state.openSidebar);
+  const openAnalysis = useAppStore((state) => state.openAnalysis);
   const addFlashcardChunk = useAppStore((state) => state.addFlashcardChunk);
   const flashcardCreatorChunks = useAppStore(
     (state) => state.flashcardCreator.chunks
@@ -47,19 +44,10 @@ const ContentScriptRoot: React.FC = () => {
   );
   const setPopupPosition = useAppStore((state) => state.setPopupPosition);
   const prevChunksCount = usePrevious(flashcardCreatorChunks.length);
-
   const selectedTextFromStore = useAppStore(
-    (state) => state.sidebar.selectedText
+    (state) => state.analysis.selectedText
   );
   const [currentRange, setCurrentRange] = React.useState<Range | null>(null);
-
-  useEffect(() => {
-    if (selectedTextFromStore) {
-      document.body.classList.add(SIDEBAR_OPEN_BODY_CLASS);
-    } else {
-      document.body.classList.remove(SIDEBAR_OPEN_BODY_CLASS);
-    }
-  }, [selectedTextFromStore]);
 
   /**
    * @function handleMouseUp
@@ -124,7 +112,7 @@ const ContentScriptRoot: React.FC = () => {
       const context = getWordOrPhraseContextForSelection(selection);
 
       if (context && selectedText) {
-        openSidebar(selectedText, context);
+        openAnalysis(selectedText, context);
       }
 
       return true;
@@ -139,19 +127,34 @@ const ContentScriptRoot: React.FC = () => {
     };
   }, [handleMouseUp]);
 
+  // Highlight selected text for analysis
   useEffect(() => {
     if (!highlightApiSupported) return;
 
-    const highlight = CSS.highlights.get('deepread-highlight');
+    const selectedTextHighlight = CSS.highlights.get(
+      'deepread-selected-text-highlight'
+    );
+    if (!selectedTextHighlight) return;
 
-    if (!highlight) return;
+    selectedTextHighlight.clear();
 
-    highlight.clear();
-
-    if (isSidebarVisible && currentRange) {
-      highlight.add(currentRange);
+    if (currentRange && selectedTextFromStore) {
+      selectedTextHighlight.add(currentRange);
     }
-  }, [isSidebarVisible, currentRange]);
+  }, [currentRange, selectedTextFromStore]);
+
+  // Clear highlighting when analysis tab is closed
+  useEffect(() => {
+    if (!selectedTextFromStore && highlightApiSupported) {
+      const selectedTextHighlight = CSS.highlights.get(
+        'deepread-selected-text-highlight'
+      );
+      if (selectedTextHighlight) {
+        selectedTextHighlight.clear();
+      }
+      setCurrentRange(null);
+    }
+  }, [selectedTextFromStore]);
 
   useEffect(() => {
     if (!highlightApiSupported) return;
@@ -190,7 +193,6 @@ const ContentScriptRoot: React.FC = () => {
     <>
       <MainPopup />
       <ExplainSelection />
-      {isSidebarVisible && <Sidebar />}
     </>
   );
 };

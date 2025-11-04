@@ -14,14 +14,14 @@ export function useWordHistory(): {
   historyData: GetDictionaryEntryWithExamplesByTextResponseType | null;
   isLoadingHistory: boolean;
 } {
-  const viewMode = useAppStore((state) => state.sidebar.viewMode);
   const normalizedText = useAppStore((state) => state.analysis.normalizedText);
+  const selectedText = useAppStore((state) => state.analysis.selectedText);
 
   const query = useQuery<
     GetDictionaryEntryWithExamplesByTextResponseType | null,
     AxiosError | ZodError
   >({
-    queryKey: ['wordHistory', normalizedText, viewMode],
+    queryKey: ['wordHistory', normalizedText],
     queryFn: async () => {
       const res = await deepReadAPI.get(`/dictionary/${normalizedText}`);
       if (res.data) {
@@ -31,7 +31,7 @@ export function useWordHistory(): {
       }
       return null;
     },
-    enabled: !!normalizedText,
+    enabled: !!normalizedText && !!selectedText,
     retry: 1,
     staleTime: Infinity,
   });

@@ -2,8 +2,8 @@ import { useSaveToDictionary } from '../../../hooks/useSaveToDictionary';
 import { useTextAnalysis } from '../../../hooks/useTextAnalysis';
 import { FaRegBookmark } from 'react-icons/fa';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import HighlightText from '../../ui/HighlightText';
-import Audio from '../Audio';
+import HighlightText from '../HighlightText';
+import Audio from '../../audio/Audio';
 
 const Analysis: React.FC = () => {
   const { analysisData, isLoadingText } = useTextAnalysis();

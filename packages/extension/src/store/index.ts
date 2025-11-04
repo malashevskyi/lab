@@ -5,14 +5,9 @@ export interface SidebarState {
   isVisible: boolean;
   selectedText: string;
   context: string;
-  viewMode: 'new' | 'history';
 }
 
-export interface AnalysisState {
-  normalizedText: string;
-}
-
-export type PopupTab = 'new-flashcard' | 'last-flashcard';
+export type PopupTab = 'new-flashcard' | 'last-flashcard' | 'analysis';
 
 export interface PopupState {
   position: { x: number; y: number };
@@ -20,11 +15,17 @@ export interface PopupState {
   activeTab: PopupTab;
 }
 
+export interface AnalysisState {
+  selectedText: string;
+  context: string;
+  normalizedText: string;
+}
+
 export interface AppState {
   sidebar: SidebarState;
-  analysis: AnalysisState;
   flashcardCreator: FlashcardState;
   popup: PopupState;
+  analysis: AnalysisState;
 }
 
 /**
@@ -46,9 +47,6 @@ export interface FlashcardState {
 export interface AppActions {
   openSidebar: (selectedText: string, context: string) => void;
   closeSidebar: () => void;
-  setViewMode: (mode: 'new' | 'history') => void;
-  showHistory: () => void;
-  showNew: () => void;
   setNormalizedText: (text: string) => void;
   // flashcards
   addFlashcardChunk: (chunk: FlashcardChunk) => void;
@@ -60,6 +58,8 @@ export interface AppActions {
   openPopup: () => void;
   closePopup: () => void;
   setActiveTab: (tab: PopupTab) => void;
+  // Analysis actions (moved from sidebar)
+  openAnalysis: (selectedText: string, context: string) => void;
 }
 
 const initialState: AppState = {
@@ -67,10 +67,6 @@ const initialState: AppState = {
     isVisible: false,
     selectedText: '',
     context: '',
-    viewMode: 'new',
-  },
-  analysis: {
-    normalizedText: '',
   },
   flashcardCreator: {
     chunks: [],
@@ -80,6 +76,11 @@ const initialState: AppState = {
     position: { x: 0, y: 0 },
     isOpen: false,
     activeTab: 'new-flashcard',
+  },
+  analysis: {
+    selectedText: '',
+    context: '',
+    normalizedText: '',
   },
 };
 
@@ -92,31 +93,15 @@ export const useAppStore = create(
         state.sidebar.isVisible = true;
         state.sidebar.selectedText = selectedText;
         state.sidebar.context = context;
-        state.sidebar.viewMode = 'new';
       }),
 
     closeSidebar: () => set(initialState),
-
-    setViewMode: (viewMode) =>
-      set((state) => {
-        state.sidebar.viewMode = viewMode;
-      }),
-
-    showHistory: () =>
-      set((state) => {
-        state.sidebar.viewMode = 'history';
-      }),
 
     setNormalizedText: (text) => {
       set((state) => {
         state.analysis.normalizedText = text;
       });
     },
-
-    showNew: () =>
-      set((state) => {
-        state.sidebar.viewMode = 'new';
-      }),
 
     addFlashcardChunk: (chunk) =>
       set((state) => ({
@@ -209,6 +194,18 @@ export const useAppStore = create(
     setActiveTab: (tab) =>
       set((state) => {
         state.popup.activeTab = tab;
+      }),
+
+    /**
+     * @function openAnalysis
+     * @description Opens analysis tab in popup with selected text.
+     */
+    openAnalysis: (selectedText, context) =>
+      set((state) => {
+        state.popup.isOpen = true;
+        state.popup.activeTab = 'analysis';
+        state.analysis.selectedText = selectedText;
+        state.analysis.context = context;
       }),
   }))
 );

@@ -1,7 +1,7 @@
-import { useAppStore } from "../../../store";
+import { useAppStore } from '../../../store';
 
 const ContextDetails = () => {
-  const selectionContext = useAppStore((state) => state.sidebar.context);
+  const selectionContext = useAppStore((state) => state.analysis.context);
 
   if (!selectionContext) return null;
 

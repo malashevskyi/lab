@@ -8,7 +8,7 @@ import {
 } from '../../utils/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ContentScriptRoot from './ContentScriptRoot';
-import { ErrorBoundary } from '../../components/system/ErrorBoundary';
+import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 import sonnerStyles from 'sonner/dist/styles.css?inline';
 import { Toaster } from 'sonner';
 

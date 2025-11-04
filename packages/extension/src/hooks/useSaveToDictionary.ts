@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 import type { ZodError } from 'zod';
 import { deepReadAPI } from '../services/api';
 import { ApiError } from '../services/ApiError';
-import { useAppStore } from '../store';
 import {
   createDictionaryEntryWithExampleBodySchema,
   createDictionaryEntryWithExampleResponseSchema,
@@ -15,7 +14,6 @@ import {
 
 export function useSaveToDictionary() {
   const queryClient = useQueryClient();
-  const showHistory = useAppStore((state) => state.showHistory);
 
   const mutation = useMutation<
     CreateEntryWithExampleResponseType,
@@ -30,9 +28,8 @@ export function useSaveToDictionary() {
       toast.success(`"${res.text}" has been saved.`);
 
       await queryClient.invalidateQueries({
-        queryKey: ['wordHistory', res.text],
+        queryKey: ['wordHistory'],
       });
-      showHistory();
     },
   });
 
@@ -43,18 +40,6 @@ export function useSaveToDictionary() {
   useEffect(() => {
     if (saveError) toast.error(`Failed to save: ${saveError.message}`);
   }, [saveError]);
-
-  // TODO: figure out do we need this or not
-  // const saveWord = (args: CreateDictionaryEntry): void => {
-  //   try {
-  //     mutation.mutate({
-  //       endpoint: "/dictionary",
-  //       body: CreateDictionaryEntrySchema.parse(args),
-  //     });
-  //   } catch (error) {
-  //     ApiError.fromUnknown(error, "Failed to save the word.").notify();
-  //   }
-  // };
 
   const saveWordWithExample = (
     args: CreateDictionaryEntryWithExampleBodyType
@@ -72,7 +57,6 @@ export function useSaveToDictionary() {
   };
 
   return {
-    // saveWord,
     saveWordWithExample,
     isSaving: mutation.isPending,
   };

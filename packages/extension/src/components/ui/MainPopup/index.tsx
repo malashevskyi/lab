@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '../../../store';
 import { FlashcardCreator } from '../FlashcardCreator';
 import { LastFlashcardTab } from './LastFlashcardTab';
+import { AnalysisTab } from './AnalysisTab';
 
 interface Position {
   y: number;
@@ -227,6 +228,16 @@ export const MainPopup: React.FC = () => {
           >
             Last Flashcard
           </button>
+          <button
+            onClick={() => setActiveTab('analysis')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'analysis'
+                ? 'border-blue-500 text-blue-600 bg-white'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Analysis
+          </button>
         </div>
       </div>
 
@@ -234,6 +245,7 @@ export const MainPopup: React.FC = () => {
         <div className="h-full overflow-y-auto p-4">
           {activeTab === 'new-flashcard' && <FlashcardCreator />}
           {activeTab === 'last-flashcard' && <LastFlashcardTab />}
+          {activeTab === 'analysis' && <AnalysisTab />}
         </div>
       </div>
     </div>

@@ -13,8 +13,8 @@ export function useTextAnalysis(): {
   analysisData: AnalysisResponse | null;
   isLoadingText: boolean;
 } {
-  const text = useAppStore((state) => state.sidebar.selectedText);
-  const context = useAppStore((state) => state.sidebar.context);
+  const text = useAppStore((state) => state.analysis.selectedText);
+  const context = useAppStore((state) => state.analysis.context);
   const setNormalizedText = useAppStore((state) => state.setNormalizedText);
 
   const query = useQuery<AnalysisResponse, AxiosError | ZodError>({

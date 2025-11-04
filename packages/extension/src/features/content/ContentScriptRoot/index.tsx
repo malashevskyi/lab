@@ -6,6 +6,7 @@ import { MainPopup } from '../../../components/ui/MainPopup';
 import { useAppStore } from '../../../store';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 import { captureError } from '../../../utils/sentry';
+import { HIGHLIGHT_KEYS } from '../../../constants/highlights';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
@@ -26,8 +27,8 @@ window.addEventListener('unhandledrejection', (event) => {
 const highlightApiSupported = CSS.highlights !== undefined;
 
 if (highlightApiSupported) {
-  CSS.highlights.set('deepread-selected-text-highlight', new Highlight());
-  CSS.highlights.set('deepread-flashcard-chunks-highlight', new Highlight());
+  CSS.highlights.set(HIGHLIGHT_KEYS.SELECTED_TEXT, new Highlight());
+  CSS.highlights.set(HIGHLIGHT_KEYS.FLASHCARD_CHUNKS, new Highlight());
 }
 
 const FLASHCARD_CREATOR_HEIGHT = 150;
@@ -131,9 +132,7 @@ const ContentScriptRoot: React.FC = () => {
   useEffect(() => {
     if (!highlightApiSupported) return;
 
-    const selectedTextHighlight = CSS.highlights.get(
-      'deepread-selected-text-highlight'
-    );
+    const selectedTextHighlight = CSS.highlights.get(HIGHLIGHT_KEYS.SELECTED_TEXT);
     if (!selectedTextHighlight) return;
 
     selectedTextHighlight.clear();
@@ -146,8 +145,7 @@ const ContentScriptRoot: React.FC = () => {
   // Clear highlighting when analysis tab is closed
   useEffect(() => {
     if (!selectedTextFromStore && highlightApiSupported) {
-      const selectedTextHighlight = CSS.highlights.get(
-        'deepread-selected-text-highlight'
+      const selectedTextHighlight = CSS.highlights.get(HIGHLIGHT_KEYS.SELECTED_TEXT
       );
       if (selectedTextHighlight) {
         selectedTextHighlight.clear();
@@ -158,9 +156,7 @@ const ContentScriptRoot: React.FC = () => {
 
   useEffect(() => {
     if (!highlightApiSupported) return;
-    const flashcardHighlight = CSS.highlights.get(
-      'deepread-flashcard-chunks-highlight'
-    );
+    const flashcardHighlight = CSS.highlights.get(HIGHLIGHT_KEYS.FLASHCARD_CHUNKS);
     if (!flashcardHighlight) return;
 
     flashcardHighlight.clear();

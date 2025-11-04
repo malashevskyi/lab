@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { usePrevious } from 'react-use';
 
-import { ExplainSelection } from '../../../components/ui/ExplainSelection';
-import { MainPopup } from '../../../components/ui/MainPopup';
+import { ExplainSelection } from '../../../components/explain/ExplainSelection';
+import { MainPopup } from '../../../components/popup/MainPopup';
 import { useAppStore } from '../../../store';
 import { doRangesIntersect } from '../../../utils/doRangesIntersect';
 import { captureError } from '../../../utils/sentry';
@@ -56,6 +56,7 @@ const ContentScriptRoot: React.FC = () => {
    * based on the modifier key pressed (`Alt` for analysis, `Shift` for flashcard chunking).
    */
   const handleMouseUp = (event: MouseEvent) => {
+    console.log('🚀 ~ event:', event);
     if (!event.altKey && !event.shiftKey) return;
 
     event.preventDefault();
@@ -132,7 +133,9 @@ const ContentScriptRoot: React.FC = () => {
   useEffect(() => {
     if (!highlightApiSupported) return;
 
-    const selectedTextHighlight = CSS.highlights.get(HIGHLIGHT_KEYS.SELECTED_TEXT);
+    const selectedTextHighlight = CSS.highlights.get(
+      HIGHLIGHT_KEYS.SELECTED_TEXT
+    );
     if (!selectedTextHighlight) return;
 
     selectedTextHighlight.clear();
@@ -145,7 +148,8 @@ const ContentScriptRoot: React.FC = () => {
   // Clear highlighting when analysis tab is closed
   useEffect(() => {
     if (!selectedTextFromStore && highlightApiSupported) {
-      const selectedTextHighlight = CSS.highlights.get(HIGHLIGHT_KEYS.SELECTED_TEXT
+      const selectedTextHighlight = CSS.highlights.get(
+        HIGHLIGHT_KEYS.SELECTED_TEXT
       );
       if (selectedTextHighlight) {
         selectedTextHighlight.clear();
@@ -156,7 +160,9 @@ const ContentScriptRoot: React.FC = () => {
 
   useEffect(() => {
     if (!highlightApiSupported) return;
-    const flashcardHighlight = CSS.highlights.get(HIGHLIGHT_KEYS.FLASHCARD_CHUNKS);
+    const flashcardHighlight = CSS.highlights.get(
+      HIGHLIGHT_KEYS.FLASHCARD_CHUNKS
+    );
     if (!flashcardHighlight) return;
 
     flashcardHighlight.clear();

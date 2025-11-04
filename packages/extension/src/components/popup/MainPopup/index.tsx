@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '../../../store';
-import { FlashcardCreator } from '../FlashcardCreator';
-import { LastFlashcardTab } from './LastFlashcardTab';
-import { AnalysisTab } from './AnalysisTab';
+import { FlashcardCreator } from '../../flashcard/FlashcardCreator';
+import { LastFlashcardTab } from '../../flashcard/LastFlashcardTab';
+import { AnalysisTab } from '../../analysis/AnalysisTab';
 import { TabsNavigation } from '../TabsNavigation';
 
 interface Position {

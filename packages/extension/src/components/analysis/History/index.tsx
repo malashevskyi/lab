@@ -1,5 +1,5 @@
 import { useWordHistory } from '../../../hooks/useTextHistory';
-import HighlightText from '../../ui/HighlightText';
+import HighlightText from '../HighlightText';
 
 const History: React.FC = () => {
   const { historyData, isLoadingHistory } = useWordHistory();

@@ -10,7 +10,7 @@ const HighlightText: React.FC<{ text: string; highlight: string }> = ({
     return <>{text}</>;
   }
 
-  const parts = text.split(new RegExp(`(${highlight})`, "gi"));
+  const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
 
   return (
     <>
@@ -19,7 +19,7 @@ const HighlightText: React.FC<{ text: string; highlight: string }> = ({
           <strong key={index}>{part}</strong>
         ) : (
           part
-        ),
+        )
       )}
     </>
   );

@@ -1,5 +1,5 @@
-import React from "react";
-import { captureError } from "../../../utils/sentry";
+import React from 'react';
+import { captureError } from '../../../utils/sentry';
 
 interface Props {
   children: React.ReactNode;
@@ -16,10 +16,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Uncaught error in React component tree", error, errorInfo);
+    console.error('Uncaught error in React component tree', error, errorInfo);
     captureError(error, {
       componentStack: errorInfo.componentStack,
-      type: "React ErrorBoundary",
+      type: 'React ErrorBoundary',
     });
   }
 

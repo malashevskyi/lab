@@ -75,6 +75,20 @@ export class ApiError extends Error {
     );
   }
 
+  static notifyAndCapture(
+    errorString: string,
+    details?: Record<string, unknown>
+  ) {
+    if (details) {
+      captureError(new Error(errorString), {
+        context: 'ApiError.notifyAndCapture',
+        details,
+      });
+    }
+
+    toast.error(errorString);
+  }
+
   static fromUnknown(
     error: unknown,
     extra?: {

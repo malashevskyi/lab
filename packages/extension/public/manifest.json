@@ -3,7 +3,7 @@
   "name": "DeepRead",
   "version": "0.1.0",
   "description": "AI-Powered Contextual Language Learning.",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "tabs"],
   "action": {
     "default_popup": "index.html"
   },
@@ -16,6 +16,11 @@
     {
       "matches": ["<all_urls>"],
       "js": ["src/features/content/index.tsx"]
+    },
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["src/features/gemini-content/index.ts"],
+      "run_at": "document_end"
     }
   ],
   "content_security_policy": {

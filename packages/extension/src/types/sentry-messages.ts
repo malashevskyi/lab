@@ -1,6 +1,7 @@
 export const MessageType = {
-  SENTRY_CAPTURE: "SENTRY_CAPTURE",
-  SENTRY_MESSAGE: "SENTRY_MESSAGE",
+  SENTRY_CAPTURE: 'SENTRY_CAPTURE',
+  SENTRY_MESSAGE: 'SENTRY_MESSAGE',
+  AI_CHAT_PROMPT: 'AI_CHAT_PROMPT',
 } as const;
 
 export interface SentryCaptureMessage {
@@ -14,8 +15,16 @@ export interface SentryCaptureMessage {
 export interface SentryLogMessage {
   type: typeof MessageType.SENTRY_MESSAGE;
   message: string;
-  level: "info" | "warning" | "error";
+  level: 'info' | 'warning' | 'error';
   extra?: Record<string, any>;
 }
 
-export type ExtensionMessage = SentryCaptureMessage | SentryLogMessage;
+export interface AIChatPromptMessage {
+  type: typeof MessageType.AI_CHAT_PROMPT;
+  prompt: string;
+}
+
+export type ExtensionMessage =
+  | SentryCaptureMessage
+  | SentryLogMessage
+  | AIChatPromptMessage;

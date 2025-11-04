@@ -15,6 +15,7 @@ Sentry.init({
 
 chrome.runtime.onMessage.addListener(
   (message: ExtensionMessage, sender, sendResponse) => {
+    console.log('🚀 ~ message:', message);
     if (message.type === MessageType.SENTRY_CAPTURE) {
       const error = new Error(message.error);
       if (message.stack) {
@@ -39,6 +40,41 @@ chrome.runtime.onMessage.addListener(
       });
 
       sendResponse({ success: true });
+    } else if (message.type === MessageType.AI_CHAT_PROMPT) {
+      console.log('Background: Received openGeminiChat message', message);
+      // Open new tab with Gemini AI chat
+      chrome.tabs
+        .create({
+          url: 'https://gemini.google.com/',
+          active: true,
+        })
+        .then((tab) => {
+          // Store the tab ID and prompt for later use
+          if (tab.id) {
+            const storageKey = `geminiTab_${tab.id}`;
+            const storageData = {
+              prompt: message.prompt,
+              timestamp: Date.now(),
+            };
+            console.log(
+              'Background: Storing data with key:',
+              storageKey,
+              storageData
+            );
+
+            void chrome.storage.local.set({
+              [storageKey]: storageData,
+            });
+          }
+          sendResponse({ success: true, tabId: tab.id });
+        })
+        .catch((error) => {
+          console.error('Failed to open Gemini tab:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+
+      // Keep the message channel open for async response (sendResponse)
+      return true;
     }
 
     return true;

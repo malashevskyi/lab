@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { usePrevious } from 'react-use';
 import { Sidebar } from '../../../components/Layout/Sidebar';
-import { useAppStore } from '../../../store';
-import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
-import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
-import { captureError } from '../../../utils/sentry';
-import { doRangesIntersect } from '../../../utils/doRangesIntersect';
-import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
+import { ExplainSelection } from '../../../components/ui/ExplainSelection';
 import { MainPopup } from '../../../components/ui/MainPopup';
+import { useAppStore } from '../../../store';
+import { doRangesIntersect } from '../../../utils/doRangesIntersect';
+import { captureError } from '../../../utils/sentry';
+import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
+import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
+import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
 
 const SIDEBAR_OPEN_BODY_CLASS = 'deepread-sidebar-open';
 
@@ -188,6 +189,7 @@ const ContentScriptRoot: React.FC = () => {
   return (
     <>
       <MainPopup />
+      <ExplainSelection />
       {isSidebarVisible && <Sidebar />}
     </>
   );

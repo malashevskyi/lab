@@ -10,6 +10,7 @@ import { HIGHLIGHT_KEYS } from '../../../constants/highlights';
 import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
+import { ApiError } from '../../../services/ApiError';
 
 window.addEventListener('error', (event) => {
   captureError(event.error, {
@@ -56,7 +57,6 @@ const ContentScriptRoot: React.FC = () => {
    * based on the modifier key pressed (`Alt` for analysis, `Shift` for flashcard chunking).
    */
   const handleMouseUp = (event: MouseEvent) => {
-    console.log('🚀 ~ event:', event);
     if (!event.altKey && !event.shiftKey) return;
 
     event.preventDefault();
@@ -74,7 +74,7 @@ const ContentScriptRoot: React.FC = () => {
       range.startContainer.nodeType !== Node.TEXT_NODE ||
       range.endContainer.nodeType !== Node.TEXT_NODE
     ) {
-      console.warn('[DeepRead] Ignored non-text selection.');
+      ApiError.notifyAndCapture('Non-text selection detected');
       selection.removeAllRanges();
       return;
     }

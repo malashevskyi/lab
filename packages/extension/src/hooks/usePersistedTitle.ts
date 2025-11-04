@@ -40,7 +40,6 @@ export const usePersistedTitle = (
         return;
       }
       if (result[key]) {
-        console.log('Loaded persisted title:', result[key]);
         setFieldValue('title', result[key]);
       }
     });

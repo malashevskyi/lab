@@ -1,4 +1,3 @@
-import { toast } from 'sonner';
 import {
   ALLOWED_COPY_NODE_TYPES,
   MAX_CONTEXT_LENGTH,
@@ -6,13 +5,7 @@ import {
 } from '../../../../config/constants';
 import { refineLargeContext } from './refineLargeContext';
 import getSentencesFromText from './getSentencesFromText';
-
-const handleError = (message: string, selection: Selection): void => {
-  // TODO: replace with sentry
-  console.error(message, selection);
-  toast.error(message);
-  selection.removeAllRanges();
-};
+import { ApiError } from '../../../../services/ApiError';
 
 /**
  * Extracts the most relevant and appropriately sized block of text surrounding a user's selection for AI analysis.
@@ -32,20 +25,20 @@ export const getWordOrPhraseContextForSelection = (
   if (
     !ALLOWED_COPY_NODE_TYPES.includes(range.commonAncestorContainer.nodeType)
   ) {
-    handleError(
-      'Selection is too complex. Please select plain text.',
-      selection
+    ApiError.notifyAndCapture(
+      'Selection is too complex. Please select plain text.'
     );
+    selection.removeAllRanges();
     return;
   }
 
   const startNode = range.startContainer.parentElement;
 
   if (!startNode) {
-    handleError(
-      'Could not determine the start node of the selection.',
-      selection
+    ApiError.notifyAndCapture(
+      'Could not determine the start node of the selection.'
     );
+    selection.removeAllRanges();
     return;
   }
 

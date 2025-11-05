@@ -32,6 +32,14 @@ export const ExplainSelection: React.FC = () => {
     )
       return;
 
+    // ignore clicks on media elements (images, videos, etc.) and other non-text elements
+    if (
+      event.target.closest(
+        'img, video, audio, canvas, svg, iframe, object, embed'
+      )
+    )
+      return;
+
     // Handle only regular text selection (no modifier keys) for action button
     if (event.altKey || event.shiftKey || event.metaKey || event.ctrlKey)
       return;
@@ -40,6 +48,13 @@ export const ExplainSelection: React.FC = () => {
     if (!selection || selection.rangeCount === 0) return;
 
     const selectionText = selection.toString().trim();
+
+    // Don't show button if selection is empty or too short (likely from drag operations)
+    if (!selectionText || selectionText.length <= 1) {
+      hideActionButton();
+      return;
+    }
+
     handleUnexpectedSelection(selectionText);
 
     const range = selection.getRangeAt(0);

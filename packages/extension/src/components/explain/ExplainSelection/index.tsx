@@ -24,6 +24,14 @@ export const ExplainSelection: React.FC = () => {
     // ignore if clicked inside the sidebar or existing UI
     if (event.target.closest('#deepread-root')) return;
 
+    // ignore clicks on interactive elements like buttons, links, headings in accordions, etc.
+    if (
+      event.target.closest(
+        'button, a, [role="button"], .heading, h1, h2, h3, h4, h5, h6'
+      )
+    )
+      return;
+
     // Handle only regular text selection (no modifier keys) for action button
     if (event.altKey || event.shiftKey || event.metaKey || event.ctrlKey)
       return;

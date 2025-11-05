@@ -73,27 +73,31 @@ export const FlashcardCreator: React.FC = () => {
     <div className="space-y-3">
       <FormikProvider value={formik}>
         <Form className="space-y-3">
-          {/* Title field */}
-          <Field name="title">
-            {({ field }: FieldProps) => (
-              <TextareaAutosize
-                {...field}
-                placeholder="Flashcard Title (Context)"
-                className="w-full p-2 border rounded-md text-sm font-semibold resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
-                minRows={1}
-                onChange={field.onChange}
-              />
-            )}
-          </Field>
+          <div className="flex gap-2 flex-nowrap items-start">
+            <button
+              type="submit"
+              className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-2 transition-colors"
+              title="Create flashcard from selection"
+              disabled={isCreating}
+            >
+              <span className="whitespace-nowrap">
+                {isCreating ? 'Creating...' : 'Create Card'}
+              </span>
+            </button>
 
-          <button
-            type="submit"
-            className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-2 transition-colors"
-            title="Create flashcard from selection"
-            disabled={isCreating}
-          >
-            <span>{isCreating ? 'Creating...' : 'Create Card'}</span>
-          </button>
+            {/* Title field */}
+            <Field name="title">
+              {({ field }: FieldProps) => (
+                <TextareaAutosize
+                  {...field}
+                  placeholder="Flashcard Title (Context)"
+                  className="w-full p-2 border rounded-md text-sm font-semibold resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  minRows={1}
+                  onChange={field.onChange}
+                />
+              )}
+            </Field>
+          </div>
 
           <div className="space-y-3">
             {formik.values.chunks.map((_, index) => (

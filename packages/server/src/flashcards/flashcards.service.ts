@@ -4,6 +4,7 @@ import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiService } from '../ai/ai.service';
 import { Repository } from 'typeorm';
+import { CreateFlashcardResponseType } from '@lab/types/deep-read/flashcards/index.js';
 
 @Injectable()
 export class FlashcardsService {
@@ -15,14 +16,20 @@ export class FlashcardsService {
 
   /**
    * Persists a flashcard in the database after validating its payload.
+   * If ID is provided, deletes the existing flashcard before creating a new one.
    * @param flashcardData {@link CreateFlashcardDto}
-   * @returns The persisted {@link FlashcardEntity} instance.
+   * @returns flashcard id {@link CreateFlashcardResponseType}
    */
   async createFlashcard({
     title,
     chunks,
     sourceUrl,
-  }: CreateFlashcardDto): Promise<void> {
+    id,
+  }: CreateFlashcardDto): Promise<CreateFlashcardResponseType> {
+    if (id) {
+      await this.flashcardsRepository.delete(id);
+    }
+
     const generatedFlashcard = await this.aiService.generateFlashcard(
       title,
       chunks,
@@ -35,7 +42,8 @@ export class FlashcardsService {
       lastInterval: null,
     });
 
-    await this.flashcardsRepository.save(newFlashcard);
+    const savedFlashcard = await this.flashcardsRepository.save(newFlashcard);
+    return { id: savedFlashcard.id };
   }
 
   /**

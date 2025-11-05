@@ -5,6 +5,7 @@ import { FlashcardsService } from './flashcards.service';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { GetLastFlashcardDocs } from './decorators/get-last-flashcard.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
+import { CreateFlashcardResponseType } from '@lab/types/deep-read/flashcards/index.js';
 
 @ApiTags('Flashcards')
 @UsePipes(ZodValidationPipe)
@@ -13,7 +14,9 @@ export class FlashcardsController {
   constructor(private readonly flashcardsService: FlashcardsService) {}
 
   @Post()
-  async createFlashcard(@Body() createDto: CreateFlashcardDto): Promise<void> {
+  async createFlashcard(
+    @Body() createDto: CreateFlashcardDto,
+  ): Promise<CreateFlashcardResponseType> {
     return this.flashcardsService.createFlashcard(createDto);
   }
 

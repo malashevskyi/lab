@@ -8,6 +8,7 @@ export const createFlashcardBodySchema = flashcardTypeSchema
     chunks: z
       .array(z.string().min(1, 'Chunk cannot be empty.'))
       .min(1, 'At least one chunk is required.'),
+    id: z.uuid().optional(),
   });
 
 export type CreateFlashcardBodyType = z.infer<typeof createFlashcardBodySchema>;

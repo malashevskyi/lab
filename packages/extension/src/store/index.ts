@@ -50,6 +50,8 @@ export interface AppActions {
   setNormalizedText: (text: string) => void;
   // flashcards
   addFlashcardChunk: (chunk: FlashcardChunk) => void;
+  addEmptyFlashcardChunk: () => void;
+  updateFlashcardChunkText: (index: number, text: string) => void;
   clearFlashcardChunks: () => void;
   removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
   removeFlashcardChunkByIndex: (index: number) => void;
@@ -115,6 +117,31 @@ export const useAppStore = create(
           activeTab: 'new-flashcard',
         },
       })),
+
+    addEmptyFlashcardChunk: () =>
+      set((state) => {
+        // Create a dummy range for the empty chunk
+        const dummyRange = document.createRange();
+        const emptyChunk: FlashcardChunk = {
+          text: '',
+          range: dummyRange,
+        };
+
+        return {
+          ...state,
+          flashcardCreator: {
+            ...state.flashcardCreator,
+            chunks: [...state.flashcardCreator.chunks, emptyChunk],
+          },
+        };
+      }),
+
+    updateFlashcardChunkText: (index, text) =>
+      set((state) => {
+        if (state.flashcardCreator.chunks[index]) {
+          state.flashcardCreator.chunks[index].text = text;
+        }
+      }),
 
     clearFlashcardChunks: () =>
       set((state) => {

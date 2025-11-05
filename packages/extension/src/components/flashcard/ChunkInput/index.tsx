@@ -6,14 +6,16 @@ import TextareaAutosize from 'react-textarea-autosize';
 interface ChunkInputRowProps {
   index: number;
   onRemove: () => void;
+  onTextChange?: (text: string) => void;
 }
 
 /**
- * @description A single row in the FlashcardCreator form, containing inputs for a tag and text.
+ * @description A single row in the FlashcardCreator form
  */
 export const ChunkInput: React.FC<ChunkInputRowProps> = ({
   index,
   onRemove,
+  onTextChange,
 }) => {
   return (
     <div className="flex items-start gap-2 group">
@@ -25,7 +27,10 @@ export const ChunkInput: React.FC<ChunkInputRowProps> = ({
             placeholder="Text content"
             className="flex-1 p-2 border border-gray-200 border-solid rounded-md text-sm resize-none min-h-[40px] focus:outline-none focus:ring-2 focus:ring-blue-400"
             minRows={1}
-            onChange={field.onChange}
+            onChange={(e) => {
+              field.onChange(e);
+              onTextChange?.(e.target.value);
+            }}
           />
         )}
       </Field>

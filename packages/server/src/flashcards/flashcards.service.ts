@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
+import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiService } from '../ai/ai.service';
 import { Repository } from 'typeorm';
@@ -62,5 +63,24 @@ export class FlashcardsService {
     const [lastFlashcard] = lastFlashcardArray;
 
     return lastFlashcard || null;
+  }
+
+  /**
+   * Updates an existing flashcard's question and answer.
+   * @param id - The flashcard ID to update
+   * @param updateData - The updated question and answer data
+   * @returns {Promise<FlashcardEntity>} The updated flashcard entity
+   */
+  async updateFlashcard(
+    id: string,
+    updateData: UpdateFlashcardDto,
+  ): Promise<FlashcardEntity | null> {
+    await this.flashcardsRepository.update(id, {
+      question: updateData.question,
+      answer: updateData.answer,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return this.flashcardsRepository.findOne({ where: { id } });
   }
 }

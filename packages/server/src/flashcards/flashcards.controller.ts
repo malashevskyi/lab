@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Param,
+  UsePipes,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { FlashcardsService } from './flashcards.service';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
+import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { GetLastFlashcardDocs } from './decorators/get-last-flashcard.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { CreateFlashcardResponseType } from '@lab/types/deep-read/flashcards/index.js';
@@ -24,5 +33,13 @@ export class FlashcardsController {
   @GetLastFlashcardDocs()
   async getLastFlashcard(): Promise<FlashcardEntity | null> {
     return this.flashcardsService.findLast();
+  }
+
+  @Put(':id')
+  async updateFlashcard(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateFlashcardDto,
+  ): Promise<FlashcardEntity | null> {
+    return this.flashcardsService.updateFlashcard(id, updateDto);
   }
 }

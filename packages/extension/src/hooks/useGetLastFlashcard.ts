@@ -25,8 +25,9 @@ export const useGetLastFlashcard = () => {
       if (!response.data) return null;
       return getLastFlashcardResponseSchema.parse(response.data);
     },
-    enabled: false,
+    enabled: true, // Enable auto-fetching so it responds to invalidations
     retry: false,
+    staleTime: 0, // Consider data immediately stale so it refetches on invalidation
   });
 
   useEffect(() => {

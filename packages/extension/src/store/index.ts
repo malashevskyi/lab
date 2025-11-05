@@ -21,9 +21,17 @@ export interface AnalysisState {
   normalizedText: string;
 }
 
+// save card data for regeneration
+export interface LastFlashcardState {
+  chunks: FlashcardChunk[];
+  title: string;
+  id: string | null;
+}
+
 export interface AppState {
   sidebar: SidebarState;
   flashcardCreator: FlashcardState;
+  lastFlashcard: LastFlashcardState;
   popup: PopupState;
   analysis: AnalysisState;
 }
@@ -55,6 +63,13 @@ export interface AppActions {
   clearFlashcardChunks: () => void;
   removeFlashcardChunks: (chunksToRemove: FlashcardChunk[]) => void;
   removeFlashcardChunkByIndex: (index: number) => void;
+  // last flashcard
+  saveLastFlashcardChunks: (
+    chunks: FlashcardChunk[],
+    title: string,
+    id: string
+  ) => void;
+  clearLastFlashcardChunks: () => void;
   setPopupPosition: (position: { x: number; y: number }) => void;
   setFlashcardCreatorTitle: (title: string) => void;
   openPopup: () => void;
@@ -73,6 +88,11 @@ const initialState: AppState = {
   flashcardCreator: {
     chunks: [],
     title: '',
+  },
+  lastFlashcard: {
+    chunks: [],
+    title: '',
+    id: null,
   },
   popup: {
     position: { x: 0, y: 0 },
@@ -172,6 +192,34 @@ export const useAppStore = create(
     removeFlashcardChunkByIndex: (index) =>
       set((state) => {
         state.flashcardCreator.chunks.splice(index, 1);
+      }),
+
+    /**
+     * @function saveLastFlashcardChunks
+     * @description Saves flashcard chunks, title and id for potential regeneration.
+     * @param {FlashcardChunk[]} chunks - The chunks to save.
+     * @param {string} title - The title to save.
+     * @param {string} id - The flashcard ID to save.
+     */
+    saveLastFlashcardChunks: (chunks, title, id) =>
+      set((state) => ({
+        ...state,
+        lastFlashcard: {
+          chunks,
+          title,
+          id,
+        },
+      })),
+
+    /**
+     * @function clearLastFlashcardChunks
+     * @description Clears the saved last flashcard chunks.
+     */
+    clearLastFlashcardChunks: () =>
+      set((state) => {
+        state.lastFlashcard.chunks = [];
+        state.lastFlashcard.title = '';
+        state.lastFlashcard.id = null;
       }),
 
     /**

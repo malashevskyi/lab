@@ -2,6 +2,8 @@ import type { GetLastFlashcardResponseType } from '@lab/types/deep-read/flashcar
 import React from 'react';
 import DOMPurify from 'dompurify';
 import { CodeBlock } from '../CodeBlock';
+import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
+import { FaRedo } from 'react-icons/fa';
 
 export interface LastFlashcardProps {
   flashcard?: GetLastFlashcardResponseType | null;
@@ -118,58 +120,86 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
   flashcard,
   isVisible,
 }) => {
+  const { regenerateFlashcard, isRegenerating, canRegenerate } =
+    useRegenerateFlashcard();
+
   if (!isVisible) return null;
 
   return (
     <div className="overflow-y-auto space-y-3 pr-2">
       <div className="mb-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
         {flashcard ? (
-          <div className="space-y-3">
-            {/* Question Section */}
-            <div className="bg-white p-3 rounded border-l-4 border-blue-400">
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">
-                  Question
+          <div className="flex gap-3">
+            {/* Main content column */}
+            <div className="flex-1 space-y-3">
+              {/* Question Section */}
+              <div className="bg-white p-3 rounded border-l-4 border-blue-400">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">
+                    Question
+                  </div>
+                  {flashcard.context && (
+                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                      {flashcard.context}
+                    </span>
+                  )}
                 </div>
-                {flashcard.context && (
-                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                    {flashcard.context}
+                <SafeHTMLRenderer
+                  html={flashcard.question}
+                  className="text-gray-800 leading-relaxed"
+                />
+              </div>
+
+              {/* Answer Section */}
+              <div className="bg-white p-3 rounded border-l-4 border-green-400">
+                <div className="text-xs font-medium text-green-600 mb-2 uppercase tracking-wide">
+                  Answer
+                </div>
+                <SafeHTMLRenderer
+                  html={flashcard.answer}
+                  className="text-gray-800 leading-relaxed"
+                />
+              </div>
+
+              {/* Metadata */}
+              <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-100">
+                <div className="space-x-2">
+                  <span className="bg-gray-100 px-2 py-1 rounded text-xs">
+                    Level: {flashcard.level}
                   </span>
-                )}
-              </div>
-              <SafeHTMLRenderer
-                html={flashcard.question}
-                className="text-gray-800 leading-relaxed"
-              />
-            </div>
-
-            {/* Answer Section */}
-            <div className="bg-white p-3 rounded border-l-4 border-green-400">
-              <div className="text-xs font-medium text-green-600 mb-2 uppercase tracking-wide">
-                Answer
-              </div>
-              <SafeHTMLRenderer
-                html={flashcard.answer}
-                className="text-gray-800 leading-relaxed"
-              />
-            </div>
-
-            {/* Metadata */}
-            <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-100">
-              <div className="space-x-2">
-                <span className="bg-gray-100 px-2 py-1 rounded text-xs">
-                  Level: {flashcard.level}
+                  {flashcard.tags.length > 0 && (
+                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                      {flashcard.tags.join(', ')}
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs">
+                  {new Date(flashcard.createdAt).toLocaleDateString()}
                 </span>
-                {flashcard.tags.length > 0 && (
-                  <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
-                    {flashcard.tags.join(', ')}
-                  </span>
-                )}
               </div>
-              <span className="text-xs">
-                {new Date(flashcard.createdAt).toLocaleDateString()}
-              </span>
             </div>
+
+            {/* Actions column */}
+            {!canRegenerate && (
+              <div className="flex flex-col gap-2 min-w-[80px]">
+                <button
+                  onClick={regenerateFlashcard}
+                  disabled={isRegenerating}
+                  className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-blue-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Regenerate flashcard with same content"
+                >
+                  <FaRedo
+                    className={`w-3 h-3 ${
+                      isRegenerating ? 'animate-spin' : ''
+                    }`}
+                  />
+                  <span className="hidden sm:inline">
+                    {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+                  </span>
+                </button>
+                {/* Future buttons will go here */}
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center text-gray-500 py-6">

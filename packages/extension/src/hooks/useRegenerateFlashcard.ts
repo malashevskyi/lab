@@ -4,24 +4,19 @@ import { deepReadAPI } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import {
   createFlashcardBodySchema,
-  createFlashcardResponseSchema,
   type CreateFlashcardBodyType,
 } from '@lab/types/deep-read/flashcards/index.js';
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 import { useAppStore } from '../store';
 
-export const useCreateFlashcard = () => {
+export const useRegenerateFlashcard = () => {
   const queryClient = useQueryClient();
-  const clearFlashcardChunks = useAppStore(
-    (state) => state.clearFlashcardChunks
-  );
   const setActiveTab = useAppStore((state) => state.setActiveTab);
+  const lastFlashcard = useAppStore((state) => state.lastFlashcard);
   const saveLastFlashcardChunks = useAppStore(
     (state) => state.saveLastFlashcardChunks
   );
-  const flashcardChunks = useAppStore((state) => state.flashcardCreator.chunks);
-  const flashcardTitle = useAppStore((state) => state.flashcardCreator.title);
 
   const mutation = useMutation<
     { id: string },
@@ -31,49 +26,62 @@ export const useCreateFlashcard = () => {
     mutationFn: async (flashcardData) => {
       const validatedData = createFlashcardBodySchema.parse(flashcardData);
       const response = await deepReadAPI.post('/flashcards', validatedData);
-      return createFlashcardResponseSchema.parse(response.data);
+      return response.data;
     },
     onSuccess: (data) => {
-      // Save chunks, title and ID for potential regeneration
-      // Only save if we're creating a new flashcard (not regenerating)
-      if (!mutation.variables?.id) {
-        saveLastFlashcardChunks(flashcardChunks, flashcardTitle, data.id);
-      }
+      // Update the stored ID with the new one
+      saveLastFlashcardChunks(
+        lastFlashcard.chunks,
+        lastFlashcard.title,
+        data.id
+      );
 
       // Invalidate and refetch the last flashcard query to ensure updated data
       void queryClient.invalidateQueries({ queryKey: ['lastFlashcard'] });
 
-      toast.success(`Flashcard created successfully!`);
-      clearFlashcardChunks();
-      // Switch to last-flashcard tab after successful creation to check the new card
+      toast.success(`Flashcard regenerated successfully!`);
+      // Switch to last-flashcard tab to show the updated card
       setActiveTab('last-flashcard');
     },
   });
 
-  const creationError = mutation.error
+  const regenerationError = mutation.error
     ? ApiError.fromUnknown(mutation.error, {
-        clientMessage: 'Failed to create the flashcard.',
+        clientMessage: 'Failed to regenerate the flashcard.',
       })
     : undefined;
 
   useEffect(() => {
-    if (creationError) {
-      creationError.notify();
+    if (regenerationError) {
+      regenerationError.notify();
     }
-  }, [creationError]);
+  }, [regenerationError]);
 
-  const createFlashcard = (data: CreateFlashcardBodyType) => {
+  const regenerateFlashcard = () => {
+    if (!lastFlashcard.id || !lastFlashcard.chunks.length) {
+      toast.error('No flashcard data available for regeneration');
+      return;
+    }
+
+    const data: CreateFlashcardBodyType = {
+      title: lastFlashcard.title,
+      chunks: lastFlashcard.chunks.map((chunk) => chunk.text),
+      sourceUrl: window.location.href,
+      id: lastFlashcard.id, // Include the ID for regeneration
+    };
+
     try {
       mutation.mutate(createFlashcardBodySchema.parse(data));
     } catch (error) {
       ApiError.fromUnknown(error, {
-        clientMessage: 'Invalid data provided for flashcard creation.',
+        clientMessage: 'Invalid data provided for flashcard regeneration.',
       }).notify();
     }
   };
 
   return {
-    createFlashcard,
-    isCreating: mutation.isPending,
+    regenerateFlashcard,
+    isRegenerating: mutation.isPending,
+    canRegenerate: lastFlashcard.id !== null && lastFlashcard.chunks.length > 0,
   };
 };

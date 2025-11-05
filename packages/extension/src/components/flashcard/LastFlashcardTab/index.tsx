@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { LastFlashcard } from '../LastFlashcard';
 import { useGetLastFlashcard } from '../../../hooks/useGetLastFlashcard';
 
@@ -6,11 +6,7 @@ import { useGetLastFlashcard } from '../../../hooks/useGetLastFlashcard';
  * @description Tab content for displaying the last created flashcard
  */
 export const LastFlashcardTab: React.FC = () => {
-  const { lastCardData, isLoading, fetchLastCard } = useGetLastFlashcard();
-
-  useEffect(() => {
-    void fetchLastCard();
-  }, [fetchLastCard]);
+  const { lastCardData, isLoading } = useGetLastFlashcard();
 
   if (isLoading) {
     return (

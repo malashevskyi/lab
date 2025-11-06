@@ -1,4 +1,4 @@
-import { decodeHtml } from './decodeHTML';
+import { decodeHtml } from './decodeHtml';
 
 const TAGS: Record<string, (text: string) => string> = {
   STRONG: (t) => `**${t}**`,

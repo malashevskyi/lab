@@ -1,120 +1,14 @@
 import type { GetLastFlashcardResponseType } from '@lab/types/deep-read/flashcards';
-import React from 'react';
-import DOMPurify from 'dompurify';
-import { CodeBlock } from '../CodeBlock';
+import React, { useEffect, useState } from 'react';
+import { EditableHTML } from '../EditableHTML';
 import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
-import { FaRedo } from 'react-icons/fa';
+import { useUpdateFlashcard } from '../../../hooks/useUpdateFlashcard';
+import { FaRedo, FaSave } from 'react-icons/fa';
 
 export interface LastFlashcardProps {
   flashcard?: GetLastFlashcardResponseType | null;
   isVisible: boolean;
 }
-
-// Component for inline code (simple gray background)
-const InlineCode: React.FC<{ children: string }> = ({ children }) => (
-  <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm font-mono">
-    {children}
-  </code>
-);
-
-// Enhanced component to safely render HTML content with proper code highlighting
-const SafeHTMLRenderer: React.FC<{ html: string; className?: string }> = ({
-  html,
-  className = '',
-}) => {
-  const sanitizedHTML = DOMPurify.sanitize(html);
-
-  // Parse the HTML to work with DOM elements
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(sanitizedHTML, 'text/html');
-
-  const elements: React.ReactNode[] = [];
-  let keyCounter = 0;
-
-  // Function to process node and its children recursively
-  const processNode = (node: Node): React.ReactNode[] => {
-    const nodeElements: React.ReactNode[] = [];
-
-    if (node.nodeType === Node.TEXT_NODE) {
-      // Plain text node
-      const text = node.textContent || '';
-      if (text.trim()) {
-        nodeElements.push(text);
-      }
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const element = node as Element;
-
-      if (element.tagName === 'PRE' && element.querySelector('code')) {
-        // Code block with syntax highlighting
-        const codeElement = element.querySelector('code');
-        if (codeElement) {
-          const code = codeElement.textContent || '';
-          const language =
-            codeElement.getAttribute('data-language') ||
-            codeElement.className.replace('language-', '') ||
-            undefined;
-
-          nodeElements.push(
-            <CodeBlock key={keyCounter++} code={code} language={language} />
-          );
-        }
-      } else if (
-        element.tagName === 'CODE' &&
-        element.parentElement?.tagName !== 'PRE'
-      ) {
-        // Inline code (not inside <pre>)
-        const codeText = element.textContent || '';
-        nodeElements.push(
-          <InlineCode key={keyCounter++}>{codeText}</InlineCode>
-        );
-      } else {
-        // Regular HTML element - process its children
-        const childElements: React.ReactNode[] = [];
-
-        Array.from(element.childNodes).forEach((child) => {
-          childElements.push(...processNode(child));
-        });
-
-        if (childElements.length > 0) {
-          // Recreate the element with processed children
-          const props: any = { key: keyCounter++ };
-
-          // Copy attributes
-          Array.from(element.attributes).forEach((attr) => {
-            if (attr.name === 'class') {
-              props.className = attr.value;
-            } else if (attr.name !== 'style') {
-              // Skip style for security
-              props[attr.name] = attr.value;
-            }
-          });
-
-          const tagName = element.tagName.toLowerCase();
-          nodeElements.push(
-            React.createElement(tagName as any, props, ...childElements)
-          );
-        }
-      }
-    }
-
-    return nodeElements;
-  };
-
-  // Process all child nodes of the body
-  Array.from(doc.body.childNodes).forEach((node) => {
-    elements.push(...processNode(node));
-  });
-
-  return (
-    <div className={`prose prose-sm max-w-none ${className}`}>
-      {elements.length > 0 ? (
-        elements
-      ) : (
-        <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />
-      )}
-    </div>
-  );
-};
 
 export const LastFlashcard: React.FC<LastFlashcardProps> = ({
   flashcard,
@@ -122,12 +16,52 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
 }) => {
   const { regenerateFlashcard, isRegenerating, canRegenerate } =
     useRegenerateFlashcard();
+  const { updateFlashcard, isUpdating } = useUpdateFlashcard();
+
+  const [editedQuestion, setEditedQuestion] = useState('');
+  const [editedAnswer, setEditedAnswer] = useState('');
+  const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    if (flashcard) {
+      setEditedQuestion(flashcard.question);
+      setEditedAnswer(flashcard.answer);
+      setHasChanges(false);
+    }
+  }, [flashcard]);
+
+  const handleQuestionChange = (newHtml: string) => {
+    setEditedQuestion(newHtml);
+    if (flashcard) {
+      const hasChanged =
+        newHtml !== flashcard.question || editedAnswer !== flashcard.answer;
+      setHasChanges(hasChanged);
+    }
+  };
+
+  const handleAnswerChange = (newHtml: string) => {
+    setEditedAnswer(newHtml);
+    if (flashcard) {
+      const hasChanged = newHtml !== flashcard.answer;
+      setHasChanges(hasChanged);
+    }
+  };
+
+  const handleUpdate = () => {
+    if (flashcard && hasChanges) {
+      updateFlashcard(flashcard.id, {
+        question: editedQuestion,
+        answer: editedAnswer,
+      });
+      setHasChanges(false);
+    }
+  };
 
   if (!isVisible) return null;
 
   return (
     <div className="overflow-y-auto space-y-3 pr-2">
-      <div className="mb-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
+      <div className="mb-2 p-3 border border-solid border-gray-200 rounded-lg bg-gray-50">
         {flashcard ? (
           <div className="flex gap-3">
             {/* Main content column */}
@@ -144,8 +78,9 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
                     </span>
                   )}
                 </div>
-                <SafeHTMLRenderer
-                  html={flashcard.question}
+                <EditableHTML
+                  content={editedQuestion}
+                  onContentChange={handleQuestionChange}
                   className="text-gray-800 leading-relaxed"
                 />
               </div>
@@ -155,8 +90,9 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
                 <div className="text-xs font-medium text-green-600 mb-2 uppercase tracking-wide">
                   Answer
                 </div>
-                <SafeHTMLRenderer
-                  html={flashcard.answer}
+                <EditableHTML
+                  content={editedAnswer}
+                  onContentChange={handleAnswerChange}
                   className="text-gray-800 leading-relaxed"
                 />
               </div>
@@ -180,12 +116,27 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
             </div>
 
             {/* Actions column */}
-            {!canRegenerate && (
-              <div className="flex flex-col gap-2 min-w-[80px]">
+            <div className="flex flex-col gap-2 min-w-[80px]">
+              {hasChanges && (
+                <button
+                  onClick={handleUpdate}
+                  disabled={isUpdating}
+                  className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-green-600 hover:text-green-700 hover:bg-green-50 border border-solid border-green-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Update flashcard changes"
+                >
+                  <FaSave
+                    className={`w-3 h-3 ${isUpdating ? 'animate-pulse' : ''}`}
+                  />
+                  <span className="hidden sm:inline">
+                    {isUpdating ? 'Updating...' : 'Update'}
+                  </span>
+                </button>
+              )}
+              {canRegenerate && (
                 <button
                   onClick={regenerateFlashcard}
                   disabled={isRegenerating}
-                  className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-blue-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-solid border-blue-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Regenerate flashcard with same content"
                 >
                   <FaRedo
@@ -197,9 +148,8 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
                     {isRegenerating ? 'Regenerating...' : 'Regenerate'}
                   </span>
                 </button>
-                {/* Future buttons will go here */}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         ) : (
           <div className="text-center text-gray-500 py-6">

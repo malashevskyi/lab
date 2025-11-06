@@ -21,9 +21,16 @@ import { normalizeLanguage } from './normalizeLanguage';
 interface CodeBlockProps {
   code: string;
   language?: string;
+  editable?: boolean;
+  onCodeChange?: (newCode: string) => void;
 }
 
-export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
+export const CodeBlock: React.FC<CodeBlockProps> = ({
+  code,
+  language,
+  editable = false,
+  onCodeChange,
+}) => {
   const normalizedLanguage = normalizeLanguage(language);
 
   const isLanguageSupported = languages[normalizedLanguage];
@@ -71,7 +78,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
 
       <Editor
         value={code}
-        onValueChange={() => {}} // Read-only
+        onValueChange={editable && onCodeChange ? onCodeChange : () => {}}
         highlight={(code) =>
           highlight(code, languages[highlightLanguage], highlightLanguage)
         }

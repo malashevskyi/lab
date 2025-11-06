@@ -5,7 +5,7 @@ import {
   BlockType,
   type Block,
 } from '../EditableHTML/utils/parseContentIntoBlocks';
-import { markdownToHtml } from '../EditableHTML/utils/markdownToHTML';
+import { markdownToHtml } from '../EditableHTML/utils/markdownToHtml';
 import { htmlToMarkdown } from '../EditableHTML/utils/htmlToMarkdown';
 
 interface FlashcardListBlockProps {

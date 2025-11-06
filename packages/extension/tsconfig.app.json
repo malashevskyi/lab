@@ -23,9 +23,9 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "erasableSyntaxOnly": false, // otherwise cannot use enums
 
     "paths": {
       "@lab/types/*": ["../../types/dist/*"],

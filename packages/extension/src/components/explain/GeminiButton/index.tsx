@@ -54,7 +54,7 @@ I don't understand this, please explain in more detail what this is and what it 
   return (
     <div
       data-gemini-button
-      className="gemini-button absolute z-[9999] bg-white border border-gray-300 rounded-lg shadow-lg p-2 hover:shadow-xl transition-shadow"
+      className="gemini-button absolute z-[9999] bg-white border border-solid border-gray-300 rounded-lg shadow-lg p-2 hover:shadow-xl transition-shadow"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,

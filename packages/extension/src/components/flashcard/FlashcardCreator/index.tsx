@@ -115,7 +115,7 @@ export const FlashcardCreator: React.FC = () => {
             <button
               type="button"
               onClick={() => addEmptyFlashcardChunk()}
-              className="p-2 text-gray-600 hover:bg-gray-100 border border-gray-300 rounded flex items-center justify-center gap-2 transition-colors"
+              className="p-2 text-gray-600 hover:bg-gray-100 border border-solid border-gray-300 rounded flex items-center justify-center gap-2 transition-colors"
               title="Add new chunk"
             >
               <FaPlus />

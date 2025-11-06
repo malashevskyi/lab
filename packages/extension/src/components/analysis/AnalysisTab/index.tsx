@@ -12,7 +12,7 @@ export const AnalysisTab: React.FC = () => {
       <div className="text-center text-gray-500 py-8">
         <p>
           Hold{' '}
-          <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 border border-gray-300 rounded">
+          <kbd className="px-2 py-1 text-xs font-semibold bg-gray-100 border border-solid border-gray-300 rounded">
             Alt
           </kbd>{' '}
           + click on text to see analysis

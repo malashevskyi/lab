@@ -1,9 +1,15 @@
-import { decodeHtml } from './decodeHTML';
+import { decodeHtml } from './decodeHtml';
 
-interface Block {
-  type: 'text' | 'code' | 'list';
+export interface Block {
+  type: BlockType;
   content: string;
   language?: string;
+}
+
+export enum BlockType {
+  Text = 'text',
+  Code = 'code',
+  List = 'list',
 }
 
 function pushTextBlocks(text: string, out: Block[]) {
@@ -11,7 +17,7 @@ function pushTextBlocks(text: string, out: Block[]) {
     .split('\n')
     .map((t) => t.trim())
     .filter(Boolean)
-    .forEach((t) => out.push({ type: 'text', content: t }));
+    .forEach((t) => out.push({ type: BlockType.Text, content: t }));
 }
 
 function normalizeCodeBlock(text: string): Block | undefined {
@@ -23,7 +29,7 @@ function normalizeCodeBlock(text: string): Block | undefined {
 
   if (codeMatch) {
     return {
-      type: 'code',
+      type: BlockType.Code,
       content: decodeHtml(codeMatch[1]),
       language: langMatch?.[1] || undefined,
     };
@@ -55,7 +61,7 @@ export const parseContentIntoBlocks = (content: string) => {
       if (codeBlock) blocks.push(codeBlock);
     } else if (blockMatch.startsWith('<ul>')) {
       // List block
-      blocks.push({ type: 'list', content: blockMatch });
+      blocks.push({ type: BlockType.List, content: blockMatch });
     }
   }
 

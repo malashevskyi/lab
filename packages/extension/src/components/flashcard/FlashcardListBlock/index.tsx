@@ -1,11 +1,12 @@
 import TextareaAutosize from 'react-textarea-autosize';
 import DOMPurify from 'dompurify';
 import { normalizeContentForComparison } from '../EditableHTML/utils/normalizeContentForComparison';
-import { useEditableContent } from '../../../hooks/useEditableContent';
 import {
   BlockType,
   type Block,
 } from '../EditableHTML/utils/parseContentIntoBlocks';
+import { markdownToHtml } from '../EditableHTML/utils/markdownToHTML';
+import { htmlToMarkdown } from '../EditableHTML/utils/htmlToMarkdown';
 
 interface FlashcardListBlockProps {
   isEditing: boolean;
@@ -22,8 +23,6 @@ export const FlashcardListBlock: React.FC<FlashcardListBlockProps> = ({
   onEdit,
   onListUpdate,
 }) => {
-  const { htmlToMarkdown, markdownToHtml } = useEditableContent();
-
   const compareAndHandleUpdate = (rowList: string) => {
     // Convert markdown list back to HTML for comparison
     const newHtml = rowList

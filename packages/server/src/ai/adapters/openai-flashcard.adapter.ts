@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import DOMPurify from 'isomorphic-dompurify';
+
 import { ErrorService } from '../../errors/errors.service.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
 import {
@@ -9,6 +10,8 @@ import {
   GenerateFlashcardResponse,
   generateFlashcardResponseSchema,
 } from '../ports/ai-generate-flashcard.port.js';
+import { processHtmlContent } from './utils/processHtmlContent.js';
+import { sanitizeResponse } from './utils/sanitizeResponse.js';
 
 const getFlashCardPrompt = () => `
 You are an expert assistant that generates high-quality study flashcards.
@@ -17,8 +20,8 @@ I want to create a lot of flashcards for an article based on its content chunks 
 Your task to create only one flashcard at a time from the provided content chunks.
 You will receive the title of the article to understand the context better.
 
-You will also receive an array of HTML chunks copied from the article.
-Your task is to extract the meaning and rewrite the content using ONLY HTML formats compatible with the Quill rich-text editor.
+You will receive an array of plain text chunks copied from the article.
+Your task is to extract the meaning and format the content using valid HTML.
 
 Do not change and do not refactor chunks with code snippets - keep them as they are. 
 
@@ -26,28 +29,43 @@ The generated HTML will be shown ONLY inside a flashcard editor, not as a full a
 Therefore, the output must remain simple, minimal, and focused.
 
 =====================
-ALLOWED HTML OUTPUT
+HTML FORMATTING RULES
 =====================
 
-Allowed tags:
-<p>, <br>, <strong>, <em>, <i>, <code>, <pre>, <ul>, <ol>, <li>, <a>, <span>
+You have exactly 3 types of content blocks:
 
-Allowed attributes:
-href, class, data-language, style (only color), target
+TYPE 1 - Text paragraphs:
+<p>text with <strong>bold</strong>, <em>italic</em>, <code>inline code</code></p>
 
-Forbidden:
-- All heading tags (<h1>, <h2>, <h3>, ...)
-- <script>, <style>, <iframe>, <img>, <object>, <embed>, <video>, <audio>, <form>, <input>, <button>
-- All event handler attributes (onclick, onerror, onload, etc.)
-- javascript:, data:, vbscript: in href
-- Inline styles except color
-- Custom tags or unknown attributes
+TYPE 2 - Lists:
+<ul>
+<li>first item</li>
+<li>second item with <strong>some emphasis</strong></li>
+</ul>
+
+CRITICAL: In lists, do NOT wrap entire <li> content in formatting tags.
+✅ Correct: <li>Item with <strong>emphasis</strong> word</li>
+❌ Wrong: <li><strong>Entire item content</strong></li>
+
+TYPE 3 - Code blocks:
+<pre><code class="language-XXX" data-language="XXX">>code here</code></pre>
+
+CRITICAL RULE: <p> tags can ONLY contain inline formatting tags.
+<p> tags CANNOT contain code blocks or lists!
+
+Allowed inside <p>: <strong>, <em>, <i>, <code>, <u>
+Allowed block structures: <p>, <ul>, <li>, <pre>, <code>
+
+FORBIDDEN inside <p>:
+- <pre><code> blocks
+- <ul><li> lists
+- Other <p> tags
 
 =====================
 CODE HANDLING RULES
 =====================
 
-1. ALL code must be output in this format:
+1. ALL code blocks must use this EXACT format:
 
 <pre><code class="language-XXX" data-language="XXX">
 ... code here ...
@@ -65,14 +83,16 @@ CODE HANDLING RULES
    - preserve indentation and formatting
 
 =====================
-GENERAL RULES
+TEXT PROCESSING RULES
 =====================
 
-- Rewrite content only with the allowed HTML tags.
-- Remove unsupported or dangerous HTML entirely.
-- Do NOT return Markdown.
-- Do NOT invent details not present in the input.
-- Final result must be clean, minimal, Quill-compatible HTML.
+- Automatically detect and format inline code with <code> tags (only inside <p> tags)
+- Identify emphasis and format with <strong> or <em> tags (only inside <p> tags)
+- Convert any list structures to <ul><li> format (as separate blocks)
+- Use HTML tags (<strong>, <em>, <code>) instead of Markdown syntax
+- Do NOT invent details not present in the input
+- Wrap plain text content in <p> tags with inline formatting only
+- Return valid, well-formed HTML
 
 
 =====================
@@ -133,19 +153,28 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
         throw new Error('OpenAI returned an empty response content.');
       }
 
-      const aiResponse = JSON.parse(responseContent);
+      const aiResponse: GenerateFlashcardResponse = JSON.parse(responseContent);
 
-      // Sanitize HTML content in question, answer and context
-      const sanitizedResponse = {
+      const { answer, question } = sanitizeResponse(
+        aiResponse.question,
+        aiResponse.answer,
+      );
+
+      /**
+       * Process HTML to remove p wrappers and format for frontend
+       * to decrease complexity for flashcard editing
+       * As it is hard for AI to generate HTML without unnecessary wrappers, we clean it manually here
+       */
+      const processedResponse = {
         ...aiResponse,
-        question: DOMPurify.sanitize(aiResponse.question || ''),
-        answer: DOMPurify.sanitize(aiResponse.answer || ''),
+        question: processHtmlContent(question),
+        answer: processHtmlContent(answer),
         context: DOMPurify.sanitize(aiResponse.context || '', {
           ALLOWED_TAGS: [],
         }), // Only text, no HTML
       };
 
-      return generateFlashcardResponseSchema.parse(sanitizedResponse);
+      return generateFlashcardResponseSchema.parse(processedResponse);
     } catch (error) {
       this.errorService.handle(
         AppErrorCode.AI_RESPONSE_INVALID,

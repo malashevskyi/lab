@@ -101,6 +101,7 @@ export default tseslint.config(
       parserOptions: {
         project: [
           './packages/server/tsconfig.app.json',
+          './packages/server/tsconfig.json',
           './types/tsconfig.json',
           './types/tsconfig.lib.json',
         ],

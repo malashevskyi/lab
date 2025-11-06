@@ -158,7 +158,7 @@ export const MainPopup: React.FC = () => {
   return (
     <div
       ref={popupRef}
-      className={`fixed bg-white rounded-lg shadow-xl border border-gray-300 z-[999999999] w-[98%] max-w-[1000px] h-[33%] min-h-[300px] max-h-[600px] grid grid-rows-[auto_auto_1fr] ${
+      className={`fixed bg-white rounded-lg shadow-xl border border-solid border-gray-300 z-[999] w-[98%] max-w-[1000px] h-[33%] min-h-[300px] max-h-[600px] grid grid-rows-[auto_auto_1fr] ${
         isDragging ? 'cursor-grabbing' : 'cursor-default'
       } ${
         isDragging || !isInitialized

@@ -28,6 +28,7 @@ export const useGetLastFlashcard = () => {
     enabled: true, // Enable auto-fetching so it responds to invalidations
     retry: false,
     staleTime: 0, // Consider data immediately stale so it refetches on invalidation
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {

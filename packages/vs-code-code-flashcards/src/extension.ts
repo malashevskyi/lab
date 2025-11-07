@@ -1,26 +1,122 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import { StateManager } from './stateManager';
+import { Highlighter } from './highlighter';
+import { CodeSnippetsProvider } from './codeSnippetsProvider';
+import { OpenAIService } from './openAIService';
+import { CodeSnippet } from './types';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  const stateManager = new StateManager(context);
+  const highlighter = new Highlighter();
+  const openAIService = new OpenAIService();
+  const snippetsProvider = new CodeSnippetsProvider(stateManager);
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vs-code-code-flashcards" is now active!');
+  vscode.window.registerTreeDataProvider(
+    'code-flashcards-snippets',
+    snippetsProvider
+  );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('vs-code-code-flashcards.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from vs-code-code-flashcards!');
-	});
+  vscode.window.onDidChangeActiveTextEditor((editor) => {
+    if (editor) {
+      highlighter.updateDecorations(editor, stateManager.getSnippets());
+    }
+  });
 
-	context.subscriptions.push(disposable);
+  if (vscode.window.activeTextEditor) {
+    highlighter.updateDecorations(
+      vscode.window.activeTextEditor,
+      stateManager.getSnippets()
+    );
+  }
+
+  const toggleHighlightCommand = vscode.commands.registerCommand(
+    'code-flashcards.toggleHighlight',
+    async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.selection.isEmpty) {
+        return;
+      }
+
+      const currentSelection = editor.selection;
+      const documentUri = editor.document.uri.toString();
+
+      const allSnippets = stateManager.getSnippets();
+      const snippetsInOtherFiles = allSnippets.filter(
+        (s) => s.uri !== documentUri
+      );
+      const snippetsInThisFile = allSnippets.filter(
+        (s) => s.uri === documentUri
+      );
+
+      const snippetsToKeep: CodeSnippet[] = [];
+      let wasIntersectionFound = false;
+
+      for (const snippet of snippetsInThisFile) {
+        const existingVscodeRange = new vscode.Range(
+          new vscode.Position(snippet.range.startLine, 0),
+          new vscode.Position(snippet.range.endLine, 999)
+        );
+
+        if (currentSelection.intersection(existingVscodeRange)) {
+          wasIntersectionFound = true;
+        } else {
+          snippetsToKeep.push(snippet);
+        }
+      }
+
+      if (!wasIntersectionFound) {
+        const newSnippet: CodeSnippet = {
+          id: uuidv4(),
+          content: editor.document.getText(currentSelection),
+          fileName: path.basename(editor.document.fileName),
+          range: {
+            startLine: currentSelection.start.line,
+            endLine: currentSelection.end.line,
+          },
+          uri: documentUri,
+        };
+        snippetsToKeep.push(newSnippet);
+      }
+
+      const finalSnippets = [...snippetsInOtherFiles, ...snippetsToKeep];
+
+      await stateManager.setSnippets(finalSnippets);
+
+      highlighter.updateDecorations(editor, stateManager.getSnippets());
+      snippetsProvider.refresh();
+    }
+  );
+
+  const generateFlashcardCommand = vscode.commands.registerCommand(
+    'code-flashcards.generateFlashcard',
+    async (snippet: CodeSnippet) => {
+      if (!snippet) {
+        vscode.window.showWarningMessage(
+          'Please select a snippet from the sidebar first.'
+        );
+        return;
+      }
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: 'Generating Flashcard...',
+          cancellable: false,
+        },
+        async () => {
+          const question = await openAIService.generateFlashcard(snippet);
+          vscode.window.showInformationMessage(`Question: ${question}`);
+        }
+      );
+    }
+  );
+
+  context.subscriptions.push(
+    toggleHighlightCommand,
+    generateFlashcardCommand,
+    highlighter
+  );
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}

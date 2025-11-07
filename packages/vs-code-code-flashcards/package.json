@@ -1,41 +1,99 @@
 {
-  "name": "vs-code-code-flashcards",
-  "displayName": "vs-code-code-flashcards",
-  "description": "Extension for creating flashcards from code.",
+  "name": "code-flashcards",
+  "displayName": "Code Flashcards",
+  "description": "Create AI-powered flashcards from your code snippets.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.105.0"
+    "vscode": "^1.83.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:code-flashcards-snippets"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "vs-code-code-flashcards.helloWorld",
-        "title": "Hello World"
+        "command": "code-flashcards.toggleHighlight",
+        "title": "Flashcards: Toggle Code Highlight"
+      },
+      {
+        "command": "code-flashcards.generateFlashcard",
+        "title": "Flashcards: Generate Flashcard",
+        "icon": "$(lightbulb)"
       }
-    ]
+    ],
+    "keybindings": [
+      {
+        "command": "code-flashcards.toggleHighlight",
+        "key": "ctrl+shift+h",
+        "mac": "cmd+shift+h",
+        "when": "editorTextFocus"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "code-flashcards-view-container",
+          "title": "Code Flashcards",
+          "icon": "$(notebook)"
+        }
+      ]
+    },
+    "views": {
+      "code-flashcards-view-container": [
+        {
+          "id": "code-flashcards-snippets",
+          "name": "Selected Snippets",
+          "type": "tree"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "code-flashcards.generateFlashcard",
+          "when": "view == code-flashcards-snippets",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Flashcards",
+      "properties": {
+        "code-flashcards.openai.apiKey": {
+          "type": "string",
+          "description": "Your OpenAI API key to generate flashcards.",
+          "default": ""
+        },
+        "code-flashcards.openai.model": {
+          "type": "string",
+          "description": "The OpenAI model to use for generation.",
+          "default": "gpt-3.5-turbo"
+        }
+      }
+    }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run compile",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "eslint src",
-    "test": "vscode-test"
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.105.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
-    "eslint": "^9.36.0",
-    "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@types/vscode": "^1.83.0",
+    "@types/mocha": "^10.0.3",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "eslint": "^8.52.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2",
+    "@vscode/test-electron": "^2.3.6"
   }
 }

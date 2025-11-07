@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import { ApiError } from '../services/ApiError';
 import type { FormikValues } from 'formik/dist/types';
 import { useAppStore } from '../store';
+import { normalizeUrl } from '../utils/normalizeUrl';
 
-const getStorageKey = (): string => `deepread_title_${window.location.href}`;
+const getStorageKey = (): string =>
+  `deepread_title_${normalizeUrl(window.location.href)}`;
 
 /**
  * @function usePersistedTitle

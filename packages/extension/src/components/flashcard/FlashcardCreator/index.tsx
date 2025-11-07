@@ -12,6 +12,7 @@ import { ChunkInput } from '../ChunkInput';
 import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
 import { useCreateFlashcard } from '../../../hooks/useCreateFlashcard';
 import TextareaAutosize from 'react-textarea-autosize';
+import { normalizeUrl } from '../../../utils/normalizeUrl';
 
 interface FormValues {
   chunks: Array<{ text: string }>;
@@ -45,7 +46,7 @@ export const FlashcardCreator: React.FC = () => {
       createFlashcard({
         title: values.title,
         chunks: values.chunks.map((c) => c.text),
-        sourceUrl: window.location.href,
+        sourceUrl: normalizeUrl(window.location.href),
       });
     },
   });

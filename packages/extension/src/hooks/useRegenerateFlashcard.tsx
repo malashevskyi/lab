@@ -10,6 +10,7 @@ import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 import { useAppStore } from '../store';
 import { FaRedo } from 'react-icons/fa';
+import { normalizeUrl } from '../utils/normalizeUrl';
 
 export const useRegenerateFlashcard = () => {
   const queryClient = useQueryClient();
@@ -68,7 +69,7 @@ export const useRegenerateFlashcard = () => {
     const data: CreateFlashcardBodyType = {
       title: lastFlashcard.title,
       chunks: lastFlashcard.chunks.map((chunk) => chunk.text),
-      sourceUrl: window.location.href,
+      sourceUrl: normalizeUrl(window.location.href),
       id: lastFlashcard.id, // Include the ID for regeneration
     };
 

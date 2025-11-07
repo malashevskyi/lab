@@ -105,3 +105,27 @@ span[data-purpose='cue-text'] {
   flex: 1;
   min-width: 0;
 }
+
+/*
+  Udemy assistant message list styles
+  My question, make it full for better readability
+*/
+[class^='learning-assistant-module--message-list'] section {
+  padding: 0px;
+  width: 100%;
+  max-width: 100%;
+  background: white;
+  border: none;
+  padding-bottom: 10px;
+}
+
+/*
+  Udemy assistant message list styles
+  AI response, make it full for better readability
+*/
+li[class^='composite-message-module--message-container'] {
+  display: block;
+}
+div[class^='learning-assistant-module--wrapper--Ta736'] {
+  padding-right: 0px;
+}

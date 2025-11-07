@@ -6,6 +6,7 @@ import {
   type Block,
 } from '../EditableHTML/utils/parseContentIntoBlocks';
 import { renderListAsHtml } from './renderListAsHtml';
+import { useToolbarStore } from '../../../store/toolbarStore';
 
 interface FlashcardListBlockProps {
   isEditing: boolean;
@@ -20,6 +21,8 @@ export const FlashcardListBlock: React.FC<FlashcardListBlockProps> = ({
   onEdit,
   onListUpdate,
 }) => {
+  const setToolbarVisible = useToolbarStore((state) => state.setToolbarVisible);
+
   const compareAndHandleUpdate = (markdownList: string) => {
     if (
       normalizeContentForComparison(list.content) ===
@@ -38,7 +41,11 @@ export const FlashcardListBlock: React.FC<FlashcardListBlockProps> = ({
         className="w-full p-2 border border-solid border-blue-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
         defaultValue={list.content}
         autoFocus
-        onBlur={(e) => compareAndHandleUpdate(e.target.value)}
+        onFocus={() => setToolbarVisible(true)}
+        onBlur={(e) => {
+          setToolbarVisible(false);
+          compareAndHandleUpdate(e.target.value);
+        }}
         onKeyDown={(e) => {
           if ((e.key === 'Enter' && e.shiftKey) || e.key === 'Escape') {
             e.preventDefault();

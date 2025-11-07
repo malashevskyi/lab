@@ -31,6 +31,7 @@ export const expandSelectionAcrossNodes = (selection: Selection): Selection => {
   let newStartOffset = startOffset;
   let newEndOffset = endOffset;
 
+  // Expand start backward to include full word
   while (
     newStartOffset > 0 &&
     !PUNCTUATION_AND_SPACE_REGEX.test(startTextContent[newStartOffset - 1])
@@ -38,10 +39,21 @@ export const expandSelectionAcrossNodes = (selection: Selection): Selection => {
     newStartOffset--;
   }
 
+  // Skip over leading punctuation, but preserve repeated punctuation (e.g., "::" in CSS)
+  // Only skip single punctuation marks
   while (
     newStartOffset < startTextContent.length &&
     PUNCTUATION_AND_SPACE_REGEX.test(startTextContent[newStartOffset])
   ) {
+    // Check if this is a repeated punctuation mark (e.g., :: in CSS)
+    const currentChar = startTextContent[newStartOffset];
+    const nextChar = startTextContent[newStartOffset + 1];
+
+    // If the same punctuation repeats, don't skip it
+    if (currentChar === nextChar && currentChar !== ' ') {
+      break;
+    }
+
     newStartOffset++;
   }
 

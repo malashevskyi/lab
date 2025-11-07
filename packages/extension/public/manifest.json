@@ -4,9 +4,7 @@
   "version": "0.1.0",
   "description": "AI-Powered Contextual Language Learning.",
   "permissions": ["storage", "activeTab", "tabs"],
-  "action": {
-    "default_popup": "index.html"
-  },
+  "action": {},
   "icons": {
     "16": "vite.svg",
     "48": "vite.svg",

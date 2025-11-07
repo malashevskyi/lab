@@ -11,6 +11,8 @@ import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
 import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
 import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
 import { ApiError } from '../../../services/ApiError';
+import { toast } from 'sonner';
+import { MessageType } from '../../../types/sentry-messages';
 
 window.addEventListener('error', (event) => {
   captureError(event.error, {
@@ -45,11 +47,15 @@ const ContentScriptRoot: React.FC = () => {
     (state) => state.removeFlashcardChunks
   );
   const setPopupPosition = useAppStore((state) => state.setPopupPosition);
+  const handleClickExtensionIcon = useAppStore(
+    (state) => state.handleClickExtensionIcon
+  );
   const prevChunksCount = usePrevious(flashcardCreatorChunks.length);
   const selectedTextFromStore = useAppStore(
     (state) => state.analysis.selectedText
   );
   const [currentRange, setCurrentRange] = React.useState<Range | null>(null);
+  const [isContentScriptReady, setIsContentScriptReady] = React.useState(false);
 
   /**
    * @function handleMouseUp
@@ -58,6 +64,14 @@ const ContentScriptRoot: React.FC = () => {
    */
   const handleMouseUp = (event: MouseEvent) => {
     if (!event.altKey && !event.shiftKey) return;
+
+    // Ensure content script is ready before processing selection
+    if (!isContentScriptReady) {
+      toast.warning(
+        'Extension is still loading, please try again in a moment.'
+      );
+      return;
+    }
 
     event.preventDefault();
 
@@ -121,6 +135,15 @@ const ContentScriptRoot: React.FC = () => {
     }
   };
 
+  // Mark content script as ready after initial render
+  useEffect(() => {
+    const readyTimer = setTimeout(() => {
+      setIsContentScriptReady(true);
+    }, 1000);
+
+    return () => clearTimeout(readyTimer);
+  }, []);
+
   useEffect(() => {
     document.addEventListener('mouseup', handleMouseUp);
 
@@ -128,6 +151,21 @@ const ContentScriptRoot: React.FC = () => {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [handleMouseUp]);
+
+  // Handle messages from background script
+  useEffect(() => {
+    const handleMessage = (message: any) => {
+      if (message.type === MessageType.OPEN_POPUP) {
+        handleClickExtensionIcon();
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(handleMessage);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+    };
+  }, [handleClickExtensionIcon]);
 
   // Highlight selected text for analysis
   useEffect(() => {

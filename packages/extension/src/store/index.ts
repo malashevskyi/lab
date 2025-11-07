@@ -72,7 +72,7 @@ export interface AppActions {
   clearLastFlashcardChunks: () => void;
   setPopupPosition: (position: { x: number; y: number }) => void;
   setFlashcardCreatorTitle: (title: string) => void;
-  openPopup: () => void;
+  handleClickExtensionIcon: () => void;
   closePopup: () => void;
   setActiveTab: (tab: PopupTab) => void;
   // Analysis actions (moved from sidebar)
@@ -243,10 +243,10 @@ export const useAppStore = create(
       }),
 
     /**
-     * @function openPopup
+     * @function handleClickExtensionIcon
      * @description Opens the popup.
      */
-    openPopup: () =>
+    handleClickExtensionIcon: () =>
       set((state) => {
         state.popup.isOpen = true;
       }),

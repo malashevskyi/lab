@@ -6,6 +6,16 @@ import {
 
 const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
 
+// Handle extension icon click
+chrome.action.onClicked.addListener((tab) => {
+  if (tab.id) {
+    // Send message to content script to open popup
+    void chrome.tabs.sendMessage(tab.id, {
+      type: MessageType.OPEN_POPUP,
+    });
+  }
+});
+
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: 'production',

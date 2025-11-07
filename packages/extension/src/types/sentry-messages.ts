@@ -2,6 +2,7 @@ export const MessageType = {
   SENTRY_CAPTURE: 'SENTRY_CAPTURE',
   SENTRY_MESSAGE: 'SENTRY_MESSAGE',
   AI_CHAT_PROMPT: 'AI_CHAT_PROMPT',
+  OPEN_POPUP: 'OPEN_POPUP',
 } as const;
 
 export interface SentryCaptureMessage {

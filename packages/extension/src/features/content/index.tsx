@@ -11,10 +11,14 @@ import ContentScriptRoot from './ContentScriptRoot';
 import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 import sonnerStyles from 'sonner/dist/styles.css?inline';
 import { Toaster } from 'sonner';
+import { initializeSiteModifiers } from './site-modifiers';
 
 console.log('[DeepRead] Content script loaded!');
 
 injectHostStyles(hostPageStyles, 'deepread-host-styles');
+
+// Initialize site-specific modifications (e.g., Udemy transcript fixes)
+initializeSiteModifiers();
 
 const rootElement = document.createElement('div');
 rootElement.id = 'deepread-root';

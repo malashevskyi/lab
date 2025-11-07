@@ -1,0 +1,107 @@
+/**
+ * Udemy Site Modifications
+ * 
+ * These styles modify Udemy's transcript functionality to make it more
+ * suitable for text selection and flashcard creation.
+ * 
+ * Note: We avoid using generated class names (with hashes like --ugVsE)
+ * and instead rely on data-purpose attributes which are more stable.
+ */
+
+/* Remove hover underline effect from transcript cues */
+p[data-purpose='transcript-cue'],
+p[data-purpose='transcript-cue-active'] {
+  text-decoration: none !important;
+}
+
+p[data-purpose='transcript-cue']:hover,
+p[data-purpose='transcript-cue-active']:hover {
+  text-decoration: none !important;
+}
+
+/* Remove button role styling and cursor */
+p[data-purpose='transcript-cue'],
+p[data-purpose='transcript-cue-active'] {
+  cursor: text !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure text is selectable */
+span[data-purpose='cue-text'] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* Remove purple borders and shadows from active transcript */
+p[data-purpose='transcript-cue-active'] {
+  border: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove box-shadow from transcript containers */
+[data-purpose='transcript-panel'] > div {
+  box-shadow: none !important;
+}
+
+/* Keep yellow background highlight for active cue (applied via span inside) */
+span[data-purpose='cue-text'] {
+  /* Udemy adds inline background-color, we let it stay but remove shadows */
+  box-shadow: none !important;
+}
+
+/* DeepRead seek button container */
+.deepread-seek-button-container {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* DeepRead seek button */
+.deepread-seek-button {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  background-color: #5624d0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+  pointer-events: auto !important;
+  z-index: 10;
+  position: relative;
+}
+
+.deepread-seek-button:hover {
+  background-color: #401b9c;
+  transform: scale(1.05);
+}
+
+.deepread-seek-button:active {
+  transform: scale(0.95);
+}
+
+/* Play icon SVG */
+.deepread-seek-button svg {
+  width: 14px;
+  height: 14px;
+  fill: white;
+}
+
+/* Transcript content wrapper */
+.deepread-transcript-content {
+  flex: 1;
+  min-width: 0;
+}

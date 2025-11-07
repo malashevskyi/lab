@@ -1,9 +1,7 @@
 import type { GetLastFlashcardResponseType } from '@lab/types/deep-read/flashcards';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useAppStore } from '../../../store';
 import { EditableHTML } from '../EditableHTML';
-import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
-import { useUpdateFlashcard } from '../../../hooks/useUpdateFlashcard';
-import { FaRedo, FaSave } from 'react-icons/fa';
 
 export interface LastFlashcardProps {
   flashcard?: GetLastFlashcardResponseType | null;
@@ -14,47 +12,39 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
   flashcard,
   isVisible,
 }) => {
-  const { regenerateFlashcard, isRegenerating, canRegenerate } =
-    useRegenerateFlashcard();
-  const { updateFlashcard, isUpdating } = useUpdateFlashcard();
+  const onLastFlashcardChange = useAppStore(
+    (state) => state.onLastFlashcardChange
+  );
 
-  const [editedQuestion, setEditedQuestion] = useState('');
-  const [editedAnswer, setEditedAnswer] = useState('');
-  const [hasChanges, setHasChanges] = useState(false);
+  const editedQuestion = useAppStore(
+    (state) => state.lastFlashcard.editedQuestion
+  );
+  const editedAnswer = useAppStore((state) => state.lastFlashcard.editedAnswer);
 
   useEffect(() => {
     if (flashcard) {
-      setEditedQuestion(flashcard.question);
-      setEditedAnswer(flashcard.answer);
-      setHasChanges(false);
+      onLastFlashcardChange({
+        hasChanges: false,
+        editedQuestion: flashcard.question,
+        editedAnswer: flashcard.answer,
+      });
     }
   }, [flashcard]);
 
   const handleQuestionChange = (newHtml: string) => {
-    setEditedQuestion(newHtml);
-    if (flashcard) {
-      const hasChanged =
-        newHtml !== flashcard.question || editedAnswer !== flashcard.answer;
-      setHasChanges(hasChanged);
-    }
+    onLastFlashcardChange({
+      hasChanges: newHtml !== flashcard?.question,
+      editedQuestion: newHtml,
+      id: flashcard?.id,
+    });
   };
 
   const handleAnswerChange = (newHtml: string) => {
-    setEditedAnswer(newHtml);
-    if (flashcard) {
-      const hasChanged = newHtml !== flashcard.answer;
-      setHasChanges(hasChanged);
-    }
-  };
-
-  const handleUpdate = () => {
-    if (flashcard && hasChanges) {
-      updateFlashcard(flashcard.id, {
-        question: editedQuestion,
-        answer: editedAnswer,
-      });
-      setHasChanges(false);
-    }
+    onLastFlashcardChange({
+      hasChanges: newHtml !== flashcard?.answer,
+      editedAnswer: newHtml,
+      id: flashcard?.id,
+    });
   };
 
   if (!isVisible) return null;
@@ -73,48 +63,12 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
                     <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">
                       Question
                     </div>
-                    {canRegenerate && (
-                      <button
-                        onClick={regenerateFlashcard}
-                        disabled={isRegenerating}
-                        className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-solid border-blue-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Regenerate flashcard with same content"
-                      >
-                        <FaRedo
-                          className={`w-3 h-3 ${
-                            isRegenerating ? 'animate-spin' : ''
-                          }`}
-                        />
-                        <span className="hidden sm:inline">
-                          {isRegenerating ? 'Regenerating...' : 'Regenerate'}
-                        </span>
-                      </button>
-                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    {hasChanges && (
-                      <button
-                        onClick={handleUpdate}
-                        disabled={isUpdating}
-                        className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-green-600 hover:text-green-700 hover:bg-green-50 border border-solid border-green-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Update flashcard changes"
-                      >
-                        <FaSave
-                          className={`w-3 h-3 ${
-                            isUpdating ? 'animate-pulse' : ''
-                          }`}
-                        />
-                        <span className="hidden sm:inline">
-                          {isUpdating ? 'Updating...' : 'Update'}
-                        </span>
-                      </button>
-                    )}
-                    {flashcard.context && (
-                      <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                        {flashcard.context}
-                      </span>
-                    )}
-                  </div>
+                  {flashcard.context && (
+                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                      {flashcard.context}
+                    </span>
+                  )}
                 </div>
                 <EditableHTML
                   content={editedQuestion}

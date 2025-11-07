@@ -26,6 +26,9 @@ export interface LastFlashcardState {
   chunks: FlashcardChunk[];
   title: string;
   id: string | null;
+  hasChanges: boolean;
+  editedQuestion: string;
+  editedAnswer: string;
 }
 
 export interface AppState {
@@ -77,6 +80,17 @@ export interface AppActions {
   setActiveTab: (tab: PopupTab) => void;
   // Analysis actions (moved from sidebar)
   openAnalysis: (selectedText: string, context: string) => void;
+  onLastFlashcardChange: ({
+    hasChanges,
+    editedQuestion,
+    editedAnswer,
+    id,
+  }: {
+    hasChanges: boolean;
+    editedQuestion?: string;
+    editedAnswer?: string;
+    id?: string;
+  }) => void;
 }
 
 const initialState: AppState = {
@@ -93,6 +107,9 @@ const initialState: AppState = {
     chunks: [],
     title: '',
     id: null,
+    hasChanges: false,
+    editedQuestion: '',
+    editedAnswer: '',
   },
   popup: {
     position: { x: 0, y: 0 },
@@ -202,14 +219,17 @@ export const useAppStore = create(
      * @param {string} id - The flashcard ID to save.
      */
     saveLastFlashcardChunks: (chunks, title, id) =>
-      set((state) => ({
-        ...state,
-        lastFlashcard: {
-          chunks,
-          title,
-          id,
-        },
-      })),
+      set((state) => {
+        return {
+          ...state,
+          lastFlashcard: {
+            ...state.lastFlashcard,
+            chunks,
+            title,
+            id,
+          },
+        };
+      }),
 
     /**
      * @function clearLastFlashcardChunks
@@ -281,6 +301,14 @@ export const useAppStore = create(
         state.popup.activeTab = 'analysis';
         state.analysis.selectedText = selectedText;
         state.analysis.context = context;
+      }),
+
+    onLastFlashcardChange: ({ hasChanges, editedQuestion, editedAnswer, id }) =>
+      set((state) => {
+        state.lastFlashcard.hasChanges = hasChanges;
+        if (editedQuestion) state.lastFlashcard.editedQuestion = editedQuestion;
+        if (editedAnswer) state.lastFlashcard.editedAnswer = editedAnswer;
+        if (id) state.lastFlashcard.id = id;
       }),
   }))
 );

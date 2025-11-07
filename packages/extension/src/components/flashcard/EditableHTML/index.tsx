@@ -23,23 +23,21 @@ export const EditableHTML: React.FC<EditableHTMLProps> = ({
   >(null);
   const blocks = parseContentIntoBlocks(content);
 
-  // Helper function to reconstruct content from blocks
+  // Helper function to reconstruct markdown content from blocks
   const reconstructContent = () =>
     blocks
       .map((b) => {
         if (b.type === BlockType.Code) {
-          // Preserve BOTH class and data-language attributes like the server generates
-          const attributes = b.language
-            ? ` class="language-${b.language}" data-language="${b.language}"`
-            : '';
-          return `<pre><code${attributes.trim()}>${b.content}</code></pre>`;
+          // Reconstruct markdown code block
+          const language = b.language || '';
+          return `\`\`\`${language}\n${b.content}\n\`\`\``;
         } else if (b.type === BlockType.List) {
-          return b.content;
+          return b.content; // Already in markdown format (- item)
         } else {
-          return b.content;
+          return b.content; // Plain text with markdown formatting
         }
       })
-      .join('\n');
+      .join('\n\n');
 
   const renderBlocks = () => {
     return blocks.map((block, index) => {
@@ -55,7 +53,6 @@ export const EditableHTML: React.FC<EditableHTMLProps> = ({
               editable={true}
               onCodeChange={(newCode) => {
                 // Update the code block in content
-                const blocks = parseContentIntoBlocks(content);
                 blocks[index] = { ...block, content: newCode };
                 const newContent = reconstructContent();
                 onContentChange(newContent);
@@ -71,7 +68,6 @@ export const EditableHTML: React.FC<EditableHTMLProps> = ({
             key={`list-edit-${index}`}
             isEditing={isBlockEditing}
             list={block}
-            content={block.content}
             onEdit={(isEdit?: boolean) => {
               setEditingTextBlockIndex(isEdit === false ? null : index);
             }}
@@ -89,7 +85,6 @@ export const EditableHTML: React.FC<EditableHTMLProps> = ({
           key={`text-${index}`}
           isEditing={isBlockEditing}
           textBlock={block}
-          content={block.content}
           onEdit={(isEdit?: boolean) => {
             setEditingTextBlockIndex(isEdit === false ? null : index);
           }}

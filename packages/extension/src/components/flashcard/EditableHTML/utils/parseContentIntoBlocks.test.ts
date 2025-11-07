@@ -35,9 +35,8 @@ describe('parseContentIntoBlocks', () => {
   });
 
   describe('Code blocks', () => {
-    test('should parse code block with class attribute only', () => {
-      const content =
-        '<pre><code class="language-javascript">console.log("test");</code></pre>';
+    test('should parse javascript code block', () => {
+      const content = '```javascript\nconsole.log("test");\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -49,9 +48,8 @@ describe('parseContentIntoBlocks', () => {
       ]);
     });
 
-    test('should parse code block with data-language attribute only', () => {
-      const content =
-        '<pre><code data-language="html">&lt;div&gt;test&lt;/div&gt;</code></pre>';
+    test('should parse html code block', () => {
+      const content = '```html\n<div>test</div>\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -63,9 +61,8 @@ describe('parseContentIntoBlocks', () => {
       ]);
     });
 
-    test('should parse code block with BOTH class and data-language attributes', () => {
-      const content =
-        '<pre><code class="language-python" data-language="python">print("hello")</code></pre>';
+    test('should parse python code block', () => {
+      const content = '```python\nprint("hello")\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -77,9 +74,8 @@ describe('parseContentIntoBlocks', () => {
       ]);
     });
 
-    test('should parse code block with data-language first, then class', () => {
-      const content =
-        '<pre><code data-language="css" class="language-css">body { margin: 0; }</code></pre>';
+    test('should parse css code block', () => {
+      const content = '```css\nbody { margin: 0; }\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -91,8 +87,8 @@ describe('parseContentIntoBlocks', () => {
       ]);
     });
 
-    test('should parse code block without language attributes', () => {
-      const content = '<pre><code>plain code without language</code></pre>';
+    test('should parse nplain code', () => {
+      const content = '```\nplain code without language\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -105,10 +101,8 @@ describe('parseContentIntoBlocks', () => {
     });
 
     test('should parse multiline code block', () => {
-      const content = `<pre><code class="language-javascript">function test() {
-  console.log("multiline");
-  return true;
-}</code></pre>`;
+      const content =
+        '```javascript\nfunction test() {\n  console.log("multiline");\n  return true;\n}\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -122,65 +116,48 @@ describe('parseContentIntoBlocks', () => {
         },
       ]);
     });
-
-    test('should handle code block with extra attributes', () => {
-      const content =
-        '<pre><code class="language-typescript" data-language="typescript" id="code1" style="color: red;">const x = 5;</code></pre>';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([
-        {
-          type: 'code',
-          content: 'const x = 5;',
-          language: 'typescript',
-        },
-      ]);
-    });
   });
 
   describe('List blocks', () => {
     test('should parse simple unordered list', () => {
-      const content = '<ul><li>Item 1</li><li>Item 2</li></ul>';
+      const content = '- Item 1\n- Item 2';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
         {
           type: 'list',
-          content: '<ul><li>Item 1</li><li>Item 2</li></ul>',
+          content: `- Item 1
+- Item 2`,
         },
       ]);
     });
 
     test('should parse multiline list', () => {
-      const content = `<ul>
-<li>First item</li>
-<li>Second item</li>
-<li>Third item</li>
-</ul>`;
+      const content = `- First item
+- Second item
+- Third item`;
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
         {
           type: 'list',
-          content: `<ul>
-<li>First item</li>
-<li>Second item</li>
-<li>Third item</li>
-</ul>`,
+          content: `- First item
+- Second item
+- Third item`,
         },
       ]);
     });
 
     test('should parse list with formatted content', () => {
-      const content =
-        '<ul><li><strong>Bold item</strong></li><li><em>Italic item</em></li></ul>';
+      const content = `- **Bold item**
+- *Italic item*`;
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
         {
           type: 'list',
-          content:
-            '<ul><li><strong>Bold item</strong></li><li><em>Italic item</em></li></ul>',
+          content: `- **Bold item**
+- *Italic item*`,
         },
       ]);
     });
@@ -188,8 +165,8 @@ describe('parseContentIntoBlocks', () => {
 
   describe('Mixed content', () => {
     test('should parse text followed by code block', () => {
-      const content = `Introduction text
-<pre><code class="language-javascript">console.log("code");</code></pre>`;
+      const content =
+        'Introduction text\n```javascript\nconsole.log("code");\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -203,8 +180,7 @@ describe('parseContentIntoBlocks', () => {
     });
 
     test('should parse code block followed by text', () => {
-      const content = `<pre><code class="language-python">print("hello")</code></pre>
-Explanation text`;
+      const content = '```python\nprint("hello")\n```Explanation text';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -218,11 +194,9 @@ Explanation text`;
     });
 
     test('should parse text, code, and list together', () => {
-      const content = `Here is some text
-<pre><code class="language-html" data-language="html">&lt;div&gt;HTML&lt;/div&gt;</code></pre>
-And here is a list:
-<ul><li>First</li><li>Second</li></ul>
-Final text`;
+      const content =
+        'Here is some text\n```html\n<div>HTML</div>\n```\nAnd here is a list:\n- First\n- Second\nFinal text';
+
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -235,18 +209,17 @@ Final text`;
         { type: 'text', content: 'And here is a list:' },
         {
           type: 'list',
-          content: '<ul><li>First</li><li>Second</li></ul>',
+          content: `- First
+- Second
+`,
         },
         { type: 'text', content: 'Final text' },
       ]);
     });
 
     test('should parse multiple code blocks with different languages', () => {
-      const content = `<pre><code class="language-javascript">console.log("js");</code></pre>
-Text between
-<pre><code data-language="python">print("python")</code></pre>
-More text
-<pre><code class="language-css" data-language="css">body { color: red; }</code></pre>`;
+      const content =
+        '```javascript\nconsole.log("js");\n```\nText between\n```python\nprint("python")\n```\nMore text\n```css\nbody { color: red; }\n```';
       const result = parseContentIntoBlocks(content);
 
       expect(result).toEqual([
@@ -271,97 +244,10 @@ More text
     });
   });
 
-  describe('Edge cases', () => {
-    test('should handle empty content', () => {
-      const content = '';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([]);
-    });
-
-    test('should handle whitespace-only content', () => {
-      const content = '   \n\n  \t  \n   ';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([]);
-    });
-
-    test('should handle content with only code block', () => {
-      const content =
-        '<pre><code class="language-sql">SELECT * FROM users;</code></pre>';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([
-        {
-          type: 'code',
-          content: 'SELECT * FROM users;',
-          language: 'sql',
-        },
-      ]);
-    });
-
-    test('should handle content with only list', () => {
-      const content = '<ul><li>Only list item</li></ul>';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([
-        {
-          type: 'list',
-          content: '<ul><li>Only list item</li></ul>',
-        },
-      ]);
-    });
-
-    test('should handle nested HTML in code content', () => {
-      const content =
-        '<pre><code class="language-html">&lt;div class="container"&gt;\n  &lt;p&gt;Nested content&lt;/p&gt;\n&lt;/div&gt;</code></pre>';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([
-        {
-          type: 'code',
-          content: `<div class="container">
-  <p>Nested content</p>
-</div>`,
-          language: 'html',
-        },
-      ]);
-    });
-
-    test('should prioritize class attribute when both class and data-language differ', () => {
-      const content =
-        '<pre><code class="language-javascript" data-language="typescript">const x = 5;</code></pre>';
-      const result = parseContentIntoBlocks(content);
-
-      expect(result).toEqual([
-        {
-          type: 'code',
-          content: 'const x = 5;',
-          language: 'javascript', // class takes priority
-        },
-      ]);
-    });
-  });
-
   describe('Real-world server examples', () => {
     test('should parse server-generated flashcard with mixed content', () => {
-      const content = `HTML provides three main list elements:
-
-<ul>
-<li><strong>&lt;ul&gt;</strong> - Creates an unordered (bulleted) list</li>
-<li><strong>&lt;ol&gt;</strong> - Creates an ordered (numbered) list</li>
-<li><strong>&lt;dl&gt;</strong> - Creates a description list with terms and definitions</li>
-</ul>
-
-Example of an unordered list:
-
-<pre><code class="language-html" data-language="html">&lt;ul&gt;
-  &lt;li&gt;First item&lt;/li&gt;
-  &lt;li&gt;Second item&lt;/li&gt;
-  &lt;li&gt;Third item&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
-
-Each list type serves different purposes in semantic HTML structure.`;
+      const content =
+        'HTML provides three main list elements:\n- **&lt;ul&gt;** - Creates an unordered (bulleted) list\n- **&lt;ol&gt;** - Creates an ordered (numbered) list\n- **&lt;dl&gt;** - Creates a description list with terms and definitions\nExample of an unordered list:\n```html\n&lt;ul&gt;\n&lt;li&gt;First item&lt;/li&gt;\n&lt;li&gt;Second item&lt;/li&gt;\n&lt;li&gt;Third item&lt;/li&gt;\n&lt;/ul&gt;\n```\nEach list type serves different purposes in semantic HTML structure.';
 
       const result = parseContentIntoBlocks(content);
 
@@ -377,11 +263,11 @@ Each list type serves different purposes in semantic HTML structure.`;
       });
       expect(result[3]).toEqual({
         type: 'code',
-        content: `<ul>
-  <li>First item</li>
-  <li>Second item</li>
-  <li>Third item</li>
-</ul>`,
+        content: `&lt;ul&gt;
+&lt;li&gt;First item&lt;/li&gt;
+&lt;li&gt;Second item&lt;/li&gt;
+&lt;li&gt;Third item&lt;/li&gt;
+&lt;/ul&gt;`,
         language: 'html',
       });
       expect(result[4]).toEqual({

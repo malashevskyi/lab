@@ -5,12 +5,10 @@ import {
   BlockType,
   type Block,
 } from '../EditableHTML/utils/parseContentIntoBlocks';
-import { markdownToHtml } from '../EditableHTML/utils/markdownToHtml';
-import { htmlToMarkdown } from '../EditableHTML/utils/htmlToMarkdown';
+import { renderListAsHtml } from './renderListAsHtml';
 
 interface FlashcardListBlockProps {
   isEditing: boolean;
-  content: string;
   list: Block;
   onEdit: (isEdit?: boolean) => void;
   onListUpdate: (updatedBlock: Block) => void;
@@ -18,53 +16,27 @@ interface FlashcardListBlockProps {
 
 export const FlashcardListBlock: React.FC<FlashcardListBlockProps> = ({
   isEditing,
-  content,
   list,
   onEdit,
   onListUpdate,
 }) => {
-  const compareAndHandleUpdate = (rowList: string) => {
-    // Convert markdown list back to HTML for comparison
-    const newHtml = rowList
-      .split('\n')
-      .filter((line) => line.trim())
-      .map((line) => {
-        const content = line.replace(/^-\s*/, '').trim();
-        const htmlContent = markdownToHtml(content);
-        return `<li>${htmlContent}</li>`;
-      })
-      .join('');
-    const newListHtml = `<ul>${newHtml}</ul>`;
-
-    // If content hasn't changed, don't update
+  const compareAndHandleUpdate = (markdownList: string) => {
     if (
       normalizeContentForComparison(list.content) ===
-      normalizeContentForComparison(newListHtml)
+      normalizeContentForComparison(markdownList)
     ) {
       onEdit(false);
       return;
     }
 
-    onListUpdate({ type: BlockType.List, content: newListHtml });
+    onListUpdate({ type: BlockType.List, content: markdownList });
   };
 
   if (isEditing) {
-    // Convert list to markdown for editing
-    // First extract each li content and convert to markdown
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = content;
-    const listItems = tempDiv.querySelectorAll('li');
-    const markdownItems = Array.from(listItems).map((li) => {
-      const htmlContent = li.innerHTML;
-      const markdownContent = htmlToMarkdown(htmlContent);
-      return `- ${markdownContent}`;
-    });
-    const listMarkdown = markdownItems.join('\n');
-
     return (
       <TextareaAutosize
         className="w-full p-2 border border-solid border-blue-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
-        defaultValue={listMarkdown.trim()}
+        defaultValue={list.content}
         autoFocus
         onBlur={(e) => compareAndHandleUpdate(e.target.value)}
         onKeyDown={(e) => {
@@ -89,7 +61,7 @@ export const FlashcardListBlock: React.FC<FlashcardListBlockProps> = ({
       className="cursor-pointer hover:bg-gray-50 p-1 rounded mb-2"
       onClick={() => onEdit()}
       dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(content),
+        __html: DOMPurify.sanitize(renderListAsHtml(list.content)),
       }}
     />
   );

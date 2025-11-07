@@ -10,7 +10,6 @@ import {
   GenerateFlashcardResponse,
   generateFlashcardResponseSchema,
 } from '../ports/ai-generate-flashcard.port.js';
-import { processHtmlContent } from './utils/processHtmlContent.js';
 import { sanitizeResponse } from './utils/sanitizeResponse.js';
 
 const getFlashCardPrompt = () => `
@@ -21,45 +20,30 @@ Your task to create only one flashcard at a time from the provided content chunk
 You will receive the title of the article to understand the context better.
 
 You will receive an array of plain text chunks copied from the article.
-Your task is to extract the meaning and format the content using valid HTML.
+Your task is to extract the meaning and format the content using markdown.
 
 Do not change and do not refactor chunks with code snippets - keep them as they are. 
 
-The generated HTML will be shown ONLY inside a flashcard editor, not as a full article.  
+The generated content will be shown ONLY inside a flashcard editor, not as a full article.  
 Therefore, the output must remain simple, minimal, and focused.
 
 =====================
-HTML FORMATTING RULES
+MARKDOWN FORMATTING RULES
 =====================
 
 You have exactly 3 types of content blocks:
 
 TYPE 1 - Text paragraphs:
-<p>text with <strong>bold</strong>, <em>italic</em>, <code>inline code</code></p>
+Plain text with **bold**, *italic*, and \`inline code\`
 
 TYPE 2 - Lists:
-<ul>
-<li>first item</li>
-<li>second item with <strong>some emphasis</strong></li>
-</ul>
-
-CRITICAL: In lists, do NOT wrap entire <li> content in formatting tags.
-✅ Correct: <li>Item with <strong>emphasis</strong> word</li>
-❌ Wrong: <li><strong>Entire item content</strong></li>
+- first item
+- second item with **some emphasis**
 
 TYPE 3 - Code blocks:
-<pre><code class="language-XXX" data-language="XXX">>code here</code></pre>
-
-CRITICAL RULE: <p> tags can ONLY contain inline formatting tags.
-<p> tags CANNOT contain code blocks or lists!
-
-Allowed inside <p>: <strong>, <em>, <i>, <code>, <u>
-Allowed block structures: <p>, <ul>, <li>, <pre>, <code>
-
-FORBIDDEN inside <p>:
-- <pre><code> blocks
-- <ul><li> lists
-- Other <p> tags
+\`\`\`javascript
+code here
+\`\`\`
 
 =====================
 CODE HANDLING RULES
@@ -67,14 +51,14 @@ CODE HANDLING RULES
 
 1. ALL code blocks must use this EXACT format:
 
-<pre><code class="language-XXX" data-language="XXX">
+\`\`\`language
 ... code here ...
-</code></pre>
+\`\`\`
 
 2. Detect the language automatically based on the provided chunks.
 
 3. When ambiguous, prefer:
-   - "typescript" over "javascript"
+   - "typescript" over "javascript" 
    - "javascript" over "text"
 
 4. Normalize malformed code:
@@ -86,24 +70,37 @@ CODE HANDLING RULES
 TEXT PROCESSING RULES
 =====================
 
-- Automatically detect and format inline code with <code> tags (only inside <p> tags)
-- Identify emphasis and format with <strong> or <em> tags (only inside <p> tags)
-- Convert any list structures to <ul><li> format (as separate blocks)
-- Use HTML tags (<strong>, <em>, <code>) instead of Markdown syntax
-- Do NOT invent details not present in the input
-- Wrap plain text content in <p> tags with inline formatting only
-- Return valid, well-formed HTML
+✅ Use **bold** for emphasis
+✅ Use *italic* for subtle emphasis  
+✅ Use \`inline code\` for code snippets, variable names, function names
+✅ Use bullet lists with - for list structures
+✅ You MUST use **every single provided content chunk** exactly once in the final flashcard output.
+✅ Do NOT use headers (# ## ###) 
+✅ Do NOT use links [text](url)
+✅ Do NOT use images ![alt](url)
+✅ Do NOT use blockquotes >
+✅ Do NOT use tables
+✅ Do NOT invent details not present in the input
+✅ Return clean, well-formed markdown
+✅ You are allowed to lightly rephrase or restructure text **ONLY** to fit valid markdown formatting.
+❌ You are NOT allowed to remove or discard any chunk.
+❌ You are NOT allowed to omit lists or paragraphs.
+❌ You are NOT allowed to omit code blocks or modify their content.
+
+You can rearrange chunks for clarity, but **ALL chunk meaning must be preserved**.
+If the input becomes very difficult, STILL include ALL chunks.
+NEVER drop content.
 
 
 =====================
 FLASHCARD STRUCTURE
 =====================
 
-After producing the cleaned HTML, analyze the content and generate:
+After producing the cleaned markdown, analyze the content and generate:
 
 {
-  "question": string;      // clear and focused question built strictly from the content
-  "answer": string;        // Quill-compatible sanitized HTML (only allowed tags)
+  "question": string;      // clear and focused question built strictly from the content (markdown format)
+  "answer": string;        // answer content in markdown format (only allowed markdown elements)
   "context": string;       // 1-2 words identifying unique context (e.g., "React", "Node.js", "PostgreSQL", "TypeScript")
   "tags": string[];        // lowercase topic labels
   "level": "junior" | "middle" | "senior"; // estimate knowledge level required
@@ -160,15 +157,10 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
         aiResponse.answer,
       );
 
-      /**
-       * Process HTML to remove p wrappers and format for frontend
-       * to decrease complexity for flashcard editing
-       * As it is hard for AI to generate HTML without unnecessary wrappers, we clean it manually here
-       */
       const processedResponse = {
         ...aiResponse,
-        question: processHtmlContent(question),
-        answer: processHtmlContent(answer),
+        question,
+        answer,
         context: DOMPurify.sanitize(aiResponse.context || '', {
           ALLOWED_TAGS: [],
         }), // Only text, no HTML

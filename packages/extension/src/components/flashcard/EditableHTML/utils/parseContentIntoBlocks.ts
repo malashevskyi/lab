@@ -1,5 +1,3 @@
-import { decodeHtml } from './decodeHtml';
-
 export interface Block {
   type: BlockType;
   content: string;
@@ -21,30 +19,27 @@ function pushTextBlocks(text: string, out: Block[]) {
 }
 
 function normalizeCodeBlock(text: string): Block | undefined {
-  const codeMatch = text.match(/<pre><code[^>]*>([\s\S]*?)<\/code><\/pre>/);
-
-  const langMatch =
-    text.match(/class="language-([^"]+)"/) ||
-    text.match(/data-language="([^"]+)"/);
+  const codeMatch = text.match(/```(\w*)\n([\s\S]*?)\n```/);
 
   if (codeMatch) {
+    const [, language, content] = codeMatch;
     return {
       type: BlockType.Code,
-      content: decodeHtml(codeMatch[1]),
-      language: langMatch?.[1] || undefined,
+      content,
+      language: language || undefined,
     };
   }
 }
 
-// Parse content into blocks separated by line breaks and special blocks (ul, pre>code)
+// Parse markdown content into blocks separated by line breaks and special blocks (lists, code blocks)
 export const parseContentIntoBlocks = (content: string) => {
   const blocks: Block[] = [];
 
-  const CODE_BLOCK = /<pre><code[\s\S]*?<\/code><\/pre>/g;
-  const LIST_BLOCK = /<ul>[\s\S]*?<\/ul>/g;
+  const CODE_BLOCK = /```\w*\n[\s\S]*?\n```/g;
+  const LIST_BLOCK = /((?:^- .+$\n?)+)/gm;
   const blockRegex = new RegExp(
     `(${CODE_BLOCK.source}|${LIST_BLOCK.source})`,
-    'g'
+    'gm'
   );
 
   let lastIndex = 0;
@@ -55,11 +50,11 @@ export const parseContentIntoBlocks = (content: string) => {
     if (textBefore) pushTextBlocks(textBefore, blocks);
   }
   function detectMatchedBlockType(blockMatch: string) {
-    if (blockMatch.startsWith('<pre><code')) {
+    if (blockMatch.startsWith('```')) {
       // Code block
       const codeBlock = normalizeCodeBlock(blockMatch);
       if (codeBlock) blocks.push(codeBlock);
-    } else if (blockMatch.startsWith('<ul>')) {
+    } else if (blockMatch.trim().startsWith('- ')) {
       // List block
       blocks.push({ type: BlockType.List, content: blockMatch });
     }
@@ -68,7 +63,7 @@ export const parseContentIntoBlocks = (content: string) => {
   while ((match = blockRegex.exec(content)) !== null) {
     handleTextBeforeMatchedBlock();
 
-    // get second capturing group
+    // get first capturing group
     const [, blockMatch] = match;
     detectMatchedBlockType(blockMatch);
 

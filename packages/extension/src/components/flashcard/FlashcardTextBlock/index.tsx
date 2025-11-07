@@ -6,11 +6,9 @@ import {
   type Block,
 } from '../EditableHTML/utils/parseContentIntoBlocks';
 import { markdownToHtml } from '../EditableHTML/utils/markdownToHtml';
-import { htmlToMarkdown } from '../EditableHTML/utils/htmlToMarkdown';
 
 interface FlashcardTextBlockProps {
   isEditing: boolean;
-  content: string;
   textBlock: Block;
   onEdit: (isEdit?: boolean) => void;
   onTextUpdate: (updatedBlock: Block) => void;
@@ -18,35 +16,27 @@ interface FlashcardTextBlockProps {
 
 export const FlashcardTextBlock: React.FC<FlashcardTextBlockProps> = ({
   isEditing,
-  content,
   textBlock,
   onEdit,
   onTextUpdate,
 }) => {
   const compareAndHandleUpdate = (markdownText: string) => {
-    // Convert markdown back to HTML for comparison
-    const newHtml = markdownToHtml(markdownText);
-
-    // If content hasn't changed, don't update
     if (
       normalizeContentForComparison(textBlock.content) ===
-      normalizeContentForComparison(newHtml)
+      normalizeContentForComparison(markdownText)
     ) {
       onEdit(false);
       return;
     }
 
-    onTextUpdate({ type: BlockType.Text, content: newHtml });
+    onTextUpdate({ type: BlockType.Text, content: markdownText });
   };
 
   if (isEditing) {
-    // Convert HTML content to markdown for editing
-    const markdownText = htmlToMarkdown(textBlock.content);
-
     return (
       <TextareaAutosize
         className="w-full p-2 border border-solid border-blue-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
-        defaultValue={markdownText}
+        defaultValue={textBlock.content}
         autoFocus
         onBlur={(e) => compareAndHandleUpdate(e.target.value)}
         onKeyDown={(e) => {
@@ -71,7 +61,7 @@ export const FlashcardTextBlock: React.FC<FlashcardTextBlockProps> = ({
       className="cursor-pointer hover:bg-gray-50 p-1 rounded mb-2"
       onClick={() => onEdit()}
       dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(content),
+        __html: DOMPurify.sanitize(markdownToHtml(textBlock.content)),
       }}
     />
   );

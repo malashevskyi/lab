@@ -7,6 +7,7 @@ import { TabsNavigation } from '../TabsNavigation';
 import { MarkdownToolbar } from '../../markdown/MarkdownToolbar';
 import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
 import { useUpdateFlashcard } from '../../../hooks/useUpdateFlashcard';
+import { usePreventHostKeyboardEvents } from './usePreventHostKeyboardEvents';
 
 interface Position {
   y: number;
@@ -38,6 +39,10 @@ export const MainPopup: React.FC = () => {
 
   const popupRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+
+  // Prevent keyboard events from propagating to host page (e.g., Udemy) when popup is open
+  // This allows users to type in input fields without triggering host page shortcuts
+  usePreventHostKeyboardEvents(popupRef, isPopupOpen);
 
   // Initialize position when popup opens
   useEffect(() => {
@@ -214,8 +219,10 @@ export const MainPopup: React.FC = () => {
       <div className="flex items-center border-b border-gray-200 bg-gray-50">
         <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         <MarkdownToolbar className="ml-2" />
-        {regenerateFlashcardButton}
-        {updateFlashcardButton}
+        <div className="flex gap-2 px-1">
+          {regenerateFlashcardButton}
+          {updateFlashcardButton}
+        </div>
       </div>
 
       <div className="overflow-hidden">

@@ -18,11 +18,8 @@ export function usePreventHostKeyboardEvents(
   useEffect(() => {
     // Only attach listeners when popup is open
     if (!isOpen) {
-      console.log('[DeepRead] Keyboard prevention DISABLED - popup closed');
       return;
     }
-
-    console.log('[DeepRead] Keyboard prevention ENABLED - popup open');
 
     const handleKeyboardEvent = (e: KeyboardEvent) => {
       // Use composedPath to get the real target inside Shadow DOM
@@ -33,22 +30,12 @@ export function usePreventHostKeyboardEvents(
         (element) => element === popupRef.current
       );
 
-      console.log('[DeepRead] Keyboard event:', {
-        key: e.key,
-        type: e.type,
-        target: realTarget.tagName,
-        isWithinPopup,
-        popupExists: !!popupRef.current,
-      });
-
       if (isWithinPopup) {
         // Check if we're focused on an input element (textarea, input, contenteditable)
         const isInputElement =
           realTarget.tagName === 'TEXTAREA' ||
           realTarget.tagName === 'INPUT' ||
           realTarget.isContentEditable;
-
-        console.log('[DeepRead] Within popup, isInputElement:', isInputElement);
 
         if (isInputElement) {
           // Only block specific keys that Udemy uses for video control shortcuts
@@ -81,14 +68,6 @@ export function usePreventHostKeyboardEvents(
             // stopImmediatePropagation prevents ALL other listeners (including Udemy) from firing
             // We do NOT call preventDefault() because that would block text input
             e.stopImmediatePropagation();
-            console.log('[DeepRead] BLOCKED Udemy shortcut:', e.key);
-          } else {
-            console.log(
-              '[DeepRead] ALLOWED key:',
-              e.key,
-              'hasModifier:',
-              hasModifier
-            );
           }
         }
       }

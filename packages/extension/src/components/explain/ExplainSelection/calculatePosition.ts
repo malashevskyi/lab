@@ -10,7 +10,7 @@ export function calculatePosition(selectionRect: DOMRect): {
 } {
   const BUTTON_OFFSET = 10; // Space between selection and button
   const CONTAINER_WIDTH = 160; // Approximate width of button container (with padding)
-  const CONTAINER_HEIGHT = 60; // Approximate height of button container (with padding)
+  const CONTAINER_HEIGHT = 110; // Approximate height of button container with 2 buttons (with padding and gap)
 
   let x = selectionRect.right + window.scrollX + BUTTON_OFFSET;
   let y = selectionRect.top + window.scrollY;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GeminiButton } from '../GeminiButton';
+import { SearchGoogleButton } from '../SearchGoogleButton';
 import { calculatePosition } from './calculatePosition';
 
 export const ExplainSelection: React.FC = () => {
@@ -128,7 +129,7 @@ export const ExplainSelection: React.FC = () => {
       {isButtonVisible && (
         <div
           data-action-buttons-container
-          className="action-buttons-container absolute z-[9999] bg-white border border-solid border-gray-300 rounded-lg shadow-lg p-2 hover:shadow-xl transition-shadow"
+          className="action-buttons-container absolute z-[9999] bg-white border border-solid border-gray-300 rounded-lg shadow-lg p-2 hover:shadow-xl transition-shadow flex flex-col gap-2"
           style={{
             left: `${buttonPosition.x}px`,
             top: `${buttonPosition.y}px`,
@@ -137,6 +138,10 @@ export const ExplainSelection: React.FC = () => {
           <GeminiButton
             selectedText={selectedText}
             pageTitle={pageTitle}
+            onHide={hideActionButton}
+          />
+          <SearchGoogleButton
+            selectedText={selectedText}
             onHide={hideActionButton}
           />
         </div>

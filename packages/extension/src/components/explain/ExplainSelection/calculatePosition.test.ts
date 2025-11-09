@@ -126,15 +126,15 @@ describe('calculatePosition', () => {
   describe('Bottom edge collision detection', () => {
     it('should position button above selection when bottom edge exceeds viewport', () => {
       mockWindow(1920, 1080, 0, 0);
-      // Selection near bottom: (100, 1050) to (200, 1070)
-      const selectionRect = createDOMRect(100, 1050, 200, 1070);
+      // Selection near bottom: (100, 1000) to (200, 1020)
+      const selectionRect = createDOMRect(100, 1000, 200, 1020);
 
       const result = calculatePosition(selectionRect);
 
-      // Bottom edge would be: 1050 + 60 = 1110 > 1080 (viewport height)
-      // Should position above: top (1050) - height (60) - offset (10) = 980
+      // Bottom edge would be: 1000 + 110 = 1110 > 1080 (viewport height)
+      // Should position above: top (1000) - height (110) - offset (10) = 880
       expect(result.x).toBe(210); // Still to the right
-      expect(result.y).toBe(980);
+      expect(result.y).toBe(880);
     });
 
     it('should align to top edge when both top and bottom are outside viewport', () => {
@@ -144,25 +144,24 @@ describe('calculatePosition', () => {
 
       const result = calculatePosition(selectionRect);
 
-      // Bottom edge: 30 + 60 = 90 > 100 - would fit
-      // But if not: top (30) - height (60) - offset (10) = -40 < 0
+      // Bottom edge: 30 + 110 = 140 > 100 - doesn't fit
+      // Top positioning: 30 - 110 - 10 = -90 < 0
       // Should fallback to top edge: scrollY (0) + offset (10) = 10
       expect(result.x).toBe(210);
-      // In this case, it actually fits, so no adjustment
-      expect(result.y).toBe(30);
+      expect(result.y).toBe(10);
     });
 
     it('should handle scrolled viewport with bottom edge collision', () => {
       mockWindow(1920, 1080, 0, 500);
       // Selection that triggers bottom collision with scroll
-      const selectionRect = createDOMRect(100, 1050, 200, 1070);
+      const selectionRect = createDOMRect(100, 1000, 200, 1020);
 
       const result = calculatePosition(selectionRect);
 
-      // Bottom edge: 1050 + 500 + 60 = 1610 > (1080 + 500) = 1580
-      // Position above: 1050 + 500 - 60 - 10 = 1480
+      // Bottom edge: 1000 + 500 + 110 = 1610 > (1080 + 500) = 1580
+      // Position above: 1000 + 500 - 110 - 10 = 1380
       expect(result.x).toBe(210);
-      expect(result.y).toBe(1480);
+      expect(result.y).toBe(1380);
     });
   });
 
@@ -192,29 +191,29 @@ describe('calculatePosition', () => {
 
     it('should handle selection at bottom-left corner', () => {
       mockWindow(1920, 1080, 0, 0);
-      const selectionRect = createDOMRect(0, 1050, 100, 1070);
+      const selectionRect = createDOMRect(0, 1000, 100, 1020);
 
       const result = calculatePosition(selectionRect);
 
       // Right: 100 + 10 = 110 (fits)
       // Bottom collision: position above
-      // 1050 - 60 - 10 = 980
+      // 1000 - 110 - 10 = 880
       expect(result.x).toBe(110);
-      expect(result.y).toBe(980);
+      expect(result.y).toBe(880);
     });
 
     it('should handle selection at bottom-right corner', () => {
       mockWindow(1920, 1080, 0, 0);
-      const selectionRect = createDOMRect(1850, 1050, 1910, 1070);
+      const selectionRect = createDOMRect(1850, 1000, 1910, 1020);
 
       const result = calculatePosition(selectionRect);
 
       // Right edge collision: position to left
       // 1850 - 160 - 10 = 1680
       // Bottom collision: position above
-      // 1050 - 60 - 10 = 980
+      // 1000 - 110 - 10 = 880
       expect(result.x).toBe(1680);
-      expect(result.y).toBe(980);
+      expect(result.y).toBe(880);
     });
 
     it('should handle very small viewport', () => {
@@ -228,8 +227,10 @@ describe('calculatePosition', () => {
       // Fallback to left edge: 10
       expect(result.x).toBe(10);
 
-      // Bottom edge: 50 + 60 = 110 > 150? No, fits
-      expect(result.y).toBe(50);
+      // Bottom edge: 50 + 110 = 160 > 150
+      // Top positioning: 50 - 110 - 10 = -70 < 0
+      // Fallback to top edge: 10
+      expect(result.y).toBe(10);
     });
   });
 

@@ -48,7 +48,7 @@ I don't understand this, please explain in more detail what this is and what it 
   return (
     <button
       onClick={handleGeminiClick}
-      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+      className="flex items-center gap-2 px-3 py-2 border border-solid border-gray-300 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
       title="Ask Gemini AI about this text"
     >
       <svg

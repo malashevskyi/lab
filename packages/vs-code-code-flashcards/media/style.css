@@ -1,0 +1,68 @@
+body {
+  font-family: var(--vscode-font-family);
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background);
+  padding: 1em;
+}
+pre,
+code {
+  font-family: var(--vscode-editor-font-family);
+  background-color: var(--vscode-editor-selectionBackground);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+pre {
+  padding: 1em;
+  white-space: pre-wrap;
+}
+strong {
+  color: var(--vscode-editor-selectionHighlightBorder);
+}
+button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: 1px solid var(--vscode-button-border, transparent);
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+input,
+textarea {
+  width: 100%;
+  box-sizing: border-box; /* Important */
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+  padding: 6px;
+  font-family: var(--vscode-font-family);
+}
+textarea {
+  resize: vertical;
+}
+#snippets-preview {
+  background-color: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-input-border);
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-top: 5px;
+  min-height: 50px;
+}
+
+button#create-button {
+  margin-top: 15px;
+}
+.snippets-header {
+  margin-top: 20px;
+}

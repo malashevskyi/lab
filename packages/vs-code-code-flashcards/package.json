@@ -1,6 +1,7 @@
 {
   "name": "code-flashcards",
   "displayName": "Code Flashcards",
+  "publisher": "malashevskyi",
   "description": "Create AI-powered flashcards from your code snippets.",
   "version": "0.0.1",
   "engines": {
@@ -11,6 +12,10 @@
   ],
   "activationEvents": [
     "onView:code-flashcards-snippets"
+  ],
+  "files": [
+    "out",
+    "media"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -23,6 +28,15 @@
         "command": "code-flashcards.generateFlashcard",
         "title": "Flashcards: Generate Flashcard",
         "icon": "$(lightbulb)"
+      },
+      {
+        "command": "code-flashcards.generateAllFlashcards",
+        "title": "Flashcards: Generate Flashcards for All Snippets",
+        "icon": "$(send)"
+      },
+      {
+        "command": "code-flashcards.login",
+        "title": "Code Flashcards: Login to Supabase"
       }
     ],
     "keybindings": [
@@ -45,9 +59,16 @@
     "views": {
       "code-flashcards-view-container": [
         {
-          "id": "code-flashcards-snippets",
-          "name": "Selected Snippets",
-          "type": "tree"
+          "id": "code-flashcards.flashcardView",
+          "name": "Create Flashcard",
+          "type": "webview",
+          "when": "code-flashcards.isAuthenticated"
+        },
+        {
+          "id": "code-flashcards.loginView",
+          "name": "Login",
+          "type": "tree",
+          "when": "!code-flashcards.isAuthenticated"
         }
       ]
     },
@@ -58,20 +79,27 @@
           "when": "view == code-flashcards-snippets",
           "group": "inline"
         }
+      ],
+      "view/title": [
+        {
+          "command": "code-flashcards.generateAllFlashcards",
+          "when": "view == code-flashcards-snippets",
+          "group": "navigation"
+        }
       ]
     },
     "configuration": {
       "title": "Code Flashcards",
       "properties": {
-        "code-flashcards.openai.apiKey": {
+        "code-flashcards.supabase.url": {
           "type": "string",
-          "description": "Your OpenAI API key to generate flashcards.",
-          "default": ""
+          "default": "",
+          "description": "The URL of your Supabase project."
         },
-        "code-flashcards.openai.model": {
+        "code-flashcards.supabase.anonKey": {
           "type": "string",
-          "description": "The OpenAI model to use for generation.",
-          "default": "gpt-3.5-turbo"
+          "default": "",
+          "description": "The anon public key for your Supabase project."
         }
       }
     }
@@ -85,15 +113,23 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.83.0",
+    "@types/markdown-it": "^14.1.2",
     "@types/mocha": "^10.0.3",
-    "@types/node": "18.x",
+    "@types/node": "^24.10.0",
+    "@types/uuid": "8.3.2",
+    "@types/vscode": "^1.83.0",
+    "@types/vscode-webview": "^1.57.5",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
+    "@vscode/test-electron": "^2.3.6",
     "eslint": "^8.52.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",
-    "typescript": "^5.2.2",
-    "@vscode/test-electron": "^2.3.6"
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.80.0",
+    "markdown-it": "^14.1.0",
+    "uuid": "8.3.2"
   }
 }

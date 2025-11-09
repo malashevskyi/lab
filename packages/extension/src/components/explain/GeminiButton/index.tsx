@@ -3,8 +3,6 @@ import { MessageType } from '../../../types/sentry-messages';
 import { insertTextIntoGeminiInput } from '../../../utils/gemini-input';
 
 interface GeminiButtonProps {
-  isVisible: boolean;
-  position: { x: number; y: number };
   selectedText: string;
   pageTitle: string;
   onHide: () => void;
@@ -14,8 +12,6 @@ interface GeminiButtonProps {
  * @description Floating button that appears near text selection to open Gemini AI chat
  */
 export const GeminiButton: React.FC<GeminiButtonProps> = ({
-  isVisible,
-  position,
   selectedText,
   pageTitle,
   onHide,
@@ -49,36 +45,25 @@ I don't understand this, please explain in more detail what this is and what it 
     onHide();
   };
 
-  if (!isVisible) return null;
-
   return (
-    <div
-      data-gemini-button
-      className="gemini-button absolute z-[9999] bg-white border border-solid border-gray-300 rounded-lg shadow-lg p-2 hover:shadow-xl transition-shadow"
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-      }}
+    <button
+      onClick={handleGeminiClick}
+      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+      title="Ask Gemini AI about this text"
     >
-      <button
-        onClick={handleGeminiClick}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-        title="Ask Gemini AI about this text"
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-        <span>Ask Gemini</span>
-      </button>
-    </div>
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+      <span>Ask Gemini</span>
+    </button>
   );
 };

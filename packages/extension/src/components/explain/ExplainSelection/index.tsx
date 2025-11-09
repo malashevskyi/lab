@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GeminiButton } from '../GeminiButton';
+import { calculatePosition } from './calculatePosition';
 
 export const ExplainSelection: React.FC = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
@@ -67,11 +68,8 @@ export const ExplainSelection: React.FC = () => {
       ? h1Element.textContent?.trim() || ''
       : document.title;
 
-    // Position the button to the right of the selection
-    const position = {
-      x: rect.right + window.scrollX + 10,
-      y: rect.top + window.scrollY,
-    };
+    // Calculate position ensuring it stays within viewport bounds
+    const position = calculatePosition(rect);
 
     setSelectedText(selectionText);
     setPageTitle(currentPageTitle);
@@ -110,8 +108,8 @@ export const ExplainSelection: React.FC = () => {
 
     const handleClickOutside = (event: MouseEvent) => {
       if (event.target instanceof HTMLElement === false) return;
-      // Don't hide if clicking on the gemini button itself
-      if (event.target.closest('[data-gemini-button]')) return;
+      // Don't hide if clicking on the action buttons container
+      if (event.target.closest('[data-action-buttons-container]')) return;
 
       handleSelectionChange();
     };
@@ -126,12 +124,23 @@ export const ExplainSelection: React.FC = () => {
   }, [hideActionButton]);
 
   return (
-    <GeminiButton
-      isVisible={isButtonVisible}
-      position={buttonPosition}
-      selectedText={selectedText}
-      pageTitle={pageTitle}
-      onHide={hideActionButton}
-    />
+    <>
+      {isButtonVisible && (
+        <div
+          data-action-buttons-container
+          className="action-buttons-container absolute z-[9999] bg-white border border-solid border-gray-300 rounded-lg shadow-lg p-2 hover:shadow-xl transition-shadow"
+          style={{
+            left: `${buttonPosition.x}px`,
+            top: `${buttonPosition.y}px`,
+          }}
+        >
+          <GeminiButton
+            selectedText={selectedText}
+            pageTitle={pageTitle}
+            onHide={hideActionButton}
+          />
+        </div>
+      )}
+    </>
   );
 };

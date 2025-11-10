@@ -22,6 +22,7 @@ All tasks, issues, and code contributions must follow these conventions.
 - Each new entity in the server must **implement its shared interface** from the `types` package.
 - All comments in the code must be in English
 - **DO NOT** use `.then()` or `.catch()` for handling promises. Always prefer the `async/await` syntax for cleaner, more readable, and synchronous-style asynchronous code.
+- **NEVER suggest or run build commands** - the user has watch mode enabled and will handle builds themselves.
 
 ### Project Scripts
 

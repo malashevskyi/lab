@@ -1,73 +1,99 @@
-# React + TypeScript + Vite
+# 🚀 Assistant
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser assistant that helps you read, learn, analyze text, and create spaced-repetition flashcards directly while browsing.
 
-Currently, two official plugins are available:
+**Extension:**  
+[![React](https://img.shields.io/badge/-React-20232A?logo=react&logoColor=61DAFB&style=flat-square)](https://github.com/facebook/react)
+[![React Query](https://img.shields.io/badge/-React%20Query-FF4154?logo=reactquery&logoColor=white&style=flat-square)](https://github.com/TanStack/query/tree/main/packages/react-query)
+[![Formik](https://img.shields.io/badge/-Formik-2C3E50?style=flat-square)](https://github.com/jaredpalmer/formik)
+[![React Draggable](https://img.shields.io/badge/-React%20Draggable-8E44AD?style=flat-square)](https://github.com/react-grid-layout/react-draggable)
+[![React H5 Audio Player](https://img.shields.io/badge/-react--h5--audio--player-1ABC9C?style=flat-square)](https://github.com/lhz516/react-h5-audio-player)
+[![React Icons](https://img.shields.io/badge/-React%20Icons-E91E63?style=flat-square)](https://github.com/react-icons/react-icons)
+[![React Simple Code Editor](https://img.shields.io/badge/-react--simple--code--editor-34495E?style=flat-square)](https://github.com/satya164/react-simple-code-editor)
+[![React Textarea Autosize](https://img.shields.io/badge/-react--textarea--autosize-16A085?style=flat-square)](https://github.com/Andarist/react-textarea-autosize)
+[![Sonner](https://img.shields.io/badge/-Sonner-FFCC00?style=flat-square)](https://github.com/emilkowalski/sonner)
+[![Zustand](https://img.shields.io/badge/-Zustand-3A3A3A?logo=zustand&style=flat-square)](https://github.com/pmndrs/zustand)
+[![Zod](https://img.shields.io/badge/-Zod-3068D9?style=flat-square)](https://github.com/colinhacks/zod)
+[![Axios](https://img.shields.io/badge/-Axios-5A29E4?logo=axios&logoColor=white&style=flat-square)](https://github.com/axios/axios)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Server:**  
+[![NestJS](https://img.shields.io/badge/-NestJS-E0234E?logo=nestjs&logoColor=white&style=flat-square)](https://github.com/nestjs/nest)
+[![OpenAI](https://img.shields.io/badge/-OpenAI-412991?logo=openai&logoColor=white&style=flat-square)](https://github.com/openai/openai-node)
 
-## React Compiler
+**Server Directory:**  
+👉 [`../server/`](../server/)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. 🧩 AI Flashcard Creation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Chunk selection with **Alt + Cmd + Click**
+- Can select both text and code blocks
+- Ability to edit and delete chunks
+- Ability to add an empty chunk for additional information
+- AI accepts **article title + chunks**
+  ![Flashcard Creation](./screenshots/flashcard-creation.png)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 2. 🔄 Check Last Flashcard
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- Shows the last created flashcard
+- Ability to edit flashcard (TODO)
+- Displays immediately after creation
+  ![Last Flashcard](./screenshots/last-flashcard.png)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 3. 🧠 Word/Phrase AI Analysis
+
+- Word/phrase translation from English to your language  
+  _(TODO: add target-language settings)_
+- Save to dictionary
+- Editing (TODO)
+- Pronunciation generation
+- History displaying all saved examples for the word/phrase
+  ![Analysis](./screenshots/analysis.png)
+
+---
+
+### 🔍 “Ask Gemini” Button on Text Selection
+
+- Opens a new tab with Gemini chat
+- Automatically inserts selected text into the input and sends request
+- If text is selected on Gemini page:
+  - Inserts into input on the same page
+  - Focuses input automatically
+    ![Ask Gemini](./screenshots/ask-gemini.png)
+
+---
+
+### 🔍 “Delete” Button on Gemini page
+
+- Adds a delete button next to microphone button in Gemini chat input
+- Clicking the delete button deletes the current chat or the last chat in the left sidebar if the new empty chat is open
+
+---
+
+### 5. Smart URL Normalization
+
+- Groups flashcards from the same course together
+- Currently supports **Udemy** courses
+  - Removes lecture-specific parts: `/learn/lecture/12345`
+  - All flashcards from one course share the same source URL
+- Example: Different lectures from the same course → One unified URL
+  ![URL Normalization](./screenshots/url-normalization.png)
+
+---
+
+### 6. 📚 Vocabulary Repetition (TODO)
+
+Spaced repetition for dictionary words.
+
+---
+
+### 7. 🗂 Flashcard Repetition (TODO)
+
+Spaced repetition for created flashcards..

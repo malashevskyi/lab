@@ -1,5 +1,6 @@
 import { ApiError } from '../../services/ApiError';
 import { insertTextIntoGeminiInput } from '../../utils/gemini-input';
+import { observeAndInsertDeleteButton } from './delete-chat-button';
 
 console.log('DeepRead: Gemini content script loaded on', window.location.href);
 
@@ -113,3 +114,6 @@ const handleAutoInjection = async () => {
 };
 
 void handleAutoInjection();
+
+// Initialize delete button functionality
+observeAndInsertDeleteButton();

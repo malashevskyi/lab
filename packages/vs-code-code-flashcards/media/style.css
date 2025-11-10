@@ -7,8 +7,6 @@ body {
 pre,
 code {
   font-family: var(--vscode-editor-font-family);
-  background-color: var(--vscode-editor-selectionBackground);
-  padding: 2px 4px;
   border-radius: 4px;
 }
 pre {
@@ -65,4 +63,15 @@ button#create-button {
 }
 .snippets-header {
   margin-top: 20px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: var(
+    --vscode-button-background
+  ); /* Prevent hover effect on disabled button */
 }

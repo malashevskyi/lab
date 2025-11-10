@@ -7,27 +7,38 @@
   const languageInput = document.getElementById('language-input');
   const snippetsPreview = document.getElementById('snippets-preview');
 
+  const originalButtonText = createButton.textContent;
+
   // Listen for messages from the extension
   window.addEventListener('message', (event) => {
     const message = event.data;
-    if (message.command === 'updateSnippets') {
-      currentSnippets = message.snippets;
-      languageInput.value = message.language || '';
 
-      // Update the preview div with the pre-rendered HTML
-      if (message.snippetsHtml && message.snippets.length > 0) {
-        snippetsPreview.innerHTML = message.snippetsHtml;
-      } else {
-        snippetsPreview.innerHTML = '<p>No snippets selected yet.</p>';
-        questionInput.value = '';
-        languageInput.value = '';
-      }
+    switch (message.command) {
+      case 'updateSnippets':
+        currentSnippets = message.snippets;
+        languageInput.value = message.language || '';
+        if (message.snippetsHtml && message.snippets.length > 0) {
+          snippetsPreview.innerHTML = message.snippetsHtml;
+        } else {
+          snippetsPreview.innerHTML = '<p>No snippets selected yet.</p>';
+          questionInput.value = '';
+          languageInput.value = '';
+        }
+        break;
+
+      case 'operationComplete':
+        createButton.disabled = false;
+        createButton.textContent = originalButtonText;
+        break;
     }
   });
 
   // Handle the create button click
   createButton.addEventListener('click', () => {
     if (questionInput.value && currentSnippets.length > 0) {
+      createButton.disabled = true;
+      createButton.textContent = 'Creating...';
+
       vscode.postMessage({
         command: 'createFlashcard',
         question: questionInput.value,

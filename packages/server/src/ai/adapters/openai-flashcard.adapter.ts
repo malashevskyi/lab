@@ -87,6 +87,22 @@ TEXT PROCESSING RULES
 ❌ You are NOT allowed to omit lists or paragraphs.
 ❌ You are NOT allowed to omit code blocks or modify their content.
 
+=====================
+LIST FORMATTING RULES
+=====================
+
+❌ WRONG: Do NOT make entire list items bold
+- **Straightforward implementation**
+- **No need for Service DX to manage its own database**
+
+✅ CORRECT: Only emphasize specific parts within list items
+- Straightforward implementation
+- No need for Service DX to **manage its own database**
+- Uses **modern TypeScript** features
+
+The dash (-) already indicates a list item, so making the entire item bold is redundant.
+Use bold only to highlight key terms or important concepts within the text.
+
 You can rearrange chunks for clarity, but **ALL chunk meaning must be preserved**.
 If the input becomes very difficult, STILL include ALL chunks.
 NEVER drop content.

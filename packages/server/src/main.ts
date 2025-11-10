@@ -28,8 +28,8 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('DeepRead API')
-    .setDescription('The API for the DeepRead browser extension.')
+    .setTitle('Assistant API')
+    .setDescription('The API for the Web Assistant application.')
     .setVersion('1.0')
     .build();
 

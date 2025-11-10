@@ -63,6 +63,7 @@ const ContentScriptRoot: React.FC = () => {
    * based on the modifier key pressed (`Alt` for analysis, `Shift` for flashcard chunking).
    */
   const handleMouseUp = (event: MouseEvent) => {
+    console.log('🚀 ~ event:', event);
     if (!event.altKey && !event.shiftKey) return;
 
     // Ensure content script is ready before processing selection
@@ -77,7 +78,7 @@ const ContentScriptRoot: React.FC = () => {
 
     if (event.target instanceof HTMLElement === false) return;
     // ignore if clicked inside the sidebar
-    if (event.target.closest('#deepread-root')) return;
+    if (event.target.closest('#assistant-root')) return;
 
     let selection = window.getSelection();
 
@@ -145,6 +146,7 @@ const ContentScriptRoot: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Content script ready state:');
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => {

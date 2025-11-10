@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import type { ZodError } from 'zod';
-import { deepReadAPI } from '../services/api';
+import { assistantApi } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import {
   getLastFlashcardResponseSchema,
   type GetLastFlashcardResponseType,
-} from '@lab/types/deep-read/flashcards';
+} from '@lab/types/assistant/flashcards';
 import { useEffect } from 'react';
 
 const GET_LAST_FLASHCARD_QUERY_KEY = 'lastFlashcard';
@@ -21,7 +21,7 @@ export const useGetLastFlashcard = () => {
   const query = useQuery<GetLastFlashcardResponseType, AxiosError | ZodError>({
     queryKey: [GET_LAST_FLASHCARD_QUERY_KEY],
     queryFn: async () => {
-      const response = await deepReadAPI.get('/flashcards/last');
+      const response = await assistantApi.get('/flashcards/last');
       if (!response.data) return null;
       return getLastFlashcardResponseSchema.parse(response.data);
     },

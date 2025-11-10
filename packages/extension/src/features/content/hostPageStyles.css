@@ -1,9 +1,9 @@
-::highlight(deepread-selected-text-highlight) {
+::highlight(assistant-selected-text-highlight) {
   background-color: rgba(255, 242, 102, 0.8);
   color: inherit;
 }
 
-::highlight(deepread-flashcard-chunks-highlight) {
+::highlight(assistant-flashcard-chunks-highlight) {
   background-color: #bfdbfe; /* blue-200 */
   color: #1f2937; /* gray-800 */
 }

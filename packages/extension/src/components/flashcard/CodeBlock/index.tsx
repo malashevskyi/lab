@@ -39,7 +39,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     : 'javascript';
 
   useEffect(() => {
-    const shadowRoot = document.querySelector('#deepread-root')?.shadowRoot;
+    const shadowRoot = document.querySelector('#assistant-root')?.shadowRoot;
 
     if (shadowRoot) {
       injectShadowRootInlineStyles(shadowRoot, prismTheme, 'code-block-theme');

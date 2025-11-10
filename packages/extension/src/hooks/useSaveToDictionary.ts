@@ -3,14 +3,14 @@ import type { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import type { ZodError } from 'zod';
-import { deepReadAPI } from '../services/api';
+import { assistantApi } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import {
   createDictionaryEntryWithExampleBodySchema,
   createDictionaryEntryWithExampleResponseSchema,
   type CreateDictionaryEntryWithExampleBodyType,
   type CreateEntryWithExampleResponseType,
-} from '@lab/types/deep-read/dictionary-entries';
+} from '@lab/types/assistant/dictionary-entries';
 
 export function useSaveToDictionary() {
   const queryClient = useQueryClient();
@@ -21,7 +21,7 @@ export function useSaveToDictionary() {
     { endpoint: string; body: unknown }
   >({
     mutationFn: async ({ endpoint, body }) => {
-      const res = await deepReadAPI.post(endpoint, body);
+      const res = await assistantApi.post(endpoint, body);
       return createDictionaryEntryWithExampleResponseSchema.parse(res.data);
     },
     onSuccess: async (res) => {

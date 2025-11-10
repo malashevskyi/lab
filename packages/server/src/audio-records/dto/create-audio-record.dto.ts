@@ -1,4 +1,4 @@
-import { createAudioRecordSchema } from '@lab/types/deep-read/audio-records/index.js';
+import { createAudioRecordSchema } from '@lab/types/assistant/audio-records/index.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
 

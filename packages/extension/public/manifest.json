@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "DeepRead",
+  "name": "Assistant",
   "version": "0.1.0",
   "description": "AI-Powered Contextual Language Learning.",
   "permissions": ["storage", "activeTab", "tabs"],

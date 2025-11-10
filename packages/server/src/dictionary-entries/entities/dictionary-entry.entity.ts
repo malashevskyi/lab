@@ -1,4 +1,4 @@
-import type { DictionaryEntryType } from '@lab/types/deep-read/dictionary-entries/index.js';
+import type { DictionaryEntryType } from '@lab/types/assistant/dictionary-entries/index.js';
 import {
   Entity,
   PrimaryGeneratedColumn,

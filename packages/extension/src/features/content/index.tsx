@@ -13,15 +13,15 @@ import sonnerStyles from 'sonner/dist/styles.css?inline';
 import { Toaster } from 'sonner';
 import { initializeSiteModifiers } from './site-modifiers';
 
-console.log('[DeepRead] Content script loaded!');
+console.log('[Assistant] Content script loaded!');
 
-injectHostStyles(hostPageStyles, 'deepread-host-styles');
+injectHostStyles(hostPageStyles, 'assistant-host-styles');
 
 // Initialize site-specific modifications (e.g., Udemy transcript fixes)
 initializeSiteModifiers();
 
 const rootElement = document.createElement('div');
-rootElement.id = 'deepread-root';
+rootElement.id = 'assistant-root';
 document.body.appendChild(rootElement);
 
 const shadowRoot = rootElement.attachShadow({ mode: 'open' });

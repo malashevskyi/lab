@@ -1,7 +1,7 @@
 services:
   server:
     build: .
-    image: deepread_server:latest
+    image: assistant_server:latest
     ports:
       - "3002:3000"
     dns:

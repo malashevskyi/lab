@@ -1,4 +1,4 @@
-import type { GetLastFlashcardResponseType } from '@lab/types/deep-read/flashcards';
+import type { GetLastFlashcardResponseType } from '@lab/types/assistant/flashcards';
 import React, { useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { EditableHTML } from '../EditableHTML';

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { deepReadAPI } from '../services/api';
+import { assistantApi } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import type { AxiosError } from 'axios';
 import type { ZodError } from 'zod';
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import {
   getDictionaryEntryWithExamplesByTextResponseSchema,
   type GetDictionaryEntryWithExamplesByTextResponseType,
-} from '@lab/types/deep-read/dictionary-entries';
+} from '@lab/types/assistant/dictionary-entries';
 
 export function useWordHistory(): {
   historyData: GetDictionaryEntryWithExamplesByTextResponseType | null;
@@ -23,7 +23,7 @@ export function useWordHistory(): {
   >({
     queryKey: ['wordHistory', normalizedText],
     queryFn: async () => {
-      const res = await deepReadAPI.get(`/dictionary/${normalizedText}`);
+      const res = await assistantApi.get(`/dictionary/${normalizedText}`);
       if (res.data) {
         return getDictionaryEntryWithExamplesByTextResponseSchema.parse(
           res.data

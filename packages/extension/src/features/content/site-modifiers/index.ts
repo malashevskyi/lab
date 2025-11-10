@@ -45,7 +45,7 @@ export const initializeSiteModifiers = (): void => {
     }
 
     // Initialize new modifier
-    console.log(`[DeepRead] Activating ${matchingModifier.name} modifier`);
+    console.log(`[Assistant] Activating ${matchingModifier.name} modifier`);
     matchingModifier.initialize();
     activeModifier = matchingModifier;
   }
@@ -83,7 +83,7 @@ const urlChangeObserver = new MutationObserver(() => {
   const currentUrl = window.location.href;
   if (currentUrl !== lastUrl) {
     lastUrl = currentUrl;
-    console.log('[DeepRead] URL changed, reinitializing site modifiers');
+    console.log('[Assistant] URL changed, reinitializing site modifiers');
     reinitializeSiteModifiers();
   }
 });
@@ -96,7 +96,7 @@ urlChangeObserver.observe(document.body, {
 
 // Also listen to popstate events (browser back/forward)
 window.addEventListener('popstate', () => {
-  console.log('[DeepRead] Navigation detected (popstate)');
+  console.log('[Assistant] Navigation detected (popstate)');
   reinitializeSiteModifiers();
 });
 
@@ -106,12 +106,12 @@ const originalReplaceState = history.replaceState.bind(history);
 
 history.pushState = function (...args) {
   originalPushState(...args);
-  console.log('[DeepRead] Navigation detected (pushState)');
+  console.log('[Assistant] Navigation detected (pushState)');
   reinitializeSiteModifiers();
 };
 
 history.replaceState = function (...args) {
   originalReplaceState(...args);
-  console.log('[DeepRead] Navigation detected (replaceState)');
+  console.log('[Assistant] Navigation detected (replaceState)');
   reinitializeSiteModifiers();
 };

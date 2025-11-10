@@ -2,7 +2,7 @@ import { ApiError } from '../../services/ApiError';
 import { insertTextIntoGeminiInput } from '../../utils/gemini-input';
 import { observeAndInsertDeleteButton } from './delete-chat-button';
 
-console.log('DeepRead: Gemini content script loaded on', window.location.href);
+console.log('Assistant: Gemini content script loaded on', window.location.href);
 
 const getStoredPrompt = async (): Promise<string | null> => {
   try {

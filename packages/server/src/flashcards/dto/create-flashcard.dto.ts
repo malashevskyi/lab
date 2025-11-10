@@ -1,4 +1,4 @@
-import { createFlashcardBodySchema } from '@lab/types/deep-read/flashcards/index.js';
+import { createFlashcardBodySchema } from '@lab/types/assistant/flashcards/index.js';
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
 import {

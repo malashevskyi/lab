@@ -5,26 +5,26 @@
 export default [
   {
     name: 'flashcard',
-    input: 'src/deep-read/flashcards/interfaces/flashcard.interface.ts',
-    output: 'src/deep-read/flashcards/schemas/flashcard.schema.ts',
+    input: 'src/assistant/flashcards/interfaces/flashcard.interface.ts',
+    output: 'src/assistant/flashcards/schemas/flashcard.schema.ts',
   },
   {
     name: 'dictionaryExample',
     input:
-      'src/deep-read/dictionary-examples/interfaces/dictionary-example.interface.ts',
+      'src/assistant/dictionary-examples/interfaces/dictionary-example.interface.ts',
     output:
-      'src/deep-read/dictionary-examples/schemas/dictionary-example.schema.ts',
+      'src/assistant/dictionary-examples/schemas/dictionary-example.schema.ts',
   },
   {
     name: 'audioRecord',
-    input: 'src/deep-read/audio-records/interfaces/audio-record.interface.ts',
-    output: 'src/deep-read/audio-records/schemas/audio-record.schema.ts',
+    input: 'src/assistant/audio-records/interfaces/audio-record.interface.ts',
+    output: 'src/assistant/audio-records/schemas/audio-record.schema.ts',
   },
   {
     name: 'dictionaryEntry',
     input:
-      'src/deep-read/dictionary-entries/interfaces/dictionary-entry.interface.ts',
+      'src/assistant/dictionary-entries/interfaces/dictionary-entry.interface.ts',
     output:
-      'src/deep-read/dictionary-entries/schemas/dictionary-entry.schema.ts',
+      'src/assistant/dictionary-entries/schemas/dictionary-entry.schema.ts',
   },
 ];

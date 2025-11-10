@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { deepReadAPI } from '../services/api';
+import { assistantApi } from '../services/api';
 import type { ZodError } from 'zod';
 import type { AxiosError } from 'axios';
 import { ApiError } from '../services/ApiError';
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import {
   generateAudioResponseSchema,
   type GenerateAudioResponse,
-} from '@lab/types/deep-read/tts';
+} from '@lab/types/assistant/tts';
 
 export function useAudioGeneration(text: string | undefined): {
   audioUrl: string | undefined;
@@ -17,7 +17,7 @@ export function useAudioGeneration(text: string | undefined): {
   const query = useQuery<GenerateAudioResponse, AxiosError | ZodError>({
     queryKey: ['audio', text],
     queryFn: async () => {
-      const res = await deepReadAPI.post<GenerateAudioResponse>(
+      const res = await assistantApi.post<GenerateAudioResponse>(
         '/tts/generate-audio',
         {
           text,

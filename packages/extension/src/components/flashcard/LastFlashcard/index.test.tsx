@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { LastFlashcard } from './index';
-import type { GetLastFlashcardResponseType } from '@lab/types/deep-read/flashcards';
+import type { GetLastFlashcardResponseType } from '@lab/types/assistant/flashcards';
 
 // Mock the CodeBlock component since we're testing the rendering logic
 vi.mock('../CodeBlock', () => ({

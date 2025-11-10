@@ -4,7 +4,7 @@ import {
   AnswerProperty,
   QuestionProperty,
 } from '../decorators/flashcards-fields.decorators';
-import { updateFlashcardBodySchema } from '@lab/types/deep-read/flashcards';
+import { updateFlashcardBodySchema } from '@lab/types/assistant/flashcards';
 
 export class UpdateFlashcardDto extends createZodDto(
   updateFlashcardBodySchema,

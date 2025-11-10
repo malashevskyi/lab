@@ -7,7 +7,7 @@ import {
   ExampleProperty,
   TranslationProperty,
 } from '../decorators/dictionary-example-fields.decorators.js';
-import { createDictionaryExampleSchema } from '@lab/types/deep-read/dictionary-examples/index.js';
+import { createDictionaryExampleSchema } from '@lab/types/assistant/dictionary-examples/index.js';
 import z from 'zod';
 
 export class CreateDictionaryExampleDto extends createZodDto(

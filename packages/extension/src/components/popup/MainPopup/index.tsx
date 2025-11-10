@@ -190,9 +190,7 @@ export const MainPopup: React.FC = () => {
         }`}
       >
         <div className="flex items-center space-x-2">
-          <h2 className="text-sm font-semibold text-gray-700">
-            DeepRead Assistant
-          </h2>
+          <h2 className="text-sm font-semibold text-gray-700">Assistant</h2>
         </div>
 
         <button

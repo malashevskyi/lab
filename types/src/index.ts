@@ -1,1 +1,1 @@
-export * from './deep-read/index.js';
+export * from './assistant/index.js';

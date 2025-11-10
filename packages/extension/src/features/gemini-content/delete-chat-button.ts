@@ -68,8 +68,8 @@ function waitForElement<T extends HTMLElement = HTMLElement>(
   });
 }
 
-const DELETE_BUTTON_ID = 'deepread-gemini-delete-button';
-const SPINNER_ID = 'deepread-delete-spinner';
+const DELETE_BUTTON_ID = 'assistant-gemini-delete-button';
+const SPINNER_ID = 'assistant-delete-spinner';
 
 /**
  * Creates a delete button with Google Material Design styling
@@ -78,7 +78,7 @@ function createDeleteButton(): HTMLButtonElement {
   const button = document.createElement('button');
   button.id = DELETE_BUTTON_ID;
   button.className =
-    'mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-unthemed deepread-delete-chat-button';
+    'mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-unthemed assistant-delete-chat-button';
   button.setAttribute('mat-icon-button', '');
   button.setAttribute('aria-label', 'Delete current chat');
   button.setAttribute('title', 'Delete chat');
@@ -140,16 +140,16 @@ function createSpinner(): HTMLElement {
     border: 3px solid rgba(95, 99, 104, 0.2);
     border-top-color: #1a73e8;
     border-radius: 50%;
-    animation: deepread-spin 0.8s linear infinite;
+    animation: assistant-spin 0.8s linear infinite;
     margin-right: 8px;
   `;
 
   // Add keyframes if not already present
-  if (!document.querySelector('#deepread-spinner-keyframes')) {
+  if (!document.querySelector('#assistant-spinner-keyframes')) {
     const style = document.createElement('style');
-    style.id = 'deepread-spinner-keyframes';
+    style.id = 'assistant-spinner-keyframes';
     style.textContent = `
-      @keyframes deepread-spin {
+      @keyframes assistant-spin {
         to { transform: rotate(360deg); }
       }
     `;

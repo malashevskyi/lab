@@ -5,7 +5,7 @@ import { useAppStore } from '../store';
 import { normalizeUrl } from '../utils/normalizeUrl';
 
 const getStorageKey = (): string =>
-  `deepread_title_${normalizeUrl(window.location.href)}`;
+  `assistant_title_${normalizeUrl(window.location.href)}`;
 
 /**
  * @function usePersistedTitle

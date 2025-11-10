@@ -9,8 +9,8 @@ import { AppErrorCode } from '../shared/exceptions/AppErrorCode.js';
 import {
   createAudioRecordSchema,
   updateAudioRecordSchema,
-} from '@lab/types/deep-read/audio-records/index.js';
-import type { UpdateAudioRecordType } from '@lab/types/deep-read/audio-records/index.js';
+} from '@lab/types/assistant/audio-records/index.js';
+import type { UpdateAudioRecordType } from '@lab/types/assistant/audio-records/index.js';
 
 @Injectable()
 export class AudioRecordsService {

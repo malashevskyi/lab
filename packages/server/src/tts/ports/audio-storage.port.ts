@@ -1,4 +1,4 @@
-import type { UploadAudioResponse } from '@lab/types/deep-read/tts/index.js';
+import type { UploadAudioResponse } from '@lab/types/assistant/tts/index.js';
 
 export abstract class AudioStoragePort {
   abstract uploadAudio(

@@ -15,35 +15,35 @@
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     },
-    "./deep-read/tts/index.js": {
-      "types": "./dist/deep-read/tts/index.d.ts",
-      "require": "./dist/deep-read/tts/index.cjs",
-      "import": "./dist/deep-read/tts/index.js"
+    "./assistant/tts/index.js": {
+      "types": "./dist/assistant/tts/index.d.ts",
+      "require": "./dist/assistant/tts/index.cjs",
+      "import": "./dist/assistant/tts/index.js"
     },
-    "./deep-read/dictionary-examples/index.js": {
-      "types": "./dist/deep-read/dictionary-examples/index.d.ts",
-      "require": "./dist/deep-read/dictionary-examples/index.cjs",
-      "import": "./dist/deep-read/dictionary-examples/index.js"
+    "./assistant/dictionary-examples/index.js": {
+      "types": "./dist/assistant/dictionary-examples/index.d.ts",
+      "require": "./dist/assistant/dictionary-examples/index.cjs",
+      "import": "./dist/assistant/dictionary-examples/index.js"
     },
-    "./deep-read/dictionary-entries/index.js": {
-      "types": "./dist/deep-read/dictionary-entries/index.d.ts",
-      "require": "./dist/deep-read/dictionary-entries/index.cjs",
-      "import": "./dist/deep-read/dictionary-entries/index.js"
+    "./assistant/dictionary-entries/index.js": {
+      "types": "./dist/assistant/dictionary-entries/index.d.ts",
+      "require": "./dist/assistant/dictionary-entries/index.cjs",
+      "import": "./dist/assistant/dictionary-entries/index.js"
     },
-    "./deep-read/ai/index.js": {
-      "types": "./dist/deep-read/ai/index.d.ts",
-      "require": "./dist/deep-read/ai/index.cjs",
-      "import": "./dist/deep-read/ai/index.js"
+    "./assistant/ai/index.js": {
+      "types": "./dist/assistant/ai/index.d.ts",
+      "require": "./dist/assistant/ai/index.cjs",
+      "import": "./dist/assistant/ai/index.js"
     },
-    "./deep-read/audio-records/index.js": {
-      "types": "./dist/deep-read/audio-records/index.d.ts",
-      "require": "./dist/deep-read/audio-records/index.cjs",
-      "import": "./dist/deep-read/audio-records/index.js"
+    "./assistant/audio-records/index.js": {
+      "types": "./dist/assistant/audio-records/index.d.ts",
+      "require": "./dist/assistant/audio-records/index.cjs",
+      "import": "./dist/assistant/audio-records/index.js"
     },
-    "./deep-read/flashcards/index.js": {
-      "types": "./dist/deep-read/flashcards/index.d.ts",
-      "require": "./dist/deep-read/flashcards/index.cjs",
-      "import": "./dist/deep-read/flashcards/index.js"
+    "./assistant/flashcards/index.js": {
+      "types": "./dist/assistant/flashcards/index.d.ts",
+      "require": "./dist/assistant/flashcards/index.cjs",
+      "import": "./dist/assistant/flashcards/index.js"
     }
   },
   "dependencies": {

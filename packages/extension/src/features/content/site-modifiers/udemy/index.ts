@@ -21,7 +21,7 @@ let styleElement: HTMLStyleElement | null = null;
  */
 const addSeekButton = (cueContainer: HTMLElement): void => {
   // Skip if button already exists
-  if (cueContainer.querySelector('.deepread-seek-button')) {
+  if (cueContainer.querySelector('.web-assistant-seek-button')) {
     return;
   }
 
@@ -33,11 +33,11 @@ const addSeekButton = (cueContainer: HTMLElement): void => {
 
   // Create wrapper for button + content
   const wrapper = document.createElement('div');
-  wrapper.className = 'deepread-seek-button-container';
+  wrapper.className = 'web-assistant-seek-button-container';
 
   // Create seek button
   const seekButton = document.createElement('button');
-  seekButton.className = 'deepread-seek-button';
+  seekButton.className = 'web-assistant-seek-button';
   seekButton.title = 'Go to this time in video';
   seekButton.innerHTML = `
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -58,13 +58,13 @@ const addSeekButton = (cueContainer: HTMLElement): void => {
     });
 
     // Temporarily mark that this is from our button
-    (clickEvent as any).fromDeepReadButton = true;
+    (clickEvent as any).fromWebAssistantButton = true;
     cue.dispatchEvent(clickEvent);
   });
 
   // Create content wrapper
   const contentWrapper = document.createElement('div');
-  contentWrapper.className = 'deepread-transcript-content';
+  contentWrapper.className = 'web-assistant-transcript-content';
 
   // Move cue's content to wrapper (but keep the cue element structure)
   while (cue.firstChild) {
@@ -100,25 +100,27 @@ const processTranscriptCues = (): void => {
     addSeekButton(container);
 
     // Skip if already processed
-    if (cue.hasAttribute('data-deepread-processed')) {
+    if (cue.hasAttribute('data-web-assistant-processed')) {
       return;
     }
 
     // Mark as processed
-    cue.setAttribute('data-deepread-processed', 'true');
+    cue.setAttribute('data-web-assistant-processed', 'true');
 
     // Make sure the element is not focusable
     cue.setAttribute('tabindex', '-1');
     cue.removeAttribute('role');
 
     // Prevent clicks on the text content (but not on the button)
-    const contentWrapper = cue.querySelector('.deepread-transcript-content');
+    const contentWrapper = cue.querySelector(
+      '.web-assistant-transcript-content'
+    );
     if (contentWrapper) {
       contentWrapper.addEventListener(
         'click',
         (e) => {
           // Only prevent clicks that are NOT from our seek button
-          if (!(e as any).fromDeepReadButton) {
+          if (!(e as any).fromWebAssistantButton) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -134,18 +136,21 @@ const processTranscriptCues = (): void => {
  * Initialize Udemy modifications
  */
 const initialize = (): void => {
-  console.log('[DeepRead] Initializing Udemy site modifier');
+  console.log('[Assistant] Initializing Udemy site modifier');
 
   // Inject custom styles - check both variable and DOM to prevent duplicates
-  if (!styleElement && !document.getElementById('deepread-udemy-modifier')) {
+  if (
+    !styleElement &&
+    !document.getElementById('web-assistant-udemy-modifier')
+  ) {
     styleElement = document.createElement('style');
-    styleElement.id = 'deepread-udemy-modifier';
+    styleElement.id = 'web-assistant-udemy-modifier';
     styleElement.textContent = styles;
     document.head.appendChild(styleElement);
   } else if (!styleElement) {
     // Style exists in DOM but not in variable (e.g., after page navigation)
     styleElement = document.getElementById(
-      'deepread-udemy-modifier'
+      'web-assistant-udemy-modifier'
     ) as HTMLStyleElement;
   }
 
@@ -219,7 +224,7 @@ const initialize = (): void => {
  * Cleanup Udemy modifications
  */
 const cleanup = (): void => {
-  console.log('[DeepRead] Cleaning up Udemy site modifier');
+  console.log('[Assistant] Cleaning up Udemy site modifier');
 
   // Remove injected styles
   if (styleElement && styleElement.parentNode) {

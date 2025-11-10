@@ -1,7 +1,7 @@
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { googleServiceAccountSchema } from '@lab/types/deep-read/tts/index.js';
+import { googleServiceAccountSchema } from '@lab/types/assistant/tts/index.js';
 import { TextToSpeechPort } from '../ports/tts.port.js';
 import { ErrorService } from '../../errors/errors.service.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';

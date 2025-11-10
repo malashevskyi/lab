@@ -24,7 +24,7 @@ BEGIN {
     print "[";
 }
 {
-    # 1. Get the full input path (e.g., types/src/deep-read/...)
+    # 1. Get the full input path (e.g., types/src/assistant/...)
     input_path = $0;
 
     # Remove the defined prefix to make paths relative to the config file (e.g., src/...)

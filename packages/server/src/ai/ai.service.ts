@@ -3,7 +3,7 @@ import { AiAnalysisPort } from './ports/ai-analysis.port.js';
 import {
   AnalysisResponse,
   GenerateFlashcardResponse,
-} from '@lab/types/deep-read/ai/index.js';
+} from '@lab/types/assistant/ai/index.js';
 import { AiFlashcardGeneratorPort } from './ports/ai-generate-flashcard.port.js';
 
 @Injectable()

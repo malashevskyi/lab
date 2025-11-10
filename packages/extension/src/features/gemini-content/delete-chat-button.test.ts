@@ -76,12 +76,12 @@ describe('Gemini Delete Chat Button', () => {
   describe('Delete Button Structure', () => {
     it('should create delete button with correct classes', () => {
       const button = document.createElement('button');
-      button.id = 'deepread-gemini-delete-button';
+      button.id = 'assistant-gemini-delete-button';
       button.className =
         'mdc-icon-button mat-mdc-icon-button mat-mdc-button-base';
       button.setAttribute('aria-label', 'Delete current chat');
 
-      expect(button.id).toBe('deepread-gemini-delete-button');
+      expect(button.id).toBe('assistant-gemini-delete-button');
       expect(button.className).toContain('mdc-icon-button');
       expect(button.getAttribute('aria-label')).toBe('Delete current chat');
     });
@@ -172,7 +172,7 @@ describe('Gemini Delete Chat Button', () => {
   describe('Spinner Creation', () => {
     it('should create spinner with correct styles', () => {
       const spinner = document.createElement('div');
-      spinner.id = 'deepread-delete-spinner';
+      spinner.id = 'assistant-delete-spinner';
       spinner.style.cssText = `
         display: inline-block;
         width: 24px;
@@ -182,7 +182,7 @@ describe('Gemini Delete Chat Button', () => {
         border-radius: 50%;
       `;
 
-      expect(spinner.id).toBe('deepread-delete-spinner');
+      expect(spinner.id).toBe('assistant-delete-spinner');
       expect(spinner.style.width).toBe('24px');
       expect(spinner.style.height).toBe('24px');
       expect(spinner.style.borderRadius).toBe('50%');
@@ -199,7 +199,7 @@ describe('Gemini Delete Chat Button', () => {
       wrapper.appendChild(micButton);
 
       const deleteButton = document.createElement('button');
-      deleteButton.id = 'deepread-gemini-delete-button';
+      deleteButton.id = 'assistant-gemini-delete-button';
       wrapper.insertBefore(deleteButton, wrapper.firstChild);
 
       expect(wrapper.firstChild).toBe(deleteButton);
@@ -226,7 +226,7 @@ describe('Gemini Delete Chat Button', () => {
       wrapper.className = 'input-buttons-wrapper-bottom';
 
       const existingButton = document.createElement('button');
-      existingButton.id = 'deepread-gemini-delete-button';
+      existingButton.id = 'assistant-gemini-delete-button';
       wrapper.appendChild(existingButton);
 
       // Add wrapper to document so querySelector can find it
@@ -234,13 +234,13 @@ describe('Gemini Delete Chat Button', () => {
 
       // Try to find the button
       const newButton = document.querySelector(
-        '#deepread-gemini-delete-button'
+        '#assistant-gemini-delete-button'
       );
       expect(newButton).toBeTruthy();
 
       // Should only have one button with this ID
       const allButtons = document.querySelectorAll(
-        '#deepread-gemini-delete-button'
+        '#assistant-gemini-delete-button'
       );
       expect(allButtons.length).toBe(1);
 
@@ -253,14 +253,14 @@ describe('Gemini Delete Chat Button', () => {
     it('should remove spinner after successful deletion', () => {
       const wrapper = document.createElement('div');
       const spinner = document.createElement('div');
-      spinner.id = 'deepread-delete-spinner';
+      spinner.id = 'assistant-delete-spinner';
       wrapper.appendChild(spinner);
 
-      expect(wrapper.querySelector('#deepread-delete-spinner')).toBeTruthy();
+      expect(wrapper.querySelector('#assistant-delete-spinner')).toBeTruthy();
 
       // Remove spinner
       spinner.remove();
-      expect(wrapper.querySelector('#deepread-delete-spinner')).toBeFalsy();
+      expect(wrapper.querySelector('#assistant-delete-spinner')).toBeFalsy();
     });
 
     it('should detect dialog disappearance', () => {

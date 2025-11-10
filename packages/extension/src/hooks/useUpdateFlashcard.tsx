@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { deepReadAPI } from '../services/api';
+import { assistantApi } from '../services/api';
 import { ApiError } from '../services/ApiError';
-import type { FlashcardType } from '@lab/types/deep-read/flashcards';
+import type { FlashcardType } from '@lab/types/assistant/flashcards';
 import { useEffect } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useAppStore } from '../store';
@@ -30,7 +30,7 @@ export const useUpdateFlashcard = () => {
     { id: string; data: UpdateFlashcardDto }
   >({
     mutationFn: async ({ id, data }) => {
-      const response = await deepReadAPI.put<FlashcardType>(
+      const response = await assistantApi.put<FlashcardType>(
         `/flashcards/${id}`,
         data
       );

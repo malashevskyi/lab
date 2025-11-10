@@ -5,7 +5,7 @@ import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiService } from '../ai/ai.service';
 import { Repository } from 'typeorm';
-import { CreateFlashcardResponseType } from '@lab/types/deep-read/flashcards/index.js';
+import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 
 @Injectable()
 export class FlashcardsService {

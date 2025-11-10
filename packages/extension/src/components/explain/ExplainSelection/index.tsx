@@ -24,7 +24,7 @@ export const ExplainSelection: React.FC = () => {
   const handleRegularSelection = (event: MouseEvent) => {
     if (event.target instanceof HTMLElement === false) return;
     // ignore if clicked inside the sidebar or existing UI
-    if (event.target.closest('#deepread-root')) return;
+    if (event.target.closest('#assistant-root')) return;
 
     // ignore clicks on interactive elements like buttons, links, headings in accordions, etc.
     if (

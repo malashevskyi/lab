@@ -12,12 +12,12 @@ import {
   type FindOrCreateDictionaryEntryResponseType,
   getDictionaryEntryWithExamplesByTextResponseSchema,
   type GetDictionaryEntryWithExamplesByTextResponseType,
-} from '@lab/types/deep-read/dictionary-entries/index.js';
+} from '@lab/types/assistant/dictionary-entries/index.js';
 import { ErrorService } from '../errors/errors.service.js';
 import { AudioRecord } from '../audio-records/entities/audio-record.entity.js';
 import { DictionaryExample } from '../dictionary-examples/entities/dictionary-example.entity.js';
 import { AppErrorCode } from '../shared/exceptions/AppErrorCode.js';
-import { GetDictionaryExampleResponseType } from '@lab/types/deep-read/dictionary-examples/index.js';
+import { GetDictionaryExampleResponseType } from '@lab/types/assistant/dictionary-examples/index.js';
 
 @Injectable()
 @UsePipes(ZodValidationPipe)

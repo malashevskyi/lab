@@ -14,7 +14,7 @@ import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { GetLastFlashcardDocs } from './decorators/get-last-flashcard.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
-import { CreateFlashcardResponseType } from '@lab/types/deep-read/flashcards/index.js';
+import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 
 @ApiTags('Flashcards')
 @UsePipes(ZodValidationPipe)

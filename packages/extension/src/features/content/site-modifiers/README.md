@@ -1,10 +1,10 @@
 # Site Modifiers
 
-Site-specific modifications for DeepRead browser extension.
+Site-specific modifications for Assistant browser extension.
 
 ## Overview
 
-The Site Modifiers system allows DeepRead to apply custom styles and behaviors to specific websites, making them more compatible with flashcard creation and text selection features.
+The Site Modifiers system allows Assistant to apply custom styles and behaviors to specific websites, making them more compatible with flashcard creation and text selection features.
 
 ## Architecture
 
@@ -167,9 +167,9 @@ Enable debug logging by opening DevTools Console:
 
 ```javascript
 // You'll see logs like:
-[DeepRead] Initializing Udemy site modifier
-[DeepRead] URL changed, reinitializing site modifiers
-[DeepRead] Navigation detected (pushState)
+[Assistant] Initializing Udemy site modifier
+[Assistant] URL changed, reinitializing site modifiers
+[Assistant] Navigation detected (pushState)
 ```
 
 ## Best Practices

@@ -1,4 +1,4 @@
-import { getLastFlashcardResponseSchema } from '@lab/types/deep-read/flashcards/index.js';
+import { getLastFlashcardResponseSchema } from '@lab/types/assistant/flashcards/index.js';
 import { createZodDto } from 'nestjs-zod';
 import {
   AnswerProperty,

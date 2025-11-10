@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { deepReadAPI } from '../services/api';
+import { assistantApi } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import {
   createFlashcardBodySchema,
   createFlashcardResponseSchema,
   type CreateFlashcardBodyType,
-} from '@lab/types/deep-read/flashcards/index.js';
+} from '@lab/types/assistant/flashcards/index.js';
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 import { useAppStore } from '../store';
@@ -30,7 +30,7 @@ export const useCreateFlashcard = () => {
   >({
     mutationFn: async (flashcardData) => {
       const validatedData = createFlashcardBodySchema.parse(flashcardData);
-      const response = await deepReadAPI.post('/flashcards', validatedData);
+      const response = await assistantApi.post('/flashcards', validatedData);
       return createFlashcardResponseSchema.parse(response.data);
     },
     onSuccess: (data) => {

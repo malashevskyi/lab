@@ -56,16 +56,16 @@ span[data-purpose='cue-text'] {
   box-shadow: none !important;
 }
 
-/* DeepRead seek button container */
-.deepread-seek-button-container {
+/* Assistant seek button container */
+.assistant-seek-button-container {
   position: relative;
   display: flex;
   align-items: flex-start;
   gap: 8px;
 }
 
-/* DeepRead seek button */
-.deepread-seek-button {
+/* Assistant seek button */
+.assistant-seek-button {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
@@ -84,24 +84,24 @@ span[data-purpose='cue-text'] {
   position: relative;
 }
 
-.deepread-seek-button:hover {
+.assistant-seek-button:hover {
   background-color: #401b9c;
   transform: scale(1.05);
 }
 
-.deepread-seek-button:active {
+.assistant-seek-button:active {
   transform: scale(0.95);
 }
 
 /* Play icon SVG */
-.deepread-seek-button svg {
+.assistant-seek-button svg {
   width: 14px;
   height: 14px;
   fill: white;
 }
 
 /* Transcript content wrapper */
-.deepread-transcript-content {
+.assistant-transcript-content {
   flex: 1;
   min-width: 0;
 }

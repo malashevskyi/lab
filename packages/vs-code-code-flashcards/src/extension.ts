@@ -200,34 +200,37 @@ export async function activate(context: vscode.ExtensionContext) {
   flashcardProvider.onDidReceiveMessage(async (message) => {
     switch (message.command) {
       case 'createFlashcard':
-        console.log(
-          '[Code Flashcards] Received "createFlashcard" command from Webview.'
-        );
-        const answer = message.snippets
-          .map(
-            (s: CodeSnippet) =>
-              `\`\`\`${path.extname(s.fileName).slice(1) || 'text'}\n${
-                s.content
-              }\n\`\`\``
-          )
-          .join('\n\n');
-        const payload: FlashcardPayload = {
-          question: message.question,
-          answer: answer,
-          context: message.language,
-          level: 'intermediate',
-        };
-        const { error } = await supabaseService.insertFlashcard(payload);
-        if (!error) {
-          vscode.window.showInformationMessage(
-            'Flashcard created successfully!'
+        try {
+          console.log(
+            '[Code Flashcards] Received "createFlashcard" command from Webview.'
           );
-          const emptySnippets: CodeSnippet[] = [];
-          await stateManager.setSnippets(emptySnippets);
-          flashcardProvider.update(emptySnippets, '');
-          vscode.window.visibleTextEditors.forEach((editor) =>
-            highlighter.updateDecorations(editor, [])
-          );
+          const answer = message.snippets
+            .map(
+              (s: CodeSnippet) =>
+                `\`\`\`${message.language}\n${s.content}\n\`\`\``
+            )
+            .join('\n\n');
+          const payload: FlashcardPayload = {
+            question: message.question,
+            answer: answer,
+            context: message.language,
+            level: 'junior',
+            source_url: 'https://vs-code',
+          };
+          const { error } = await supabaseService.insertFlashcard(payload);
+          if (!error) {
+            vscode.window.showInformationMessage(
+              'Flashcard created successfully!'
+            );
+            const emptySnippets: CodeSnippet[] = [];
+            await stateManager.setSnippets(emptySnippets);
+            flashcardProvider.update(emptySnippets, '');
+            vscode.window.visibleTextEditors.forEach((editor) =>
+              highlighter.updateDecorations(editor, [])
+            );
+          }
+        } finally {
+          flashcardProvider.signalOperationComplete();
         }
         return;
       case 'showError':
@@ -236,10 +239,17 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  // Restore saved snippets on activation
+  const savedSnippets = stateManager.getSnippets();
+  if (savedSnippets.length > 0) {
+    const primaryLanguage = determinePrimaryLanguage(savedSnippets);
+    flashcardProvider.update(savedSnippets, primaryLanguage);
+  }
+
   if (vscode.window.activeTextEditor) {
     highlighter.updateDecorations(
       vscode.window.activeTextEditor,
-      stateManager.getSnippets()
+      savedSnippets
     );
   }
 }

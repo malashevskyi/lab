@@ -6,6 +6,7 @@ export interface FlashcardPayload {
   answer: string;
   context: string;
   level: string;
+  source_url: string;
 }
 
 const SUPABASE_SESSION_KEY = 'supabase_session';

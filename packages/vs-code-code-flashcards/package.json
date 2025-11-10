@@ -113,6 +113,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@types/highlight.js": "^10.1.0",
     "@types/markdown-it": "^14.1.2",
     "@types/mocha": "^10.0.3",
     "@types/node": "^24.10.0",
@@ -129,7 +130,9 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.80.0",
+    "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
+    "markdown-it-highlightjs": "^4.2.0",
     "uuid": "8.3.2"
   }
 }

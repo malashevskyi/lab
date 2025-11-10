@@ -88,3 +88,5 @@ dist/
 
 vendor
 dummy-non-existing-folder
+
+out

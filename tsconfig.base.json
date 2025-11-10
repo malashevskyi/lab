@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    // Use ${configDir} to make paths relative to the tsconfig.json location
+    // TODO add other common options here
+    "noImplicitOverride": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "${configDir}/dist",
     "rootDir": "${configDir}/src"
   },

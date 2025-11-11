@@ -47,7 +47,14 @@ A browser assistant that helps you read, learn, analyze text, and create spaced-
 
 ---
 
-### 3. 🧠 Word/Phrase AI Analysis
+### 3. 📚 Flashcards Tab
+
+- Displays all flashcards created for the current page URL
+- Groups flashcards by normalized URL (e.g., Udemy course)
+
+---
+
+### 4. 🧠 Word/Phrase AI Analysis
 
 - Word/phrase translation from English to your language  
   _(TODO: add target-language settings)_

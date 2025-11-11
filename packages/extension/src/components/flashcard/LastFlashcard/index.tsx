@@ -58,12 +58,7 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
             <div className="flex-1 space-y-3">
               {/* Question Section */}
               <div className="bg-white p-3 rounded border-l-4 border-solid border-blue-400">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="text-xs font-medium text-blue-600 uppercase tracking-wide">
-                      Question
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between">
                   {flashcard.context && (
                     <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
                       {flashcard.context}
@@ -79,9 +74,6 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
 
               {/* Answer Section */}
               <div className="bg-white p-3 rounded border-l-4 border-solid border-green-400">
-                <div className="text-xs font-medium text-green-600 mb-2 uppercase tracking-wide">
-                  Answer
-                </div>
                 <EditableHTML
                   content={editedAnswer}
                   onContentChange={handleAnswerChange}

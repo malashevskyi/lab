@@ -13,6 +13,7 @@ import { FlashcardsService } from './flashcards.service';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { GetLastFlashcardDocs } from './decorators/get-last-flashcard.docs.decorator';
+import { GetFlashcardsByUrlDocs } from './decorators/get-flashcards-by-url.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 
@@ -33,6 +34,14 @@ export class FlashcardsController {
   @GetLastFlashcardDocs()
   async getLastFlashcard(): Promise<FlashcardEntity | null> {
     return this.flashcardsService.findLast();
+  }
+
+  @Get('by-url/:sourceUrl')
+  @GetFlashcardsByUrlDocs()
+  async getFlashcardsByUrl(
+    @Param('sourceUrl') sourceUrl: string,
+  ): Promise<FlashcardEntity[]> {
+    return this.flashcardsService.findBySourceUrl(sourceUrl);
   }
 
   @Put(':id')

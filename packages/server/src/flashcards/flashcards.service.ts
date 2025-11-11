@@ -66,6 +66,22 @@ export class FlashcardsService {
   }
 
   /**
+   * Finds all flashcards for a specific source URL.
+   * @param sourceUrl - The source URL to filter by
+   * @returns {Promise<FlashcardEntity[]>} Array of flashcards for the given URL
+   */
+  async findBySourceUrl(sourceUrl: string): Promise<FlashcardEntity[]> {
+    return this.flashcardsRepository.find({
+      where: {
+        sourceUrl,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  /**
    * Updates an existing flashcard's question and answer.
    * @param id - The flashcard ID to update
    * @param updateData - The updated question and answer data

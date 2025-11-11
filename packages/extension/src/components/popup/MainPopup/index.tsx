@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore } from '../../../store';
 import { FlashcardCreator } from '../../flashcard/FlashcardCreator';
 import { LastFlashcardTab } from '../../flashcard/LastFlashcardTab';
+import { FlashcardsTab } from '../../flashcard/FlashcardsTab';
 import { AnalysisTab } from '../../analysis/AnalysisTab';
 import { TabsNavigation } from '../TabsNavigation';
 import { MarkdownToolbar } from '../../markdown/MarkdownToolbar';
@@ -227,6 +228,7 @@ export const MainPopup: React.FC = () => {
         <div className="h-full overflow-y-auto p-4">
           {activeTab === 'new-flashcard' && <FlashcardCreator />}
           {activeTab === 'last-flashcard' && <LastFlashcardTab />}
+          {activeTab === 'flashcards' && <FlashcardsTab />}
           {activeTab === 'analysis' && <AnalysisTab />}
         </div>
       </div>

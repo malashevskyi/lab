@@ -7,7 +7,11 @@ export interface SidebarState {
   context: string;
 }
 
-export type PopupTab = 'new-flashcard' | 'last-flashcard' | 'analysis';
+export type PopupTab =
+  | 'new-flashcard'
+  | 'last-flashcard'
+  | 'flashcards'
+  | 'analysis';
 
 export interface PopupState {
   position: { x: number; y: number };

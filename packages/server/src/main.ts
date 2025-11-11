@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { LogLevel } from '@nestjs/common';
+import { INestApplication, LogLevel } from '@nestjs/common';
 import { AppModule } from './app.module.js';
 import * as Sentry from '@sentry/node';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SpelunkerModule } from 'nestjs-spelunker';
+import * as fs from 'fs';
 import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter.js';
 
 async function bootstrap() {
@@ -33,6 +35,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
+  if (process.env.NODE_ENV === 'development') {
+    generateDependencyGraph(app);
+  }
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
@@ -41,3 +47,24 @@ async function bootstrap() {
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();
+
+function generateDependencyGraph(app: INestApplication) {
+  // Module dependencies graph
+  const tree = SpelunkerModule.explore(app);
+  const root = SpelunkerModule.graph(tree);
+  const edges = SpelunkerModule.findGraphEdges(root);
+  const mermaidEdges = edges
+    .map(({ from, to }) => `  ${from.module.name}-->${to.module.name}`)
+    // filter out modules from the chart if you need
+    .filter(
+      (edge) =>
+        !edge.includes('FilteredModule') && !edge.includes('OtherExample'),
+    )
+    .sort();
+  // write into file
+  fs.writeFileSync(
+    'deps.mermaid',
+    `graph LR
+${mermaidEdges.join('\n')}`,
+  );
+}

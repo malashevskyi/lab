@@ -17,7 +17,7 @@ export const LastFlashcardTab: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="mb-5">
       <LastFlashcard flashcard={lastCardData} isVisible={true} />
     </div>
   );

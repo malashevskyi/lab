@@ -9,6 +9,8 @@ import { MarkdownToolbar } from '../../markdown/MarkdownToolbar';
 import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
 import { usePreventHostKeyboardEvents } from './usePreventHostKeyboardEvents';
 
+const MIN_POPUP_HEIGHT = 350;
+
 interface Position {
   y: number;
 }
@@ -43,22 +45,26 @@ export const MainPopup: React.FC = () => {
   // This allows users to type in input fields without triggering host page shortcuts
   usePreventHostKeyboardEvents(popupRef, isPopupOpen);
 
+  const getInitialY = () => {
+    return Math.min(
+      window.innerHeight * 0.65,
+      window.innerHeight - MIN_POPUP_HEIGHT
+    );
+  };
+
   // Initialize position when popup opens
   useEffect(() => {
-    if (isPopupOpen && !isInitialized) {
-      const initialY = window.innerHeight * 0.67; // Position at 67% from top
-      setPosition({ y: initialY });
-      setIsInitialized(true);
-    } else if (isPopupOpen && isInitialized) {
-      // If popup was already initialized, use normal position update
-      const initialY = window.innerHeight * 0.67;
-      setPosition({ y: initialY });
+    if (isPopupOpen) {
+      setPosition({ y: getInitialY() });
+      setTimeout(() => {
+        setIsInitialized(true);
+      }, 0);
     } else if (!isPopupOpen) {
       // Reset initialization when popup closes
       setIsInitialized(false);
       setIsAtBottom(false);
     }
-  }, [isPopupOpen, isInitialized]);
+  }, [isPopupOpen]);
 
   // Handle scroll behavior
   useEffect(() => {
@@ -84,8 +90,7 @@ export const MainPopup: React.FC = () => {
         if (scrollDiff >= 100) {
           // Move popup back to bottom
           setIsAtBottom(false);
-          const initialY = window.innerHeight * 0.67;
-          setPosition({ y: initialY });
+          setPosition({ y: getInitialY() });
         }
       }
 
@@ -153,8 +158,7 @@ export const MainPopup: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       if (!isDragging && !isAtBottom) {
-        const initialY = window.innerHeight * 0.67;
-        setPosition({ y: initialY });
+        setPosition({ y: getInitialY() });
       }
     };
 
@@ -167,7 +171,7 @@ export const MainPopup: React.FC = () => {
   return (
     <div
       ref={popupRef}
-      className={`fixed bg-white rounded-lg shadow-xl border border-solid border-gray-300 z-[999] w-[98%] max-w-[800px] h-[35%] min-h-[300px] max-h-[600px] grid grid-rows-[auto_auto_1fr] ${
+      className={`fixed bg-white rounded-lg shadow-xl border border-solid border-gray-300 z-[999] w-[98%] max-w-[800px] h-[35%] min-h-[350px] grid grid-rows-[auto_auto_1fr] ${
         isDragging ? 'cursor-grabbing' : 'cursor-default'
       } ${
         isDragging || !isInitialized

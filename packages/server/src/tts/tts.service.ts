@@ -4,6 +4,7 @@ import type { GenerateAudioResponse } from '@lab/types/assistant/tts/index.js';
 import { TextToSpeechPort } from './ports/tts.port.js';
 import { AudioStoragePort } from './ports/audio-storage.port.js';
 import { AudioRecordsService } from '../audio-records/audio-records.service.js';
+import { stripMarkdown } from './utils/stripMarkdown.js';
 
 @Injectable()
 export class TtsService {
@@ -35,7 +36,8 @@ export class TtsService {
     questionText: string,
     flashcardId: string,
   ): Promise<GenerateAudioResponse> {
-    const audioBuffer = await this.ttsPort.generateAudioBuffer(questionText);
+    const cleanText = stripMarkdown(questionText);
+    const audioBuffer = await this.ttsPort.generateAudioBuffer(cleanText);
 
     const { audioUrl } =
       await this.audioStoragePort.uploadFlashcardQuestionAudio(

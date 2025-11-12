@@ -4,8 +4,10 @@ import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiService } from '../ai/ai.service';
+import { TtsService } from '../tts/tts.service';
 import { Repository } from 'typeorm';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
+import { GenerateAudioResponseDto } from './dto/generate-audio.response.dto';
 
 @Injectable()
 export class FlashcardsService {
@@ -13,6 +15,7 @@ export class FlashcardsService {
     @InjectRepository(FlashcardEntity)
     private readonly flashcardsRepository: Repository<FlashcardEntity>,
     private readonly aiService: AiService,
+    private readonly ttsService: TtsService,
   ) {}
 
   /**
@@ -98,5 +101,28 @@ export class FlashcardsService {
     });
 
     return this.flashcardsRepository.findOne({ where: { id } });
+  }
+
+  async generateQuestionAudio(id: string): Promise<GenerateAudioResponseDto> {
+    const flashcard = await this.flashcardsRepository.findOne({
+      where: { id },
+    });
+
+    if (!flashcard) {
+      throw new Error(`Flashcard with ID "${id}" not found`);
+    }
+
+    const { audioUrl } =
+      await this.ttsService.generateAndUploadFlashcardQuestionAudio(
+        flashcard.question,
+        id,
+      );
+
+    await this.flashcardsRepository.update(id, {
+      questionAudioUrl: audioUrl,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return { audioUrl };
   }
 }

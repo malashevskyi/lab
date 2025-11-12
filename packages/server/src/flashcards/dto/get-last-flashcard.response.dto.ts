@@ -9,6 +9,7 @@ import {
   LastIntervalProperty,
   LevelProperty,
   NextReviewDateProperty,
+  QuestionAudioUrlProperty,
   QuestionProperty,
   SourceUrlProperty,
   TagsProperty,
@@ -51,6 +52,11 @@ export class GetLastFlashcardResponseDto extends createZodDto(
   @LastIntervalProperty()
   lastInterval: z.infer<
     typeof getLastFlashcardResponseSchema.shape.lastInterval
+  >;
+
+  @QuestionAudioUrlProperty()
+  questionAudioUrl: z.infer<
+    typeof getLastFlashcardResponseSchema.shape.questionAudioUrl
   >;
 
   @CreatedAtProperty()

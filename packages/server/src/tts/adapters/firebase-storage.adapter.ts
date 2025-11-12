@@ -13,6 +13,7 @@ import { ErrorService } from '../../errors/errors.service.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
 
 const BUCKET_DIRECTORY = 'audio';
+const FLASHCARD_QUESTIONS_DIRECTORY = 'flashcard-questions';
 
 const getFirebaseCredentials = (
   serviceAccountString: string,
@@ -81,24 +82,27 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
     }
   }
 
-  /**
-   * Uploads an audio file to Firebase Storage and returns a signed URL.
-   * @param buffer - The audio file buffer to upload.
-   * @param text - A text string used to generate the file name.
-   * @returns A promise resolving to an object containing the public URL and storage path.
-   * @throws {AppError} If the upload or URL generation fails.
-   */
-  async uploadAudio(
-    buffer: Buffer,
-    text: string,
-  ): Promise<UploadAudioResponse> {
+  private async deleteIfExists(storagePath: string): Promise<void> {
     try {
-      const fileName = `${text.replace(/\s/g, '_')}.mp3`;
-      const storagePath = `${BUCKET_DIRECTORY}/${fileName}`;
       const file = this.storage.bucket(this.bucketName).file(storagePath);
-
       const [exists] = await file.exists();
       if (exists) await file.delete();
+    } catch (error) {
+      this.errorService.handle(
+        AppErrorCode.AUDIO_DELETION_FAILED,
+        `Failed to delete audio from storage at path: "${storagePath}"`,
+        error,
+      );
+    }
+  }
+
+  private async saveAndGetSignedUrl(
+    buffer: Buffer,
+    storagePath: string,
+  ): Promise<{ audioUrl: string; expiresAt: string }> {
+    try {
+      const file = this.storage.bucket(this.bucketName).file(storagePath);
+      await this.deleteIfExists(storagePath);
 
       await file.save(buffer, {
         metadata: { contentType: 'audio/mpeg' },
@@ -113,17 +117,77 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
         expires: oneMonthFromNow,
       });
 
+      return { audioUrl, expiresAt: oneMonthFromNow.toISOString() };
+    } catch (error) {
+      this.errorService.handle(
+        AppErrorCode.AUDIO_UPLOAD_FAILED,
+        `Failed to save audio to storage at path: "${storagePath}"`,
+        error,
+      );
+    }
+  }
+
+  /**
+   * Uploads an audio file to Firebase Storage and returns a signed URL.
+   * @param buffer - The audio file buffer to upload.
+   * @param text - A text string used to generate the file name.
+   * @returns A promise resolving to an object containing the public URL and storage path.
+   * @throws {AppError} If the upload or URL generation fails.
+   */
+  async uploadAudio(
+    buffer: Buffer,
+    text: string,
+  ): Promise<UploadAudioResponse> {
+    try {
+      const fileName = `${text.replace(/\s/g, '_')}.mp3`;
+      const storagePath = `${BUCKET_DIRECTORY}/${fileName}`;
+      const { audioUrl, expiresAt } = await this.saveAndGetSignedUrl(
+        buffer,
+        storagePath,
+      );
+
       this.logger.log(`Successfully uploaded file: ${storagePath}`);
 
       return {
         audioUrl,
         storagePath,
-        expiresAt: oneMonthFromNow.toISOString(),
+        expiresAt,
       };
     } catch (error) {
       this.errorService.handle(
         AppErrorCode.AUDIO_UPLOAD_FAILED,
         `Failed to upload audio to storage for text: "${text}"`,
+        error,
+      );
+    }
+  }
+
+  async uploadFlashcardQuestionAudio(
+    buffer: Buffer,
+    flashcardId: string,
+  ): Promise<UploadAudioResponse> {
+    try {
+      const fileName = `${flashcardId}.mp3`;
+      const storagePath = `${FLASHCARD_QUESTIONS_DIRECTORY}/${fileName}`;
+
+      const { audioUrl, expiresAt } = await this.saveAndGetSignedUrl(
+        buffer,
+        storagePath,
+      );
+
+      this.logger.log(
+        `Successfully uploaded flashcard question audio: ${storagePath}`,
+      );
+
+      return {
+        audioUrl,
+        storagePath,
+        expiresAt,
+      };
+    } catch (error) {
+      this.errorService.handle(
+        AppErrorCode.AUDIO_UPLOAD_FAILED,
+        `Failed to upload flashcard question audio for ID: "${flashcardId}"`,
         error,
       );
     }

@@ -37,6 +37,9 @@ export class FlashcardEntity implements FlashcardType {
   @Column({ type: 'varchar', array: true, default: '{}' })
   contexts: UsageContext[];
 
+  @Column({ name: 'question_audio_url', type: 'text', nullable: true })
+  questionAudioUrl: string | null;
+
   @Column({ name: 'next_review_date', type: 'timestamptz', nullable: true })
   nextReviewDate: string | null;
 

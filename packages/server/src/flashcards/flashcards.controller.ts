@@ -14,8 +14,10 @@ import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { GetLastFlashcardDocs } from './decorators/get-last-flashcard.docs.decorator';
 import { GetFlashcardsByUrlDocs } from './decorators/get-flashcards-by-url.docs.decorator';
+import { GenerateFlashcardQuestionAudioDocs } from './decorators/generate-flashcard-question-audio.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
+import { GenerateAudioResponseDto } from './dto/generate-audio.response.dto';
 
 @ApiTags('Flashcards')
 @UsePipes(ZodValidationPipe)
@@ -50,5 +52,13 @@ export class FlashcardsController {
     @Body() updateDto: UpdateFlashcardDto,
   ): Promise<FlashcardEntity | null> {
     return this.flashcardsService.updateFlashcard(id, updateDto);
+  }
+
+  @Post(':id/generate-question-audio')
+  @GenerateFlashcardQuestionAudioDocs()
+  async generateQuestionAudio(
+    @Param('id') id: string,
+  ): Promise<GenerateAudioResponseDto> {
+    return this.flashcardsService.generateQuestionAudio(id);
   }
 }

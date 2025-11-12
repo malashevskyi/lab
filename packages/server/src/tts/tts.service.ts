@@ -30,4 +30,19 @@ export class TtsService {
 
     return generateAudioResponseSchema.parse({ audioUrl });
   }
+
+  async generateAndUploadFlashcardQuestionAudio(
+    questionText: string,
+    flashcardId: string,
+  ): Promise<GenerateAudioResponse> {
+    const audioBuffer = await this.ttsPort.generateAudioBuffer(questionText);
+
+    const { audioUrl } =
+      await this.audioStoragePort.uploadFlashcardQuestionAudio(
+        audioBuffer,
+        flashcardId,
+      );
+
+    return generateAudioResponseSchema.parse({ audioUrl });
+  }
 }

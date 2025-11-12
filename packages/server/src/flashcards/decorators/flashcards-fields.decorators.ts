@@ -174,3 +174,16 @@ export function UpdatedAtProperty() {
     IsDateString(),
   );
 }
+
+export function QuestionAudioUrlProperty() {
+  return applyDecorators(
+    ApiProperty({
+      description:
+        'The URL of the audio file for the flashcard question stored in Firebase Storage.',
+      example:
+        'https://firebasestorage.googleapis.com/v0/b/your-app.appspot.com/o/flashcard-questions%2Fa1b2c3d4-e5f6-7890-1234-567890abcdef.mp3?alt=media&token=some-token',
+      nullable: true,
+    }),
+    IsUrl(),
+  );
+}

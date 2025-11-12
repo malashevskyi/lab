@@ -5,4 +5,8 @@ export abstract class AudioStoragePort {
     buffer: Buffer,
     text: string,
   ): Promise<UploadAudioResponse>;
+  abstract uploadFlashcardQuestionAudio(
+    buffer: Buffer,
+    flashcardId: string,
+  ): Promise<UploadAudioResponse>;
 }

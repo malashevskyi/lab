@@ -8,4 +8,5 @@ export enum AppErrorCode {
   AUDIO_RECORD_NOT_FOUND = 'audio_record_not_found',
   CONFLICT_EXCEPTION = 'conflict_exception',
   NOT_FOUND = 'not_found',
+  AUDIO_DELETION_FAILED = 'audio_deletion_failed',
 }

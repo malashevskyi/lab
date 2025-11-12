@@ -23,6 +23,7 @@ export const flashcardTypeSchema = z.object({
   tags: z.array(z.string()),
   level: knowledgeLevelSchema,
   contexts: z.array(usageContextSchema),
+  questionAudioUrl: z.url().nullable(),
   nextReviewDate: z.iso.datetime().nullable(),
   lastInterval: z.number().nullable(),
   createdAt: z.iso.datetime(),

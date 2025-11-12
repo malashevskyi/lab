@@ -33,6 +33,11 @@ export interface FlashcardType {
   level: KnowledgeLevel;
   contexts: UsageContext[];
   /**
+   * @format url
+   * @nullable true
+   */
+  questionAudioUrl: string | null;
+  /**
    * @format 'date-time'
    * @nullable true
    */

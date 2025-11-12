@@ -1,38 +1,64 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import type { ZodError } from 'zod';
 import { assistantApi } from '../services/api';
 import { ApiError } from '../services/ApiError';
 import {
   getLastFlashcardResponseSchema,
-  type GetLastFlashcardResponseType,
+  type FlashcardType,
 } from '@lab/types/assistant/flashcards';
 import { useEffect } from 'react';
 import { normalizeUrl } from '../utils/normalizeUrl';
+import { useAppStore } from '../store';
+
+export const FLASHCARDS_BY_URL_QUERY_KEY = 'flashcardsByUrl';
+export const SINGLE_FLASHCARD_QUERY_KEY = 'flashcard';
 
 /**
  * @function useGetFlashcardsByUrl
- * @description A custom hook for fetching flashcards by source URL.
- * @param {string} sourceUrl - The URL to filter flashcards by
- * @returns An object containing query state and flashcards data.
+ * @description Fetch + NORMALIZE flashcards by URL.
  */
 export const useGetFlashcardsByUrl = (sourceUrl: string) => {
-  const query = useQuery<GetLastFlashcardResponseType[], AxiosError | ZodError>(
-    {
-      queryKey: ['flashcardsByUrl', sourceUrl],
-      queryFn: async () => {
-        const response = await assistantApi.get(
-          `/flashcards/by-url/${encodeURIComponent(normalizeUrl(sourceUrl))}`
-        );
-        if (!response.data) return [];
-        return getLastFlashcardResponseSchema.array().parse(response.data);
-      },
-      enabled: !!sourceUrl,
-      retry: false,
-      staleTime: 0,
-      refetchOnWindowFocus: false,
-    }
-  );
+  const activeTab = useAppStore((state) => state.popup.activeTab);
+  const queryClient = useQueryClient();
+
+  const normalizedUrl = normalizeUrl(sourceUrl);
+
+  const { data: flashcardIds } = useQuery<FlashcardType['id'][]>({
+    queryKey: [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, 'ids'],
+    enabled: false,
+  });
+
+  const query = useQuery<FlashcardType[], AxiosError | ZodError>({
+    queryKey: [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl],
+    queryFn: async () => {
+      const response = await assistantApi.get(
+        `/flashcards/by-url/${encodeURIComponent(normalizedUrl)}`
+      );
+
+      const data = response.data || [];
+      return getLastFlashcardResponseSchema.array().parse(data);
+    },
+
+    enabled: false,
+    retry: false,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (!query.data) return;
+
+    const cards = query.data;
+
+    queryClient.setQueryData(
+      [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, 'ids'],
+      cards.map((c) => c.id)
+    );
+    cards.forEach((card) => {
+      queryClient.setQueryData([SINGLE_FLASHCARD_QUERY_KEY, card.id], card);
+    });
+  }, [query.data, queryClient, normalizedUrl]);
 
   useEffect(() => {
     if (query.error) {
@@ -42,8 +68,12 @@ export const useGetFlashcardsByUrl = (sourceUrl: string) => {
     }
   }, [query.error]);
 
+  useEffect(() => {
+    if (activeTab === 'flashcards') void query.refetch();
+  }, [activeTab]);
+
   return {
-    flashcardsData: query.data,
+    flashcardIds,
     isLoading: query.isFetching,
     refetch: query.refetch,
   };

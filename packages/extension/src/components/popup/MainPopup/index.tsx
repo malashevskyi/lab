@@ -7,7 +7,6 @@ import { AnalysisTab } from '../../analysis/AnalysisTab';
 import { TabsNavigation } from '../TabsNavigation';
 import { MarkdownToolbar } from '../../markdown/MarkdownToolbar';
 import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
-import { useUpdateFlashcard } from '../../../hooks/useUpdateFlashcard';
 import { usePreventHostKeyboardEvents } from './usePreventHostKeyboardEvents';
 
 interface Position {
@@ -29,7 +28,6 @@ export const MainPopup: React.FC = () => {
     return { y: viewportHeight * 0.67 }; // 67% from top = popup at bottom
   });
   const { regenerateFlashcardButton } = useRegenerateFlashcard();
-  const { updateFlashcardButton } = useUpdateFlashcard();
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
   const [dragStartPosition, setDragStartPosition] = useState(0);
@@ -218,10 +216,7 @@ export const MainPopup: React.FC = () => {
       <div className="flex items-center border-b border-gray-200 bg-gray-50">
         <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         <MarkdownToolbar className="ml-2" />
-        <div className="flex gap-2 px-1">
-          {regenerateFlashcardButton}
-          {updateFlashcardButton}
-        </div>
+        <div className="flex gap-2 px-1">{regenerateFlashcardButton}</div>
       </div>
 
       <div className="overflow-hidden">

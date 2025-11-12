@@ -84,17 +84,6 @@ export interface AppActions {
   setActiveTab: (tab: PopupTab) => void;
   // Analysis actions (moved from sidebar)
   openAnalysis: (selectedText: string, context: string) => void;
-  onLastFlashcardChange: ({
-    hasChanges,
-    editedQuestion,
-    editedAnswer,
-    id,
-  }: {
-    hasChanges: boolean;
-    editedQuestion?: string;
-    editedAnswer?: string;
-    id?: string;
-  }) => void;
 }
 
 const initialState: AppState = {
@@ -305,14 +294,6 @@ export const useAppStore = create(
         state.popup.activeTab = 'analysis';
         state.analysis.selectedText = selectedText;
         state.analysis.context = context;
-      }),
-
-    onLastFlashcardChange: ({ hasChanges, editedQuestion, editedAnswer, id }) =>
-      set((state) => {
-        state.lastFlashcard.hasChanges = hasChanges;
-        if (editedQuestion) state.lastFlashcard.editedQuestion = editedQuestion;
-        if (editedAnswer) state.lastFlashcard.editedAnswer = editedAnswer;
-        if (id) state.lastFlashcard.id = id;
       }),
   }))
 );

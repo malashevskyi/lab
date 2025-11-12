@@ -1,21 +1,10 @@
-import { useEffect } from 'react';
-import { useFlashcardStore } from '../../../store/flashcardStore';
 import { useGetFlashcardsByUrl } from '../../../hooks/useGetFlashcardsByUrl';
 import { FlashCard } from '../FlashCard';
 
 export const FlashcardsTab: React.FC = () => {
-  const setFlashcards = useFlashcardStore((state) => state.setFlashcards);
-  const flashcards = useFlashcardStore((state) => state.flashcards);
-
-  const { flashcardsData, isLoading } = useGetFlashcardsByUrl(
+  const { flashcardIds, isLoading } = useGetFlashcardsByUrl(
     window.location.href
   );
-
-  useEffect(() => {
-    if (flashcardsData) {
-      setFlashcards(flashcardsData);
-    }
-  }, [flashcardsData, setFlashcards]);
 
   if (isLoading) {
     return (
@@ -44,9 +33,7 @@ export const FlashcardsTab: React.FC = () => {
     );
   }
 
-  const flashcardsList = Array.from(flashcards.values());
-
-  if (flashcardsList.length === 0) {
+  if (!flashcardIds?.length) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="text-center text-gray-500 py-6">
@@ -74,11 +61,9 @@ export const FlashcardsTab: React.FC = () => {
 
   return (
     <div className="overflow-y-auto space-y-3 pr-2">
-      {flashcardsList
-        .filter((card) => card !== null)
-        .map((flashcard) => (
-          <FlashCard key={flashcard.id} flashcard={flashcard} />
-        ))}
+      {flashcardIds.map((id) => (
+        <FlashCard key={id} flashcardId={id} />
+      ))}
     </div>
   );
 };

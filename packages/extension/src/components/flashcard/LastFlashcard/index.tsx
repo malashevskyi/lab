@@ -1,6 +1,5 @@
 import type { GetLastFlashcardResponseType } from '@lab/types/assistant/flashcards';
-import React, { useEffect } from 'react';
-import { useAppStore } from '../../../store';
+import React from 'react';
 import { FlashCard } from '../FlashCard';
 
 export interface LastFlashcardProps {
@@ -12,20 +11,6 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
   flashcard,
   isVisible,
 }) => {
-  const onLastFlashcardChange = useAppStore(
-    (state) => state.onLastFlashcardChange
-  );
-
-  useEffect(() => {
-    if (flashcard) {
-      onLastFlashcardChange({
-        hasChanges: false,
-        editedQuestion: flashcard.question,
-        editedAnswer: flashcard.answer,
-      });
-    }
-  }, [flashcard]);
-
   if (!isVisible) return null;
 
   if (!flashcard) {
@@ -54,7 +39,7 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
 
   return (
     <div className="overflow-y-auto space-y-3 pr-2">
-      <FlashCard flashcard={flashcard} isEditable />
+      <FlashCard flashcardId={flashcard.id} />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import {
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 import { useAppStore } from '../store';
+import { GET_LAST_FLASHCARD_QUERY_KEY } from './useGetLastFlashcard';
 
 export const useCreateFlashcard = () => {
   const queryClient = useQueryClient();
@@ -41,7 +42,9 @@ export const useCreateFlashcard = () => {
       }
 
       // Invalidate and refetch the last flashcard query to ensure updated data
-      void queryClient.invalidateQueries({ queryKey: ['lastFlashcard'] });
+      void queryClient.invalidateQueries({
+        queryKey: [GET_LAST_FLASHCARD_QUERY_KEY],
+      });
 
       toast.success(`Flashcard created successfully!`);
       clearFlashcardChunks();

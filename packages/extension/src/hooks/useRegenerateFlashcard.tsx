@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useAppStore } from '../store';
 import { FaRedo } from 'react-icons/fa';
 import { normalizeUrl } from '../utils/normalizeUrl';
+import { GET_LAST_FLASHCARD_QUERY_KEY } from './useGetLastFlashcard';
 
 export const useRegenerateFlashcard = () => {
   const queryClient = useQueryClient();
@@ -40,7 +41,9 @@ export const useRegenerateFlashcard = () => {
       );
 
       // Invalidate and refetch the last flashcard query to ensure updated data
-      void queryClient.invalidateQueries({ queryKey: ['lastFlashcard'] });
+      void queryClient.invalidateQueries({
+        queryKey: [GET_LAST_FLASHCARD_QUERY_KEY],
+      });
 
       toast.success(`Flashcard regenerated successfully!`);
       // Switch to last-flashcard tab to show the updated card

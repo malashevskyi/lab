@@ -9,9 +9,9 @@ import {
 import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 import { useAppStore } from '../store';
-import { FaRedo } from 'react-icons/fa';
 import { normalizeUrl } from '../utils/normalizeUrl';
 import { GET_LAST_FLASHCARD_QUERY_KEY } from './useGetLastFlashcard';
+import { LoadingButton } from '../components/ui/LoadingButton';
 
 export const useRegenerateFlashcard = () => {
   const queryClient = useQueryClient();
@@ -91,19 +91,14 @@ export const useRegenerateFlashcard = () => {
     if (!canRegenerate || activeTab !== 'last-flashcard') return null;
 
     return (
-      <button
+      <LoadingButton
         onClick={regenerateFlashcard}
         disabled={mutation.isPending}
+        isLoading={mutation.isPending}
+        loadingText="Regenerating..."
+        idleText="Regenerate"
         className="inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-solid border-blue-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        title="Regenerate flashcard with same content"
-      >
-        <FaRedo
-          className={`w-3 h-3 ${mutation.isPending ? 'animate-spin' : ''}`}
-        />
-        <span className="hidden sm:inline">
-          {mutation.isPending ? 'Regenerating...' : 'Regenerate'}
-        </span>
-      </button>
+      />
     );
   };
 

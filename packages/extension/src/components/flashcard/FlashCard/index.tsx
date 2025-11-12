@@ -1,6 +1,9 @@
 import type { FlashcardType } from '@lab/types/assistant/flashcards';
 import { EditableHTML } from '../EditableHTML';
 import { useUpdateFlashcard } from '../../../hooks/useUpdateFlashcard';
+import { useGenerateFlashcardAudio } from '../../../hooks/useGenerateFlashcardAudio';
+import { AudioControls } from '../AudioControls';
+import { CreateAudioButton } from '../CreateAudioButton';
 import { useQuery } from '@tanstack/react-query';
 
 interface FlashCardProps {
@@ -14,7 +17,12 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
     enabled: false,
   });
 
+  const { generateAudio, isGenerating } =
+    useGenerateFlashcardAudio(flashcardId);
+
   if (!flashcard.data) return null;
+
+  const hasAudio = !!flashcard.data.questionAudioUrl;
 
   const handleQuestionChange = (newHtml: string) => {
     updateFlashcard(flashcard.data.id, newHtml, flashcard.data.answer);
@@ -29,12 +37,26 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
       <div className="flex gap-3">
         <div className="flex-1 space-y-3">
           <div className="bg-white p-3 rounded border-l-4 border-solid border-blue-400">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               {flashcard.data.context && (
                 <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
                   {flashcard.data.context}
                 </span>
               )}
+              <div className="flex items-center gap-2">
+                {hasAudio ? (
+                  <AudioControls
+                    audioUrl={flashcard.data.questionAudioUrl || ''}
+                    isGenerating={isGenerating}
+                    onRegenerate={generateAudio}
+                  />
+                ) : (
+                  <CreateAudioButton
+                    onClick={generateAudio}
+                    isGenerating={isGenerating}
+                  />
+                )}
+              </div>
             </div>
             <EditableHTML
               content={flashcard.data.question}

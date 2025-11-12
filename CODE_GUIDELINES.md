@@ -35,6 +35,10 @@ All tasks, issues, and code contributions must follow these conventions.
 - **For workspace operations**, prefer `pnpm` commands:
   - Install dependencies: `pnpm install`
   - Run in specific package: `pnpm --filter <package-name> <command>`
+- **For running tests**, use `vitest`:
+  - Run all tests: `pnpm vitest run`
+  - Run specific test file: `pnpm vitest run <filename>`
+  - Watch mode: `pnpm vitest`
 
 ### TypeScript
 

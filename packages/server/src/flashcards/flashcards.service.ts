@@ -5,9 +5,10 @@ import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiService } from '../ai/ai.service';
 import { TtsService } from '../tts/tts.service';
-import { Repository } from 'typeorm';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 import { GenerateAudioResponseDto } from './dto/generate-audio.response.dto';
+import { startOfDay } from 'date-fns';
 
 @Injectable()
 export class FlashcardsService {
@@ -140,5 +141,17 @@ export class FlashcardsService {
     }
 
     await this.flashcardsRepository.delete(id);
+  }
+
+  async countTodayFlashcards(): Promise<number> {
+    const todayStart = startOfDay(new Date());
+
+    const count = await this.flashcardsRepository.count({
+      where: {
+        createdAt: MoreThanOrEqual(todayStart.toISOString()),
+      },
+    });
+
+    return count;
   }
 }

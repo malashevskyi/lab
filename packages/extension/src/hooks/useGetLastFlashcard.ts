@@ -43,6 +43,18 @@ export const useGetLastFlashcard = () => {
   }, [query.data]);
 
   useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      if (
+        event.type === 'removed' &&
+        event.query.queryKey[0] === SINGLE_FLASHCARD_QUERY_KEY
+      ) {
+        void query.refetch();
+      }
+    });
+    return () => unsubscribe();
+  }, [queryClient, query]);
+
+  useEffect(() => {
     if (query.error) {
       ApiError.fromUnknown(query.error, {
         clientMessage: 'Failed to fetch the last flashcard.',

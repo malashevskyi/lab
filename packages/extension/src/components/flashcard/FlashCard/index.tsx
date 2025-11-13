@@ -2,8 +2,10 @@ import type { FlashcardType } from '@lab/types/assistant/flashcards';
 import { EditableHTML } from '../EditableHTML';
 import { useUpdateFlashcard } from '../../../hooks/useUpdateFlashcard';
 import { useGenerateFlashcardAudio } from '../../../hooks/useGenerateFlashcardAudio';
+import { useDeleteFlashcard } from '../../../hooks/useDeleteFlashcard';
 import { AudioControls } from '../AudioControls';
 import { CreateAudioButton } from '../CreateAudioButton';
+import { DeleteButton } from '../DeleteButton';
 import { useQuery } from '@tanstack/react-query';
 
 interface FlashCardProps {
@@ -12,6 +14,7 @@ interface FlashCardProps {
 
 export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
   const { updateFlashcard } = useUpdateFlashcard();
+  const { deleteFlashcard, isDeleting } = useDeleteFlashcard();
   const flashcard = useQuery<FlashcardType>({
     queryKey: ['flashcard', flashcardId],
     enabled: false,
@@ -30,6 +33,10 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
 
   const handleAnswerChange = (newHtml: string) => {
     updateFlashcard(flashcard.data.id, flashcard.data.question, newHtml);
+  };
+
+  const handleDelete = () => {
+    deleteFlashcard(flashcard.data.id);
   };
 
   return (
@@ -56,6 +63,7 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
                     isGenerating={isGenerating}
                   />
                 )}
+                <DeleteButton onClick={handleDelete} isDeleting={isDeleting} />
               </div>
             </div>
             <EditableHTML

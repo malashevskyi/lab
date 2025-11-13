@@ -18,11 +18,11 @@ export const SINGLE_FLASHCARD_QUERY_KEY = 'flashcard';
  * @function useGetFlashcardsByUrl
  * @description Fetch + NORMALIZE flashcards by URL.
  */
-export const useGetFlashcardsByUrl = (sourceUrl: string) => {
+export const useGetFlashcardsByUrl = () => {
   const activeTab = useAppStore((state) => state.popup.activeTab);
   const queryClient = useQueryClient();
 
-  const normalizedUrl = normalizeUrl(sourceUrl);
+  const normalizedUrl = normalizeUrl(window.location.href);
 
   const { data: flashcardIds } = useQuery<FlashcardType['id'][]>({
     queryKey: [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, 'ids'],

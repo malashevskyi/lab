@@ -2,9 +2,7 @@ import { useGetFlashcardsByUrl } from '../../../hooks/useGetFlashcardsByUrl';
 import { FlashCard } from '../FlashCard';
 
 export const FlashcardsTab: React.FC = () => {
-  const { flashcardIds, isLoading } = useGetFlashcardsByUrl(
-    window.location.href
-  );
+  const { flashcardIds, isLoading } = useGetFlashcardsByUrl();
 
   if (isLoading) {
     return (

@@ -232,10 +232,10 @@ const ContentScriptRoot: React.FC = () => {
   }, [flashcardCreatorChunks, prevChunksCount, setPopupPosition]);
 
   return (
-    <>
+    <div id="assistant-root">
       <MainPopup />
       <ExplainSelection />
-    </>
+    </div>
   );
 };
 

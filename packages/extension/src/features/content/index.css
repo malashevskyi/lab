@@ -96,3 +96,8 @@ ul li::marker {
 }
 
 @import 'tailwindcss';
+
+/* TODO: figure out why this is not applied */
+#assistant-root :where(.text-\[14px\]) {
+  font-size: 14px;
+}

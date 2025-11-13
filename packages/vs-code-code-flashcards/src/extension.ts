@@ -7,7 +7,6 @@ import { FlashcardViewProvider } from './flashcardViewProvider';
 import { SupabaseService, FlashcardPayload } from './supabaseService';
 import { LoginViewProvider } from './loginViewProvider';
 import { CodeSnippet } from './types';
-import { extensionToLanguageMap } from './constants';
 
 // This will be our URI handler for the OAuth callback
 class UriHandler
@@ -25,20 +24,6 @@ function setAuthenticatedContext(value: boolean) {
     'setContext',
     'code-flashcards.isAuthenticated',
     value
-  );
-}
-
-function determinePrimaryLanguage(snippets: CodeSnippet[]): string {
-  if (!snippets || snippets.length === 0) return '';
-  const languageCounts: { [key: string]: number } = {};
-  for (const snippet of snippets) {
-    const ext = path.extname(snippet.fileName).toLowerCase();
-    const lang = extensionToLanguageMap[ext];
-    if (lang) languageCounts[lang] = (languageCounts[lang] || 0) + 1;
-  }
-  return Object.keys(languageCounts).reduce(
-    (a, b) => (languageCounts[a] > languageCounts[b] ? a : b),
-    ''
   );
 }
 
@@ -190,15 +175,18 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const finalSnippets = [...snippetsInOtherFiles, ...snippetsToKeep];
       await stateManager.setSnippets(finalSnippets);
-      const primaryLanguage = determinePrimaryLanguage(finalSnippets);
+      const selectedTechnology = stateManager.getSelectedTechnology();
       highlighter.updateDecorations(editor, finalSnippets);
-      flashcardProvider.update(finalSnippets, primaryLanguage);
+      flashcardProvider.update(finalSnippets, selectedTechnology);
     }
   );
   context.subscriptions.push(toggleHighlightCommand);
 
   flashcardProvider.onDidReceiveMessage(async (message) => {
     switch (message.command) {
+      case 'selectTechnology':
+        await stateManager.setSelectedTechnology(message.technology);
+        return;
       case 'createFlashcard':
         try {
           console.log(
@@ -213,9 +201,10 @@ export async function activate(context: vscode.ExtensionContext) {
           const payload: FlashcardPayload = {
             question: message.question,
             answer: answer,
-            context: message.language,
-            level: 'junior',
+            context: message.technology,
+            level: '-',
             source_url: 'https://vs-code',
+            next_review_date: new Date().toISOString(),
           };
           const { error } = await supabaseService.insertFlashcard(payload);
           if (!error) {
@@ -224,7 +213,8 @@ export async function activate(context: vscode.ExtensionContext) {
             );
             const emptySnippets: CodeSnippet[] = [];
             await stateManager.setSnippets(emptySnippets);
-            flashcardProvider.update(emptySnippets, '');
+            const selectedTech = stateManager.getSelectedTechnology();
+            flashcardProvider.update(emptySnippets, selectedTech);
             vscode.window.visibleTextEditors.forEach((editor) =>
               highlighter.updateDecorations(editor, [])
             );
@@ -241,9 +231,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Restore saved snippets on activation
   const savedSnippets = stateManager.getSnippets();
+  const selectedTechnology = stateManager.getSelectedTechnology();
   if (savedSnippets.length > 0) {
-    const primaryLanguage = determinePrimaryLanguage(savedSnippets);
-    flashcardProvider.update(savedSnippets, primaryLanguage);
+    flashcardProvider.update(savedSnippets, selectedTechnology);
+  } else {
+    flashcardProvider.update([], selectedTechnology);
   }
 
   if (vscode.window.activeTextEditor) {

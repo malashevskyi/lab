@@ -75,3 +75,29 @@ button:disabled:hover {
     --vscode-button-background
   ); /* Prevent hover effect on disabled button */
 }
+
+.technology-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.technology-button {
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: 1px solid var(--vscode-button-border, transparent);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.technology-button:hover {
+  background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.technology-button.active {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}

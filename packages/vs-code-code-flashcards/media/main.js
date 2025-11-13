@@ -1,13 +1,53 @@
 (function () {
   const vscode = acquireVsCodeApi();
   let currentSnippets = [];
+  let selectedTechnology = 'Node.js';
+
+  const TECHNOLOGIES = ['Node.js', 'React', 'TypeScript', 'Microservices'];
 
   const createButton = document.getElementById('create-button');
   const questionInput = document.getElementById('question-input');
-  const languageInput = document.getElementById('language-input');
   const snippetsPreview = document.getElementById('snippets-preview');
+  const technologyButtonsContainer =
+    document.getElementById('technology-buttons');
 
   const originalButtonText = createButton.textContent;
+
+  // Create technology buttons
+  function createTechnologyButtons() {
+    technologyButtonsContainer.innerHTML = '';
+    TECHNOLOGIES.forEach((tech) => {
+      const button = document.createElement('button');
+      button.className = 'technology-button';
+      button.textContent = tech;
+      button.onclick = () => selectTechnology(tech);
+      technologyButtonsContainer.appendChild(button);
+    });
+  }
+
+  function selectTechnology(technology) {
+    selectedTechnology = technology;
+    updateTechnologyButtons();
+    vscode.postMessage({
+      command: 'selectTechnology',
+      technology: technology,
+    });
+  }
+
+  function updateTechnologyButtons() {
+    const buttons =
+      technologyButtonsContainer.querySelectorAll('.technology-button');
+    buttons.forEach((button) => {
+      if (button.textContent === selectedTechnology) {
+        button.classList.add('active');
+      } else {
+        button.classList.remove('active');
+      }
+    });
+  }
+
+  createTechnologyButtons();
+  updateTechnologyButtons();
 
   // Listen for messages from the extension
   window.addEventListener('message', (event) => {
@@ -16,13 +56,15 @@
     switch (message.command) {
       case 'updateSnippets':
         currentSnippets = message.snippets;
-        languageInput.value = message.language || '';
+        if (message.selectedTechnology) {
+          selectedTechnology = message.selectedTechnology;
+          updateTechnologyButtons();
+        }
         if (message.snippetsHtml && message.snippets.length > 0) {
           snippetsPreview.innerHTML = message.snippetsHtml;
         } else {
           snippetsPreview.innerHTML = '<p>No snippets selected yet.</p>';
           questionInput.value = '';
-          languageInput.value = '';
         }
         break;
 
@@ -42,7 +84,7 @@
       vscode.postMessage({
         command: 'createFlashcard',
         question: questionInput.value,
-        language: languageInput.value || 'unknown',
+        technology: selectedTechnology,
         snippets: currentSnippets,
       });
     } else {

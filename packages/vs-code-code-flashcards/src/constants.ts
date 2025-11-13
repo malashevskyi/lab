@@ -14,3 +14,12 @@ export const extensionToLanguageMap: { [key: string]: string } = {
   '.php': 'php',
   '.rs': 'rust',
 };
+
+export const TECHNOLOGIES = [
+  'Node.js',
+  'React',
+  'TypeScript',
+  'Microservices',
+] as const;
+
+export type Technology = (typeof TECHNOLOGIES)[number];

@@ -77,7 +77,7 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  public update(snippets: CodeSnippet[], language: string) {
+  public update(snippets: CodeSnippet[], selectedTechnology?: string) {
     if (this._view) {
       this._view.show?.(true);
       const markdownString = snippets
@@ -92,8 +92,9 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
       this._view.webview.postMessage({
         command: 'updateSnippets',
         snippets: snippets,
-        language: language,
+        // language: language,
         snippetsHtml: snippetsHtml,
+        selectedTechnology: selectedTechnology,
       });
     }
   }

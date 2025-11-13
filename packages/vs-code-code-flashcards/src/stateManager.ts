@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { CodeSnippet } from './types';
 
 const SNIPPETS_STORAGE_KEY = 'code-flashcards.snippets';
+const SELECTED_TECHNOLOGY_KEY = 'code-flashcards.selectedTechnology';
 
 export class StateManager {
   constructor(private context: vscode.ExtensionContext) {}
@@ -27,5 +28,16 @@ export class StateManager {
     const snippets = this.getSnippets();
     const updatedSnippets = snippets.filter((s) => s.id !== snippetId);
     await this.setSnippets(updatedSnippets);
+  }
+
+  public getSelectedTechnology(): string {
+    return this.context.globalState.get<string>(
+      SELECTED_TECHNOLOGY_KEY,
+      'Node.js'
+    );
+  }
+
+  public async setSelectedTechnology(technology: string): Promise<void> {
+    await this.context.globalState.update(SELECTED_TECHNOLOGY_KEY, technology);
   }
 }

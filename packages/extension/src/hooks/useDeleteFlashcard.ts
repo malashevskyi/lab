@@ -10,6 +10,7 @@ import { normalizeUrl } from '../utils/normalizeUrl';
 import type { FlashcardType } from '@lab/types/assistant/flashcards/interfaces/flashcard.interface';
 import { useAppStore } from '../store';
 import { GET_LAST_FLASHCARD_QUERY_KEY } from './useGetLastFlashcard';
+import { TODAY_COUNT_QUERY_KEY } from './useGetTodayFlashcardsCount';
 
 export const useDeleteFlashcard = () => {
   const queryClient = useQueryClient();
@@ -38,6 +39,10 @@ export const useDeleteFlashcard = () => {
           queryKey: [GET_LAST_FLASHCARD_QUERY_KEY],
         });
       }
+
+      void queryClient.invalidateQueries({
+        queryKey: [TODAY_COUNT_QUERY_KEY],
+      });
     },
     onError: (error) => {
       ApiError.fromUnknown(error, {

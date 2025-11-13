@@ -125,4 +125,20 @@ export class FlashcardsService {
 
     return { audioUrl };
   }
+
+  async deleteFlashcard(id: string): Promise<void> {
+    const flashcard = await this.flashcardsRepository.findOne({
+      where: { id },
+    });
+
+    if (!flashcard) {
+      throw new Error(`Flashcard with ID "${id}" not found`);
+    }
+
+    if (flashcard.questionAudioUrl) {
+      await this.ttsService.deleteFlashcardQuestionAudio(id);
+    }
+
+    await this.flashcardsRepository.delete(id);
+  }
 }

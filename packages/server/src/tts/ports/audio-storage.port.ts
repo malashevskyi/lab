@@ -9,4 +9,5 @@ export abstract class AudioStoragePort {
     buffer: Buffer,
     flashcardId: string,
   ): Promise<UploadAudioResponse>;
+  abstract deleteFlashcardQuestionAudio(flashcardId: string): Promise<void>;
 }

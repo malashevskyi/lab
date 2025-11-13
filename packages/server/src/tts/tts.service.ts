@@ -47,4 +47,8 @@ export class TtsService {
 
     return generateAudioResponseSchema.parse({ audioUrl });
   }
+
+  async deleteFlashcardQuestionAudio(flashcardId: string): Promise<void> {
+    await this.audioStoragePort.deleteFlashcardQuestionAudio(flashcardId);
+  }
 }

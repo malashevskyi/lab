@@ -192,4 +192,22 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
       );
     }
   }
+
+  async deleteFlashcardQuestionAudio(flashcardId: string): Promise<void> {
+    try {
+      const fileName = `${flashcardId}.mp3`;
+      const storagePath = `${FLASHCARD_QUESTIONS_DIRECTORY}/${fileName}`;
+      await this.deleteIfExists(storagePath);
+
+      this.logger.log(
+        `Successfully deleted flashcard question audio: ${storagePath}`,
+      );
+    } catch (error) {
+      this.errorService.handle(
+        AppErrorCode.AUDIO_DELETION_FAILED,
+        `Failed to delete flashcard question audio for ID: "${flashcardId}"`,
+        error,
+      );
+    }
+  }
 }

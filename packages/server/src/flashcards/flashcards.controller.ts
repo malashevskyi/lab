@@ -4,8 +4,10 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Param,
   UsePipes,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
@@ -15,6 +17,7 @@ import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { GetLastFlashcardDocs } from './decorators/get-last-flashcard.docs.decorator';
 import { GetFlashcardsByUrlDocs } from './decorators/get-flashcards-by-url.docs.decorator';
 import { GenerateFlashcardQuestionAudioDocs } from './decorators/generate-flashcard-question-audio.docs.decorator';
+import { DeleteFlashcardDocs } from './decorators/delete-flashcard.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 import { GenerateAudioResponseDto } from './dto/generate-audio.response.dto';
@@ -60,5 +63,12 @@ export class FlashcardsController {
     @Param('id') id: string,
   ): Promise<GenerateAudioResponseDto> {
     return this.flashcardsService.generateQuestionAudio(id);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @DeleteFlashcardDocs()
+  async deleteFlashcard(@Param('id') id: string): Promise<void> {
+    await this.flashcardsService.deleteFlashcard(id);
   }
 }

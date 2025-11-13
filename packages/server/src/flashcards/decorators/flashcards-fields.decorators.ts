@@ -103,7 +103,7 @@ export function TagsProperty() {
 }
 
 export function LevelProperty() {
-  const levels = ['junior', 'middle', 'senior'];
+  const levels = ['junior', 'middle', 'senior', '-'];
   return applyDecorators(
     ApiProperty({
       description: 'The estimated knowledge level for the flashcard.',

@@ -1,4 +1,4 @@
-export type KnowledgeLevel = 'junior' | 'middle' | 'senior';
+export type KnowledgeLevel = 'junior' | 'middle' | 'senior' | '-';
 export type UsageContext =
   | 'interview'
   | 'general-knowledge'

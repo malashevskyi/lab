@@ -5,6 +5,7 @@ export const knowledgeLevelSchema = z.union([
   z.literal('junior'),
   z.literal('middle'),
   z.literal('senior'),
+  z.literal('-'),
 ]);
 
 export const usageContextSchema = z.union([

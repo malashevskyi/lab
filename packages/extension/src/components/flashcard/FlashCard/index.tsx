@@ -83,9 +83,11 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
 
           <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-100">
             <div className="space-x-2">
-              <span className="bg-gray-100 px-2 py-1 rounded text-xs">
-                Level: {flashcard.data.level}
-              </span>
+              {flashcard.data.level !== '-' && (
+                <span className="bg-gray-100 px-2 py-1 rounded text-xs">
+                  Level: {flashcard.data.level}
+                </span>
+              )}
               {flashcard.data.tags.length > 0 && (
                 <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
                   {flashcard.data.tags.join(', ')}

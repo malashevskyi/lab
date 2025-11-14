@@ -2,10 +2,13 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
-import { CodeSnippet } from './types';
 import mdhljs from 'markdown-it-highlightjs';
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { CodeSnippet } from './types';
 
 import hljs from 'highlight.js/lib/core';
+import { StateManager } from './stateManager';
 
 import javascript from 'highlight.js/lib/languages/javascript';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -48,7 +51,10 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
   public readonly onDidReceiveMessage: vscode.Event<any> =
     this._onDidReceiveMessage.event;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(
+    private readonly _extensionUri: vscode.Uri,
+    private readonly stateManager: StateManager
+  ) {}
 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
     this._view = webviewView;
@@ -60,11 +66,27 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
 
     // This runs when the view is actually created
     webviewView.webview.onDidReceiveMessage((message) => {
+      if (message.command === 'webviewReady') {
+        this.updateWithCurrentState();
+        return;
+      }
       // Forward the message to our event emitter
       this._onDidReceiveMessage.fire(message);
     });
 
-    this.update([], '');
+    // Update view when it becomes visible, to reflect current state
+    // otherwise selected snippets are not shown
+    webviewView.onDidChangeVisibility(() => {
+      if (webviewView.visible) {
+        this.updateWithCurrentState();
+      }
+    });
+  }
+
+  private updateWithCurrentState() {
+    const snippets = this.stateManager.getSnippets();
+    const selectedTechnology = this.stateManager.getSelectedTechnology();
+    this.update(snippets, selectedTechnology);
   }
 
   public getView(): vscode.WebviewView | undefined {

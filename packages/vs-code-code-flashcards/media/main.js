@@ -94,4 +94,7 @@
       });
     }
   });
+
+  // Notify extension that the webview is ready to get initial data after reload
+  vscode.postMessage({ command: 'webviewReady' });
 })();

@@ -1,6 +1,4 @@
-import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as path from 'path';
 import MarkdownIt from 'markdown-it';
 import mdhljs from 'markdown-it-highlightjs';
 import * as path from 'path';
@@ -13,11 +11,12 @@ import { StateManager } from './stateManager';
 import javascript from 'highlight.js/lib/languages/javascript';
 import typescript from 'highlight.js/lib/languages/typescript';
 // import python from 'highlight.js/lib/languages/python';
-import sql from 'highlight.js/lib/languages/sql';
 import css from 'highlight.js/lib/languages/css';
 import scss from 'highlight.js/lib/languages/scss';
+import sql from 'highlight.js/lib/languages/sql';
 // import javahtml from 'highlight.js/lib/languages/xml'; // for HTML
 import json from 'highlight.js/lib/languages/json';
+import { formatSnippetsAsMarkdown } from './utils/formatSnippetsAsMarkdown';
 // import rust from 'highlight.js/lib/languages/rust';
 // import go from 'highlight.js/lib/languages/go';
 // import java from 'highlight.js/lib/languages/java';
@@ -102,19 +101,11 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
   public update(snippets: CodeSnippet[], selectedTechnology?: string) {
     if (this._view) {
       this._view.show?.(true);
-      const markdownString = snippets
-        .map((s) => {
-          const lang = path.extname(s.fileName).slice(1) || 'text';
-          return `**${s.fileName} (Lines: ${s.range.startLine + 1}-${
-            s.range.endLine + 1
-          })**\n\`\`\`${lang}\n${s.content}\n\`\`\``;
-        })
-        .join('\n\n---\n\n');
+      const markdownString = formatSnippetsAsMarkdown(snippets);
       const snippetsHtml = this.md.render(markdownString);
       this._view.webview.postMessage({
         command: 'updateSnippets',
         snippets: snippets,
-        // language: language,
         snippetsHtml: snippetsHtml,
         selectedTechnology: selectedTechnology,
       });

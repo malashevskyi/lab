@@ -1,12 +1,15 @@
-import * as vscode from 'vscode';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { StateManager } from './stateManager';
-import { Highlighter } from './highlighter';
+import * as vscode from 'vscode';
 import { FlashcardViewProvider } from './flashcardViewProvider';
-import { SupabaseService, FlashcardPayload } from './supabaseService';
+import { Highlighter } from './highlighter';
 import { LoginViewProvider } from './loginViewProvider';
+import { StateManager } from './stateManager';
+import { SupabaseAuthManager } from './supabaseAuthManager';
+import { createSupabaseClient } from './supabaseClient';
+import { FlashcardPayload, SupabaseService } from './supabaseService';
 import { CodeSnippet } from './types';
+import { formatSnippetsAsMarkdown } from './utils/formatSnippetsAsMarkdown';
 
 // This will be our URI handler for the OAuth callback
 class UriHandler
@@ -28,11 +31,22 @@ function setAuthenticatedContext(value: boolean) {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  // --- INITIALIZATION ---
   const stateManager = new StateManager(context);
   const highlighter = new Highlighter();
-  const supabaseService = new SupabaseService(context);
-  const flashcardProvider = new FlashcardViewProvider(context.extensionUri);
+
+  const supabaseClient = createSupabaseClient();
+
+  if (!supabaseClient) return;
+
+  const authManager = new SupabaseAuthManager(context, supabaseClient);
+  const initialClient = await authManager.getAuthenticatedClient();
+  const supabaseService = new SupabaseService(authManager);
+  setAuthenticatedContext(!!initialClient);
+
+  const flashcardProvider = new FlashcardViewProvider(
+    context.extensionUri,
+    stateManager
+  );
   const loginProvider = new LoginViewProvider();
 
   // --- REGISTER ALL PROVIDERS AND VIEWS ---
@@ -54,19 +68,11 @@ export async function activate(context: vscode.ExtensionContext) {
   const uriHandler = new UriHandler();
   context.subscriptions.push(vscode.window.registerUriHandler(uriHandler));
 
-  const initialSession = await supabaseService.getSession();
-  setAuthenticatedContext(!!initialSession);
+  // Check if session is expired on startup and clear it if necessary
 
   const loginCommand = vscode.commands.registerCommand(
     'code-flashcards.login',
     async () => {
-      const supabaseClient = supabaseService.getSupabaseClient();
-      if (!supabaseClient) {
-        vscode.window.showErrorMessage(
-          'Supabase is not configured. Please check URL and Anon Key in settings.'
-        );
-        return;
-      }
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: `vscode://${context.extension.id}/callback` },
@@ -93,11 +99,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 data: { session },
               } = await supabaseClient.auth.getSession();
               if (session) {
-                await supabaseService.setSession(session);
+                await authManager.handleLogin(session);
                 setAuthenticatedContext(true);
-                vscode.window.showInformationMessage(
-                  'Successfully logged in to Supabase!'
-                );
                 disposable.dispose();
                 resolve();
               } else
@@ -123,7 +126,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const logoutCommand = vscode.commands.registerCommand(
     'code-flashcards.logout',
     async () => {
-      await supabaseService.clearSession();
+      await authManager.clearSession();
       setAuthenticatedContext(false);
       vscode.window.showInformationMessage('Successfully logged out.');
     }
@@ -192,12 +195,8 @@ export async function activate(context: vscode.ExtensionContext) {
           console.log(
             '[Code Flashcards] Received "createFlashcard" command from Webview.'
           );
-          const answer = message.snippets
-            .map(
-              (s: CodeSnippet) =>
-                `\`\`\`${message.language}\n${s.content}\n\`\`\``
-            )
-            .join('\n\n');
+          const answer = formatSnippetsAsMarkdown(message.snippets);
+
           const payload: FlashcardPayload = {
             question: message.question,
             answer: answer,
@@ -229,16 +228,8 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  // Restore saved snippets on activation
-  const savedSnippets = stateManager.getSnippets();
-  const selectedTechnology = stateManager.getSelectedTechnology();
-  if (savedSnippets.length > 0) {
-    flashcardProvider.update(savedSnippets, selectedTechnology);
-  } else {
-    flashcardProvider.update([], selectedTechnology);
-  }
-
   if (vscode.window.activeTextEditor) {
+    const savedSnippets = stateManager.getSnippets();
     highlighter.updateDecorations(
       vscode.window.activeTextEditor,
       savedSnippets

@@ -23,7 +23,6 @@ button {
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 20px;
 }
 button:hover {
   background-color: var(--vscode-button-hoverBackground);
@@ -80,7 +79,6 @@ button:disabled:hover {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 15px;
 }
 
 .technology-button {

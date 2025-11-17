@@ -39,9 +39,9 @@ export async function activate(context: vscode.ExtensionContext) {
   if (!supabaseClient) return;
 
   const authManager = new SupabaseAuthManager(context, supabaseClient);
-  const initialClient = await authManager.getAuthenticatedClient();
   const supabaseService = new SupabaseService(authManager);
-  setAuthenticatedContext(!!initialClient);
+  const initialSession = await authManager.getSession();
+  setAuthenticatedContext(!!initialSession);
 
   const flashcardProvider = new FlashcardViewProvider(
     context.extensionUri,
@@ -91,24 +91,25 @@ export async function activate(context: vscode.ExtensionContext) {
             const accessToken = hash.get('access_token');
             const refreshToken = hash.get('refresh_token');
             if (accessToken && refreshToken) {
-              await supabaseClient.auth.setSession({
+              const {
+                data: { session },
+              } = await supabaseClient.auth.setSession({
                 access_token: accessToken,
                 refresh_token: refreshToken,
               });
-              const {
-                data: { session },
-              } = await supabaseClient.auth.getSession();
               if (session) {
                 await authManager.handleLogin(session);
                 setAuthenticatedContext(true);
                 disposable.dispose();
                 resolve();
-              } else
+              } else {
                 reject(new Error('Could not retrieve session after login.'));
-            } else
+              }
+            } else {
               reject(
                 new Error('Redirect URI did not contain expected tokens.')
               );
+            }
           } catch (e: any) {
             reject(e);
           }

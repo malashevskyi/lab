@@ -3,7 +3,17 @@
   let currentSnippets = [];
   let selectedTechnology = 'Node.js';
 
-  const TECHNOLOGIES = ['Node.js', 'React', 'TypeScript', 'Microservices'];
+  const TECHNOLOGIES = [
+    'Node.js',
+    'React',
+    'JavaScript',
+    'TypeScript',
+    'Microservices',
+    'Express.js',
+    'Material-UI',
+    'Vs-code RegExp',
+    'Javascript RegExp',
+  ];
 
   const createButton = document.getElementById('create-button');
   const questionInput = document.getElementById('question-input');

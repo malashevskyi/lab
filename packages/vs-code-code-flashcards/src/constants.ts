@@ -20,6 +20,10 @@ export const TECHNOLOGIES = [
   'React',
   'TypeScript',
   'Microservices',
+  'Express.js',
+  'Material-UI',
+  'Vs-code RegExp',
+  'Javascript RegExp',
 ] as const;
 
 export type Technology = (typeof TECHNOLOGIES)[number];

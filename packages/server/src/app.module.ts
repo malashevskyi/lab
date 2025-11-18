@@ -12,6 +12,7 @@ import { AudioRecordsModule } from './audio-records/audio-records.module.js';
 import { DictionaryEntriesModule } from './dictionary-entries/dictionary-entries.module.js';
 import { DictionaryExamplesModule } from './dictionary-examples/dictionary-examples.module.js';
 import { FlashcardsModule } from './flashcards/flashcards.module';
+import { StacksModule } from './stacks/stacks.module';
 import ormConfig from './shared/configs/orm.config.js';
 
 @Module({
@@ -40,6 +41,7 @@ import ormConfig from './shared/configs/orm.config.js';
     DictionaryEntriesModule,
     DictionaryExamplesModule,
     FlashcardsModule,
+    StacksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

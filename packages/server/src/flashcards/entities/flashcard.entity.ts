@@ -4,12 +4,15 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import type {
   FlashcardType,
   KnowledgeLevel,
   UsageContext,
 } from '@lab/types/assistant/flashcards/index.js';
+import { StackEntity } from '../../stacks/entities/stack.entity';
 
 @Entity('flashcards')
 export class FlashcardEntity implements FlashcardType {
@@ -23,6 +26,8 @@ export class FlashcardEntity implements FlashcardType {
   answer: string;
 
   @Column({ type: 'varchar' })
+  @ManyToOne(() => StackEntity, { onDelete: 'RESTRICT', onUpdate: 'CASCADE' })
+  @JoinColumn({ name: 'context', referencedColumnName: 'id' })
   context: string;
 
   @Column({ name: 'source_url', type: 'text', nullable: true })

@@ -24,6 +24,6 @@ export const TECHNOLOGIES = [
   'Material-UI',
   'Vs-code RegExp',
   'Javascript RegExp',
-] as const;
+] as const as string[];
 
 export type Technology = (typeof TECHNOLOGIES)[number];

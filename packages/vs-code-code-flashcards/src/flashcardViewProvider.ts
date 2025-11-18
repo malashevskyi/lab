@@ -17,6 +17,7 @@ import sql from 'highlight.js/lib/languages/sql';
 // import javahtml from 'highlight.js/lib/languages/xml'; // for HTML
 import json from 'highlight.js/lib/languages/json';
 import { formatSnippetsAsMarkdown } from './utils/formatSnippetsAsMarkdown';
+import { TECHNOLOGIES } from './constants';
 // import rust from 'highlight.js/lib/languages/rust';
 // import go from 'highlight.js/lib/languages/go';
 // import java from 'highlight.js/lib/languages/java';
@@ -85,7 +86,7 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
   private updateWithCurrentState() {
     const snippets = this.stateManager.getSnippets();
     const selectedTechnology = this.stateManager.getSelectedTechnology();
-    this.update(snippets, selectedTechnology);
+    this.update(snippets, selectedTechnology, TECHNOLOGIES);
   }
 
   public getView(): vscode.WebviewView | undefined {
@@ -98,7 +99,11 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  public update(snippets: CodeSnippet[], selectedTechnology?: string) {
+  public update(
+    snippets: CodeSnippet[],
+    selectedTechnology?: string,
+    technologies?: string[]
+  ) {
     if (this._view) {
       this._view.show?.(true);
       const markdownString = formatSnippetsAsMarkdown(snippets);
@@ -108,6 +113,7 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
         snippets: snippets,
         snippetsHtml: snippetsHtml,
         selectedTechnology: selectedTechnology,
+        allTechnologies: technologies,
       });
     }
   }

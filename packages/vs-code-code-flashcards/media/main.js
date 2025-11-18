@@ -3,18 +3,6 @@
   let currentSnippets = [];
   let selectedTechnology = 'Node.js';
 
-  const TECHNOLOGIES = [
-    'Node.js',
-    'React',
-    'JavaScript',
-    'TypeScript',
-    'Microservices',
-    'Express.js',
-    'Material-UI',
-    'Vs-code RegExp',
-    'Javascript RegExp',
-  ];
-
   const createButton = document.getElementById('create-button');
   const questionInput = document.getElementById('question-input');
   const snippetsPreview = document.getElementById('snippets-preview');
@@ -24,9 +12,9 @@
   const originalButtonText = createButton.textContent;
 
   // Create technology buttons
-  function createTechnologyButtons() {
+  function createTechnologyButtons(technologies) {
     technologyButtonsContainer.innerHTML = '';
-    TECHNOLOGIES.forEach((tech) => {
+    technologies.forEach((tech) => {
       const button = document.createElement('button');
       button.className = 'technology-button';
       button.textContent = tech;
@@ -56,16 +44,20 @@
     });
   }
 
-  createTechnologyButtons();
+  // createTechnologyButtons();
   updateTechnologyButtons();
 
   // Listen for messages from the extension
   window.addEventListener('message', (event) => {
     const message = event.data;
+    console.log('🚀 ~ message:', message);
 
     switch (message.command) {
       case 'updateSnippets':
         currentSnippets = message.snippets;
+        if (message.allTechnologies) {
+          createTechnologyButtons(message.allTechnologies);
+        }
         if (message.selectedTechnology) {
           selectedTechnology = message.selectedTechnology;
           updateTechnologyButtons();

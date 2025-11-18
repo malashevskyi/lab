@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
-import DOMPurify from 'isomorphic-dompurify';
 
 import { ErrorService } from '../../errors/errors.service.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
@@ -11,6 +10,7 @@ import {
   generateFlashcardResponseSchema,
 } from '../ports/ai-generate-flashcard.port.js';
 import { sanitizeResponse } from './utils/sanitizeResponse.js';
+import { StacksService } from '../../stacks/stacks.service';
 
 const getFlashCardPrompt = () => `
 You are an expert assistant that generates high-quality study flashcards.
@@ -134,6 +134,7 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
   constructor(
     private readonly configService: ConfigService,
     private readonly errorService: ErrorService,
+    private readonly stacksService: StacksService,
   ) {
     const apiKey = this.configService.getOrThrow<string>('OPENAI_API_KEY');
     const projectId = this.configService.get<string>('OPENAI_PROJECT_ID');
@@ -173,13 +174,16 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
         aiResponse.answer,
       );
 
+      // Find or create stack based on context from AI response
+      const stack = await this.stacksService.findOrCreate(
+        aiResponse.context || '',
+      );
+
       const processedResponse = {
         ...aiResponse,
         question,
         answer,
-        context: DOMPurify.sanitize(aiResponse.context || '', {
-          ALLOWED_TAGS: [],
-        }), // Only text, no HTML
+        context: stack.id, // Use the normalized stack ID from database
       };
 
       return generateFlashcardResponseSchema.parse(processedResponse);

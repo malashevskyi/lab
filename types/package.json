@@ -15,6 +15,11 @@
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     },
+    "./assistant/stack/index.js": {
+      "types": "./dist/assistant/stack/index.d.ts",
+      "require": "./dist/assistant/stack/index.cjs",
+      "import": "./dist/assistant/stack/index.js"
+    },
     "./assistant/tts/index.js": {
       "types": "./dist/assistant/tts/index.d.ts",
       "require": "./dist/assistant/tts/index.cjs",

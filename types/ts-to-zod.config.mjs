@@ -4,6 +4,11 @@
  */
 export default [
   {
+    name: 'stack',
+    input: 'src/assistant/stack/interfaces/stack.interface.ts',
+    output: 'src/assistant/stack/schemas/stack.schema.ts',
+  },
+  {
     name: 'flashcard',
     input: 'src/assistant/flashcards/interfaces/flashcard.interface.ts',
     output: 'src/assistant/flashcards/schemas/flashcard.schema.ts',

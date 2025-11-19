@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
@@ -20,6 +20,7 @@ export const StackAutocomplete: React.FC<StackAutocompleteProps> = ({
   defaultValue,
   onBlur,
 }) => {
+  const selectRef = useRef<any>(null);
   const options = useMemo(
     () => items.map((item) => ({ value: item, label: item })),
     [items]
@@ -39,6 +40,20 @@ export const StackAutocomplete: React.FC<StackAutocompleteProps> = ({
       setInputValue('');
     }
   }, [defaultValue, options]);
+
+  // Focus and move cursor to end
+  useEffect(() => {
+    if (selectRef.current) {
+      selectRef.current.focus();
+      // Small delay to ensure input is ready
+      setTimeout(() => {
+        const input = selectRef.current?.inputRef;
+        if (input) {
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }, 0);
+    }
+  }, []);
 
   const handleBlur = () => {
     onBlur(inputValue);
@@ -70,6 +85,7 @@ export const StackAutocomplete: React.FC<StackAutocompleteProps> = ({
   return (
     <CacheProvider value={emotionCache}>
       <CreatableSelect
+        ref={selectRef}
         options={options}
         value={selectedValue}
         inputValue={inputValue}
@@ -83,6 +99,9 @@ export const StackAutocomplete: React.FC<StackAutocompleteProps> = ({
         onKeyDown={handleKeyDown}
         placeholder="Оберіть або вдіть стек..."
         isClearable
+        autoFocus
+        openMenuOnFocus
+        menuIsOpen
       />
     </CacheProvider>
   );

@@ -24,7 +24,7 @@ const rootElement = document.createElement('div');
 rootElement.id = 'assistant-root';
 document.body.appendChild(rootElement);
 
-const shadowRoot = rootElement.attachShadow({ mode: 'open' });
+export const shadowRoot = rootElement.attachShadow({ mode: 'open' });
 
 injectShadowRootInlineStyles(shadowRoot, sonnerStyles, 'sonner-styles');
 injectShadowRootInlineStyles(shadowRoot, tailwindStyles, 'tailwind-styles');

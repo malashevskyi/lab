@@ -5,6 +5,7 @@ import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiService } from '../ai/ai.service';
 import { TtsService } from '../tts/tts.service';
+import { StacksService } from '../stacks/stacks.service';
 import { Repository, MoreThanOrEqual } from 'typeorm';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 import { GenerateAudioResponseDto } from './dto/generate-audio.response.dto';
@@ -17,6 +18,7 @@ export class FlashcardsService {
     private readonly flashcardsRepository: Repository<FlashcardEntity>,
     private readonly aiService: AiService,
     private readonly ttsService: TtsService,
+    private readonly stacksService: StacksService,
   ) {}
 
   /**
@@ -86,20 +88,51 @@ export class FlashcardsService {
   }
 
   /**
-   * Updates an existing flashcard's question and answer.
+   * Updates an existing flashcard's question, answer, or context.
+   * When context is updated, it either updates the stack (case change) or switches to another stack.
    * @param id - The flashcard ID to update
-   * @param updateData - The updated question and answer data
+   * @param updateData - The updated data
    * @returns {Promise<FlashcardEntity>} The updated flashcard entity
    */
   async updateFlashcard(
     id: string,
     updateData: UpdateFlashcardDto,
   ): Promise<FlashcardEntity | null> {
-    await this.flashcardsRepository.update(id, {
-      question: updateData.question,
-      answer: updateData.answer,
-      updatedAt: new Date().toISOString(),
+    const flashcard = await this.flashcardsRepository.findOne({
+      where: { id },
     });
+
+    if (!flashcard) {
+      throw new Error(`Flashcard with ID "${id}" not found`);
+    }
+
+    const updateFields: Partial<FlashcardEntity> = {
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (updateData.question !== undefined)
+      updateFields.question = updateData.question;
+    if (updateData.answer !== undefined)
+      updateFields.answer = updateData.answer;
+
+    if (updateData.context !== undefined) {
+      const oldContext = flashcard.context;
+      const newContext = updateData.context;
+
+      // Check if it's just a case change of the same stack
+      if (oldContext.toLowerCase() === newContext.toLowerCase()) {
+        // Case change - update the stack itself (affects all flashcards with this stack)
+        await this.stacksService.update(oldContext, newContext);
+        updateFields.context = newContext;
+      } else {
+        // Different stack - just update this flashcard's context
+        // Create new stack if it doesn't exist
+        const targetStack = await this.stacksService.findOrCreate(newContext);
+        updateFields.context = targetStack.id;
+      }
+    }
+
+    await this.flashcardsRepository.update(id, updateFields);
 
     return this.flashcardsRepository.findOne({ where: { id } });
   }

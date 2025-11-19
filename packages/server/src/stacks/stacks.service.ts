@@ -73,4 +73,41 @@ export class StacksService {
 
     return this.create(context);
   }
+
+  /**
+   * Update stack ID (rename stack)
+   * This updates ONLY the case of the stack name (e.g., "react" → "React")
+   * All flashcards with this stack will be updated automatically via CASCADE
+   * @param oldId - Current stack ID
+   * @param newId - New stack ID (must be case-insensitive match)
+   * @returns {Promise<StackEntity>} Updated stack entity
+   */
+  async update(oldId: string, newId: string): Promise<StackEntity> {
+    const stack = await this.findByName(oldId);
+
+    if (!stack) {
+      throw new Error(`Stack with id "${oldId}" not found`);
+    }
+
+    // Only allow case changes (same stack, different capitalization)
+    if (oldId.toLowerCase() !== newId.toLowerCase()) {
+      throw new Error(
+        `Cannot rename stack "${oldId}" to "${newId}". Only case changes are allowed.`,
+      );
+    }
+
+    // Update stack ID (case change only)
+    await this.stacksRepository
+      .createQueryBuilder()
+      .update(StackEntity)
+      .set({ id: newId })
+      .where('LOWER(id) = LOWER(:oldId)', { oldId })
+      .execute();
+
+    const updated = await this.findByName(newId);
+    if (!updated) {
+      throw new Error(`Failed to update stack "${oldId}" to "${newId}"`);
+    }
+    return updated;
+  }
 }

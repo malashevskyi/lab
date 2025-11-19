@@ -5,9 +5,15 @@ import { FlashcardsService } from './flashcards.service';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { AiModule } from '../ai/ai.module';
 import { TtsModule } from '../tts/tts.module';
+import { StacksModule } from '../stacks/stacks.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FlashcardEntity]), AiModule, TtsModule],
+  imports: [
+    TypeOrmModule.forFeature([FlashcardEntity]),
+    AiModule,
+    TtsModule,
+    StacksModule,
+  ],
   controllers: [FlashcardsController],
   providers: [FlashcardsService],
 })

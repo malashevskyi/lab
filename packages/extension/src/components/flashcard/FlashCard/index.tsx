@@ -7,13 +7,18 @@ import { AudioControls } from '../AudioControls';
 import { CreateAudioButton } from '../CreateAudioButton';
 import { DeleteButton } from '../DeleteButton';
 import { useQuery } from '@tanstack/react-query';
+import { StackLabel } from '../StackLabel';
 
 interface FlashCardProps {
   flashcardId: FlashcardType['id'];
+  stacks: string[];
 }
 
-export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
-  const { updateFlashcard } = useUpdateFlashcard();
+export const FlashCard: React.FC<FlashCardProps> = ({
+  flashcardId,
+  stacks,
+}) => {
+  const { updateFlashcard, isUpdating } = useUpdateFlashcard();
   const { deleteFlashcard, isDeleting } = useDeleteFlashcard();
   const flashcard = useQuery<FlashcardType>({
     queryKey: ['flashcard', flashcardId],
@@ -28,11 +33,15 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
   const hasAudio = !!flashcard.data.questionAudioUrl;
 
   const handleQuestionChange = (newHtml: string) => {
-    updateFlashcard(flashcard.data.id, newHtml, flashcard.data.answer);
+    updateFlashcard(flashcard.data.id, { question: newHtml });
   };
 
   const handleAnswerChange = (newHtml: string) => {
-    updateFlashcard(flashcard.data.id, flashcard.data.question, newHtml);
+    updateFlashcard(flashcard.data.id, { answer: newHtml });
+  };
+
+  const handleContextChange = (newContext: string) => {
+    updateFlashcard(flashcard.data.id, { context: newContext });
   };
 
   const handleDelete = () => {
@@ -45,11 +54,12 @@ export const FlashCard: React.FC<FlashCardProps> = ({ flashcardId }) => {
         <div className="flex-1 space-y-3">
           <div className="bg-white p-3 rounded border-l-4 border-solid border-blue-400">
             <div className="flex items-center justify-between mb-2">
-              {flashcard.data.context && (
-                <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                  {flashcard.data.context}
-                </span>
-              )}
+              <StackLabel
+                defaultValue={flashcard.data.context}
+                stacks={stacks}
+                onContextChange={handleContextChange}
+                isUpdating={isUpdating}
+              />
               <div className="flex items-center gap-2">
                 {hasAudio ? (
                   <AudioControls

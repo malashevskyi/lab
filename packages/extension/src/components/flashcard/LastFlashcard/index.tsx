@@ -4,11 +4,13 @@ import { FlashCard } from '../FlashCard';
 
 export interface LastFlashcardProps {
   flashcard?: GetLastFlashcardResponseType | null;
+  stacks: string[];
   isVisible: boolean;
 }
 
 export const LastFlashcard: React.FC<LastFlashcardProps> = ({
   flashcard,
+  stacks,
   isVisible,
 }) => {
   if (!isVisible) return null;
@@ -39,7 +41,7 @@ export const LastFlashcard: React.FC<LastFlashcardProps> = ({
 
   return (
     <div className="overflow-y-auto space-y-3 pr-2">
-      <FlashCard flashcardId={flashcard.id} />
+      <FlashCard flashcardId={flashcard.id} stacks={stacks} />
     </div>
   );
 };

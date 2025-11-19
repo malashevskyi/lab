@@ -1,10 +1,13 @@
 import { useGetFlashcardsByUrl } from '../../../hooks/useGetFlashcardsByUrl';
+import { useGetStacks } from '../../../hooks/useGetStacks';
 import { FlashCard } from '../FlashCard';
 
 export const FlashcardsTab: React.FC = () => {
-  const { flashcardIds, isLoading } = useGetFlashcardsByUrl();
+  const { flashcardIds, isLoading: isFlashcardsLoading } =
+    useGetFlashcardsByUrl();
+  const { stacks, isLoading: isStacksLoading } = useGetStacks();
 
-  if (isLoading) {
+  if (isFlashcardsLoading || isStacksLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <svg
@@ -60,7 +63,7 @@ export const FlashcardsTab: React.FC = () => {
   return (
     <div className="overflow-y-auto space-y-3 pr-2">
       {flashcardIds.map((id) => (
-        <FlashCard key={id} flashcardId={id} />
+        <FlashCard key={id} flashcardId={id} stacks={stacks} />
       ))}
     </div>
   );

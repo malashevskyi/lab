@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { SupabaseAuthManager } from './supabaseAuthManager';
+import { StackType } from './types';
 
 export interface FlashcardPayload {
   question: string;
@@ -34,5 +35,14 @@ export class SupabaseService {
     }
 
     return { error };
+  }
+
+  public async getStacks(): Promise<{ data: StackType[] | null; error: any }> {
+    const client = await this.authManager.getAuthenticatedClient();
+    if (!client) {
+      return { data: null, error: new Error('Not authenticated') };
+    }
+
+    return await client.from('stacks').select();
   }
 }

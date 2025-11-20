@@ -17,7 +17,6 @@ import sql from 'highlight.js/lib/languages/sql';
 // import javahtml from 'highlight.js/lib/languages/xml'; // for HTML
 import json from 'highlight.js/lib/languages/json';
 import { formatSnippetsAsMarkdown } from './utils/formatSnippetsAsMarkdown';
-import { TECHNOLOGIES } from './constants';
 // import rust from 'highlight.js/lib/languages/rust';
 // import go from 'highlight.js/lib/languages/go';
 // import java from 'highlight.js/lib/languages/java';
@@ -53,7 +52,8 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    private readonly stateManager: StateManager
+    private readonly stateManager: StateManager,
+    private readonly stacks: string[]
   ) {}
 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
@@ -86,7 +86,7 @@ export class FlashcardViewProvider implements vscode.WebviewViewProvider {
   private updateWithCurrentState() {
     const snippets = this.stateManager.getSnippets();
     const selectedTechnology = this.stateManager.getSelectedTechnology();
-    this.update(snippets, selectedTechnology, TECHNOLOGIES);
+    this.update(snippets, selectedTechnology, this.stacks);
   }
 
   public getView(): vscode.WebviewView | undefined {

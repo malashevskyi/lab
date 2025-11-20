@@ -8,7 +8,7 @@ import { StateManager } from './stateManager';
 import { SupabaseAuthManager } from './supabaseAuthManager';
 import { createSupabaseClient } from './supabaseClient';
 import { FlashcardPayload, SupabaseService } from './supabaseService';
-import { CodeSnippet } from './types';
+import { CodeSnippet, StackType } from './types';
 import { formatSnippetsAsMarkdown } from './utils/formatSnippetsAsMarkdown';
 
 // This will be our URI handler for the OAuth callback
@@ -38,14 +38,21 @@ export async function activate(context: vscode.ExtensionContext) {
 
   if (!supabaseClient) return;
 
+  let stacks: StackType[] = [];
+
   const authManager = new SupabaseAuthManager(context, supabaseClient);
   const supabaseService = new SupabaseService(authManager);
+
   const initialSession = await authManager.getSession();
   setAuthenticatedContext(!!initialSession);
 
+  const { data: stacksData } = await supabaseService.getStacks();
+  if (stacksData) stacks = stacksData;
+
   const flashcardProvider = new FlashcardViewProvider(
     context.extensionUri,
-    stateManager
+    stateManager,
+    stacks.map((item: StackType) => item.id)
   );
   const loginProvider = new LoginViewProvider();
 

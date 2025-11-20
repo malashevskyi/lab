@@ -14,16 +14,3 @@ export const extensionToLanguageMap: { [key: string]: string } = {
   '.php': 'php',
   '.rs': 'rust',
 };
-
-export const TECHNOLOGIES = [
-  'Node.js',
-  'React',
-  'TypeScript',
-  'Microservices',
-  'Express.js',
-  'Material-UI',
-  'Vs-code RegExp',
-  'Javascript RegExp',
-] as const as string[];
-
-export type Technology = (typeof TECHNOLOGIES)[number];

@@ -8,3 +8,7 @@ export interface CodeSnippet {
   };
   uri: string;
 }
+
+export interface StackType {
+  id: string;
+}

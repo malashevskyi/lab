@@ -1,14 +1,14 @@
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
 import { Pool, PoolClient } from "pg";
-import { defineSecret, defineString } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
 import { logger } from "firebase-functions";
 import * as Sentry from "@sentry/node";
 import { extractStoragePath } from "../utils/extractStoragePath";
 import { initializeSentry } from "../bootstrap";
 
 const supabaseUrlParam = defineSecret("SUPABASE_DATABASE_URL");
-const bucketNameParam = defineString("STORAGE_BUCKET");
+const bucketNameParam = defineSecret("STORAGE_BUCKET");
 
 let supabasePool: Pool;
 

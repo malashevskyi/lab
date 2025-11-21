@@ -1,8 +1,8 @@
 import * as Sentry from "@sentry/node";
 import * as admin from "firebase-admin";
-import { defineString } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
 
-const dsn = defineString("SENTRY_DSN", { default: "" });
+const dsn = defineSecret("SENTRY_DSN");
 
 export function initializeSentry() {
   const dsnValue = dsn.value();

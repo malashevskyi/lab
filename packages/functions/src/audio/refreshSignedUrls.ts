@@ -37,6 +37,7 @@ export default onSchedule(
     region: "europe-west1",
   },
   async () => {
+    initializeSentry();
     logger.info("Starting job: refreshSignedUrls");
     let client: PoolClient | null = null;
 

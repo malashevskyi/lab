@@ -4,12 +4,15 @@ import { defineString } from "firebase-functions/params";
 
 const dsn = defineString("SENTRY_DSN", { default: "" });
 
-if (dsn) {
-  Sentry.init({
-    dsn: dsn.value(),
-    environment: process.env.NODE_ENV,
-    tracesSampleRate: 1.0,
-  });
+export function initializeSentry() {
+  const dsnValue = dsn.value();
+  if (dsnValue && !Sentry.isInitialized()) {
+    Sentry.init({
+      dsn: dsnValue,
+      environment: process.env.NODE_ENV || "production",
+      tracesSampleRate: 1.0,
+    });
+  }
 }
 
 admin.initializeApp();

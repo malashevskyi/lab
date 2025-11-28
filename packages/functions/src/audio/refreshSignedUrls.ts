@@ -37,7 +37,7 @@ export default onSchedule(
   {
     schedule: "every 24 hours",
     region: "europe-west1",
-    secrets: [supabaseUrlParam],
+    secrets: [supabaseUrlParam, bucketNameParam],
   },
   async () => {
     initializeSentry();

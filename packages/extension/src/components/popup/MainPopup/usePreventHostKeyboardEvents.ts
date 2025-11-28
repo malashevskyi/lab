@@ -52,6 +52,11 @@ export function usePreventHostKeyboardEvents(
             'J', // J - rewind 10s
             'l', // L - forward 10s
             'L', // L - forward 10s
+            'b', // b - toggle notes
+            'B', // B - toggle notes
+            'i', // I - content information
+            'I', // I - content information
+            '?', // ? - keyboard shortcuts help
             '<', // < - decrease speed
             '>', // > - increase speed
             'ArrowLeft', // Arrow left - rewind 5s

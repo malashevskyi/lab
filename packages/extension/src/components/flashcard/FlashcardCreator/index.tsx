@@ -57,19 +57,6 @@ export const FlashcardCreator: React.FC = () => {
     removeFlashcardChunkByIndex(index);
   };
 
-  if (rawChunks.length === 0) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center text-gray-500">
-        <div className="text-center">
-          <h3 className="text-lg font-medium mb-2">No content selected</h3>
-          <p className="text-sm">
-            Select some text on the page to create a flashcard
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
       <FormikProvider value={formik}>

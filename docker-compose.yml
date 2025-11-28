@@ -12,16 +12,7 @@ services:
       - /app/types/dist
     secrets:
       - doppler_token
-      # - infisical_client_id
-      # - infisical_client_secret
-      # - infisical_service_token
 
 secrets:
-  # infisical_client_id:
-  #   file: ~/.docker-secrets/infisical_client_id.txt
-  # infisical_client_secret:
-  #   file: ~/.docker-secrets/infisical_client_secret.txt
-  # infisical_service_token:
-  #   file: ~/.docker-secrets/infisical_service_token.txt
   doppler_token:
     file: ~/.docker-secrets/doppler_token.txt

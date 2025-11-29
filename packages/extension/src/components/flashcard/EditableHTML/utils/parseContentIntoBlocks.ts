@@ -19,7 +19,7 @@ function pushTextBlocks(text: string, out: Block[]) {
 }
 
 function normalizeCodeBlock(text: string): Block | undefined {
-  const codeMatch = text.match(/```(\w*)\n([\s\S]*?)\n```/);
+  const codeMatch = text.match(/```(\w*)\n([\s\S]*?)\n\s*```/);
 
   if (codeMatch) {
     const [, language, content] = codeMatch;
@@ -35,7 +35,8 @@ function normalizeCodeBlock(text: string): Block | undefined {
 export const parseContentIntoBlocks = (content: string) => {
   const blocks: Block[] = [];
 
-  const CODE_BLOCK = /```\w*\n[\s\S]*?\n```/g;
+  // Updated regex to handle code blocks with optional leading whitespace (for indented code in lists)
+  const CODE_BLOCK = /\s*```\w*\n[\s\S]*?\n\s*```/g;
   const LIST_BLOCK = /((?:^- .+$\n?)+)/gm;
   const blockRegex = new RegExp(
     `(${CODE_BLOCK.source}|${LIST_BLOCK.source})`,
@@ -50,11 +51,13 @@ export const parseContentIntoBlocks = (content: string) => {
     if (textBefore) pushTextBlocks(textBefore, blocks);
   }
   function detectMatchedBlockType(blockMatch: string) {
-    if (blockMatch.startsWith('```')) {
+    // Trim to check type, but keep original for processing
+    const trimmedBlock = blockMatch.trim();
+    if (trimmedBlock.startsWith('```')) {
       // Code block
       const codeBlock = normalizeCodeBlock(blockMatch);
       if (codeBlock) blocks.push(codeBlock);
-    } else if (blockMatch.trim().startsWith('- ')) {
+    } else if (trimmedBlock.startsWith('- ')) {
       // List block
       blocks.push({ type: BlockType.List, content: blockMatch });
     }

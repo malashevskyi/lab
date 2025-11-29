@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { parseContentIntoBlocks } from './parseContentIntoBlocks';
+import { parseContentIntoBlocks, BlockType } from './parseContentIntoBlocks';
 
 describe('parseContentIntoBlocks', () => {
   describe('Text content', () => {
@@ -275,6 +275,50 @@ describe('parseContentIntoBlocks', () => {
         content:
           'Each list type serves different purposes in semantic HTML structure.',
       });
+    });
+
+    test('should parse Angular CLI answer with multiple code blocks in lists', () => {
+      const content = `**Angular CLI** is a command-line interface tool that helps create, build, and manage Angular applications.
+
+To install it globally using **pnpm**:
+\`\`\`bash
+pnpm install -g @angular/cli
+\`\`\`
+
+- **Create a new project:**
+  \`\`\`bash
+  ng new project-name
+  \`\`\`
+- **Serve your application locally:**
+  \`\`\`bash
+  ng serve
+  \`\`\`
+- **Build the project for production:**
+  \`\`\`bash
+  ng build
+  \`\`\`
+- **Generate new components or services:**
+  \`\`\`bash
+  ng generate component component-name
+  ng generate service service-name
+  \`\`\``;
+
+      const result = parseContentIntoBlocks(content);
+
+      console.log('Total blocks found:', result.length);
+      console.log('Blocks:', JSON.stringify(result, null, 2));
+
+      // Count block types
+      const codeBlocks = result.filter((b) => b.type === BlockType.Code);
+      const listBlocks = result.filter((b) => b.type === BlockType.List);
+      const textBlocks = result.filter((b) => b.type === BlockType.Text);
+
+      console.log('Code blocks:', codeBlocks.length);
+      console.log('List blocks:', listBlocks.length);
+      console.log('Text blocks:', textBlocks.length);
+
+      // We expect to find 5 code blocks total (1 standalone + 4 in lists)
+      expect(codeBlocks.length).toBe(5);
     });
   });
 });

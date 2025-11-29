@@ -16,7 +16,7 @@ const sanitizeTextContent = (text: string): string => {
 export const sanitizeMarkdownContent = (markdown: string): string => {
   if (!markdown) return '';
 
-  const CODE_BLOCK = /```[\w]*\n[\s\S]*?\n```/g;
+  const CODE_BLOCK = /\s*```[\w]*\n[\s\S]*?\n\s*```/g;
   const blockRegex = new RegExp(`(${CODE_BLOCK.source})`, 'g');
 
   let lastIndex = 0;
@@ -31,7 +31,8 @@ export const sanitizeMarkdownContent = (markdown: string): string => {
   }
 
   function detectMatchedBlockType(blockMatch: string) {
-    if (blockMatch.startsWith('```')) {
+    const trimmedBlock = blockMatch.trim();
+    if (trimmedBlock.startsWith('```')) {
       // Code block - keep as is without sanitization
       parts.push(blockMatch);
     }

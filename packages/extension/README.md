@@ -84,6 +84,17 @@ A browser assistant that helps you read, learn, analyze text, and create spaced-
 
 ---
 
+### 🗑️ "Delete" Button for ChatGPT Chats
+
+- Adds a delete button to each chat item in the ChatGPT sidebar
+- Button appears directly in the chat list for quick access
+- Clicking the delete button removes the chat immediately via ChatGPT API
+- Shows a loading spinner during deletion
+- No confirmation dialog - immediate deletion for faster workflow
+- Uses ChatGPT's backend API with authentication for reliable deletion
+
+---
+
 ### 5. Smart URL Normalization
 
 - Groups flashcards from the same course together

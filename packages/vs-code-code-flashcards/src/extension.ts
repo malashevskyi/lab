@@ -198,6 +198,25 @@ export async function activate(context: vscode.ExtensionContext) {
       case 'selectTechnology':
         await stateManager.setSelectedTechnology(message.technology);
         return;
+      case 'clearAllSnippets':
+        try {
+          console.log(
+            '[Code Flashcards] Received "clearAllSnippets" command from Webview.'
+          );
+          const emptySnippets: CodeSnippet[] = [];
+          await stateManager.setSnippets(emptySnippets);
+          const selectedTech = stateManager.getSelectedTechnology();
+          flashcardProvider.update(emptySnippets, selectedTech);
+          vscode.window.visibleTextEditors.forEach((editor) =>
+            highlighter.updateDecorations(editor, [])
+          );
+          vscode.window.showInformationMessage('All snippets cleared.');
+        } catch (error: any) {
+          vscode.window.showErrorMessage(
+            `Failed to clear snippets: ${error.message}`
+          );
+        }
+        return;
       case 'createFlashcard':
         try {
           console.log(

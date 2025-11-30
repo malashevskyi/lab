@@ -99,3 +99,21 @@ button:disabled:hover {
   background-color: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
 }
+
+.clear-button {
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  padding: 6px 12px;
+  font-size: 12px;
+  margin-left: 10px;
+  margin-top: 0;
+}
+
+.clear-button:hover {
+  background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+h4 {
+  display: inline-block;
+  margin-right: 10px;
+}

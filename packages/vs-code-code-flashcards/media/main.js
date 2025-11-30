@@ -8,6 +8,7 @@
   const snippetsPreview = document.getElementById('snippets-preview');
   const technologyButtonsContainer =
     document.getElementById('technology-buttons');
+  const clearSnippetsButton = document.getElementById('clear-snippets-button');
 
   const originalButtonText = createButton.textContent;
 
@@ -95,6 +96,13 @@
         text: 'Please provide a question and select at least one code snippet.',
       });
     }
+  });
+
+  // Handle the clear snippets button click
+  clearSnippetsButton.addEventListener('click', () => {
+    vscode.postMessage({
+      command: 'clearAllSnippets',
+    });
   });
 
   // Notify extension that the webview is ready to get initial data after reload

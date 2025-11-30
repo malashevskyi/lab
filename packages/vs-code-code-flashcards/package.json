@@ -3,7 +3,7 @@
   "displayName": "Code Flashcards",
   "publisher": "malashevskyi",
   "description": "Create AI-powered flashcards from your code snippets.",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.83.0"
   },
@@ -110,7 +110,10 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "dev-update": "npm version patch && vsce package",
+    "install-local": "npm run dev-update && code --install-extension *.vsix --force",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/highlight.js": "^10.1.0",

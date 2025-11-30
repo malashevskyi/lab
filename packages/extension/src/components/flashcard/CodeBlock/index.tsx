@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { highlight, languages } from 'prismjs';
 import Editor from 'react-simple-code-editor';
 
@@ -32,6 +32,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   onCodeChange,
 }) => {
   const normalizedLanguage = normalizeLanguage(language);
+  const [localCode, setLocalCode] = useState(code);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const isLanguageSupported = languages[normalizedLanguage];
   const highlightLanguage = isLanguageSupported
@@ -46,8 +48,35 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     }
   }, []);
 
+  // Update local state when code prop changes from parent
+  useEffect(() => {
+    setLocalCode(code);
+  }, [code]);
+
+  const handleBlur = () => {
+    // Only save if content actually changed
+    if (editable && onCodeChange && localCode !== code) {
+      onCodeChange(localCode);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Save on Shift+Enter or Escape
+    if ((e.key === 'Enter' && e.shiftKey) || e.key === 'Escape') {
+      e.preventDefault();
+      if (editable && onCodeChange && localCode !== code) {
+        onCodeChange(localCode);
+      }
+      // Remove focus from editor
+      if (editorRef.current) {
+        editorRef.current.blur();
+      }
+    }
+  };
+
   return (
     <div
+      ref={editorRef}
       style={{
         padding: 1,
         fontFamily: 'monospace',
@@ -59,6 +88,9 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         overflow: 'hidden',
         margin: '8px 0',
       }}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
     >
       {/* Language label */}
       {language && (
@@ -77,8 +109,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       )}
 
       <Editor
-        value={code}
-        onValueChange={editable && onCodeChange ? onCodeChange : () => {}}
+        value={localCode}
+        onValueChange={editable ? setLocalCode : () => {}}
         highlight={(code) =>
           highlight(code, languages[highlightLanguage], highlightLanguage)
         }

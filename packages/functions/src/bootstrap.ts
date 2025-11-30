@@ -15,4 +15,6 @@ export function initializeSentry() {
   }
 }
 
-admin.initializeApp();
+admin.initializeApp({
+  storageBucket: "deep-read-ai.firebasestorage.app",
+});

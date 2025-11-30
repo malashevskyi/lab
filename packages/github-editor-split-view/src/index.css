@@ -39,3 +39,10 @@
     var(--color-action-list-item-default-hover-bg)
   );
 }
+
+/* Hide loading spinner in preview */
+
+/* Approach 3: Target within MarkdownEditor */
+html body div[class^='MarkdownEditor-module'] span[class^='prc-Spinner-Box'] {
+  display: none !important;
+}

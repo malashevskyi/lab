@@ -19,6 +19,11 @@
       "matches": ["https://gemini.google.com/*"],
       "js": ["src/features/gemini-content/index.ts"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": ["src/features/chatgpt-content/index.ts"],
+      "run_at": "document_end"
     }
   ],
   "content_security_policy": {

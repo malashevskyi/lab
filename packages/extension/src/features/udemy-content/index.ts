@@ -1,5 +1,5 @@
 /**
- * Udemy Site Modifier
+ * Udemy Content Script
  *
  * Modifies Udemy's transcript functionality to:
  * - Remove underline on hover
@@ -11,8 +11,9 @@
  * (like .transcript--cue-container--Vuwj6) to ensure stability across Udemy updates.
  */
 
-import type { SiteModifier } from '../types';
 import styles from './styles.css?inline';
+
+console.log('Assistant: Udemy content script loaded on', window.location.href);
 
 let styleElement: HTMLStyleElement | null = null;
 
@@ -21,7 +22,7 @@ let styleElement: HTMLStyleElement | null = null;
  */
 const addSeekButton = (cueContainer: HTMLElement): void => {
   // Skip if button already exists
-  if (cueContainer.querySelector('.web-assistant-seek-button')) {
+  if (cueContainer.querySelector('.assistant-seek-button')) {
     return;
   }
 
@@ -33,11 +34,11 @@ const addSeekButton = (cueContainer: HTMLElement): void => {
 
   // Create wrapper for button + content
   const wrapper = document.createElement('div');
-  wrapper.className = 'web-assistant-seek-button-container';
+  wrapper.className = 'assistant-seek-button-container';
 
   // Create seek button
   const seekButton = document.createElement('button');
-  seekButton.className = 'web-assistant-seek-button';
+  seekButton.className = 'assistant-seek-button';
   seekButton.title = 'Go to this time in video';
   seekButton.innerHTML = `
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -58,13 +59,13 @@ const addSeekButton = (cueContainer: HTMLElement): void => {
     });
 
     // Temporarily mark that this is from our button
-    (clickEvent as any).fromWebAssistantButton = true;
+    (clickEvent as any).fromAssistantButton = true;
     cue.dispatchEvent(clickEvent);
   });
 
   // Create content wrapper
   const contentWrapper = document.createElement('div');
-  contentWrapper.className = 'web-assistant-transcript-content';
+  contentWrapper.className = 'assistant-transcript-content';
 
   // Move cue's content to wrapper (but keep the cue element structure)
   while (cue.firstChild) {
@@ -100,27 +101,25 @@ const processTranscriptCues = (): void => {
     addSeekButton(container);
 
     // Skip if already processed
-    if (cue.hasAttribute('data-web-assistant-processed')) {
+    if (cue.hasAttribute('data-assistant-processed')) {
       return;
     }
 
     // Mark as processed
-    cue.setAttribute('data-web-assistant-processed', 'true');
+    cue.setAttribute('data-assistant-processed', 'true');
 
     // Make sure the element is not focusable
     cue.setAttribute('tabindex', '-1');
     cue.removeAttribute('role');
 
     // Prevent clicks on the text content (but not on the button)
-    const contentWrapper = cue.querySelector(
-      '.web-assistant-transcript-content'
-    );
+    const contentWrapper = cue.querySelector('.assistant-transcript-content');
     if (contentWrapper) {
       contentWrapper.addEventListener(
         'click',
         (e) => {
           // Only prevent clicks that are NOT from our seek button
-          if (!(e as any).fromWebAssistantButton) {
+          if (!(e as any).fromAssistantButton) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -136,21 +135,18 @@ const processTranscriptCues = (): void => {
  * Initialize Udemy modifications
  */
 const initialize = (): void => {
-  console.log('[Assistant] Initializing Udemy site modifier');
+  console.log('[Assistant] Initializing Udemy transcript modifier');
 
   // Inject custom styles - check both variable and DOM to prevent duplicates
-  if (
-    !styleElement &&
-    !document.getElementById('web-assistant-udemy-modifier')
-  ) {
+  if (!styleElement && !document.getElementById('assistant-udemy-modifier')) {
     styleElement = document.createElement('style');
-    styleElement.id = 'web-assistant-udemy-modifier';
+    styleElement.id = 'assistant-udemy-modifier';
     styleElement.textContent = styles;
     document.head.appendChild(styleElement);
   } else if (!styleElement) {
     // Style exists in DOM but not in variable (e.g., after page navigation)
     styleElement = document.getElementById(
-      'web-assistant-udemy-modifier'
+      'assistant-udemy-modifier'
     ) as HTMLStyleElement;
   }
 
@@ -215,49 +211,7 @@ const initialize = (): void => {
       subtree: true,
     });
   }
-
-  // Store observer for cleanup
-  (initialize as any).observer = observer;
 };
 
-/**
- * Cleanup Udemy modifications
- */
-const cleanup = (): void => {
-  console.log('[Assistant] Cleaning up Udemy site modifier');
-
-  // Remove injected styles
-  if (styleElement && styleElement.parentNode) {
-    styleElement.parentNode.removeChild(styleElement);
-    styleElement = null;
-  }
-
-  // Disconnect observer
-  const observer = (initialize as any).observer as MutationObserver | undefined;
-  if (observer) {
-    observer.disconnect();
-  }
-};
-
-/**
- * Check if current URL is a Udemy course page
- */
-const matches = (url: string): boolean => {
-  try {
-    const urlObj = new URL(url);
-    return (
-      urlObj.hostname.includes('udemy.com') &&
-      urlObj.pathname.includes('/course/')
-    );
-  } catch {
-    return false;
-  }
-};
-
-export const udemyModifier: SiteModifier = {
-  id: 'udemy',
-  name: 'Udemy',
-  matches,
-  initialize,
-  cleanup,
-};
+// Initialize on load
+initialize();

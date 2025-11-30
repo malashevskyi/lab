@@ -24,6 +24,11 @@
       "matches": ["https://chatgpt.com/*"],
       "js": ["src/features/chatgpt-content/index.ts"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["https://www.udemy.com/course/*"],
+      "js": ["src/features/udemy-content/index.ts"],
+      "run_at": "document_end"
     }
   ],
   "content_security_policy": {

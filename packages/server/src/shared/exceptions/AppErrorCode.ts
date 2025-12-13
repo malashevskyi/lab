@@ -9,4 +9,5 @@ export enum AppErrorCode {
   CONFLICT_EXCEPTION = 'conflict_exception',
   NOT_FOUND = 'not_found',
   AUDIO_DELETION_FAILED = 'audio_deletion_failed',
+  AUDIO_RETRIEVAL_FAILED = 'audio_retrieval_failed',
 }

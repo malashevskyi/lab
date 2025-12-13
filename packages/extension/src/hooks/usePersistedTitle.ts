@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { ApiError } from '../services/ApiError';
-import type { FormikValues } from 'formik/dist/types';
-import { useAppStore } from '../store';
-import { normalizeUrl } from '../utils/normalizeUrl';
+import { useEffect } from "react";
+import { fromUnknown } from "../services/errorUtils";
+import type { FormikValues } from "formik/dist/types";
+import { useAppStore } from "../store";
+import { normalizeUrl } from "../utils/normalizeUrl";
 
 const getStorageKey = (): string =>
   `assistant_title_${normalizeUrl(window.location.href)}`;
@@ -26,9 +26,9 @@ export const usePersistedTitle = (
   );
 
   useEffect(() => {
-    const h1Element = document.querySelector('h1');
+    const h1Element = document.querySelector("h1");
     const pageTitle = h1Element
-      ? h1Element.textContent?.trim() || ''
+      ? h1Element.textContent?.trim() || ""
       : document.title;
 
     setFlashcardCreatorTitle(pageTitle);
@@ -38,11 +38,11 @@ export const usePersistedTitle = (
     const key = getStorageKey();
     chrome.storage.local.get(key, (result) => {
       if (chrome.runtime.lastError) {
-        ApiError.fromUnknown(chrome.runtime.lastError).notify();
+        fromUnknown(chrome.runtime.lastError, { notify: true });
         return;
       }
       if (result[key]) {
-        setFieldValue('title', result[key]);
+        setFieldValue("title", result[key]);
       }
     });
   }, [setFieldValue]);
@@ -55,7 +55,7 @@ export const usePersistedTitle = (
       chrome.storage.local.set({ [key]: titleToSave }, () => {
         setFlashcardCreatorTitle(titleToSave);
         if (chrome.runtime.lastError) {
-          ApiError.fromUnknown(chrome.runtime.lastError).notify();
+          fromUnknown(chrome.runtime.lastError, { notify: true });
         }
       });
     }

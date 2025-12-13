@@ -1,16 +1,16 @@
+import {
+  googleServiceAccountSchema,
+  type GoogleCredentials,
+  type UploadAudioResponse,
+} from '@lab/types/assistant/tts/index.js';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import { App } from 'firebase-admin/app';
 import { getStorage, Storage } from 'firebase-admin/storage';
-import {
-  googleServiceAccountSchema,
-  type UploadAudioResponse,
-  type GoogleCredentials,
-} from '@lab/types/assistant/tts/index.js';
-import { AudioStoragePort } from '../ports/audio-storage.port.js';
-import { ErrorService } from '../../errors/errors.service.js';
+import { AppException } from 'src/shared/exceptions/AppException.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
+import { AudioStoragePort } from '../ports/audio-storage.port.js';
 
 const BUCKET_DIRECTORY = 'audio';
 const FLASHCARD_QUESTIONS_DIRECTORY = 'flashcard-questions';
@@ -31,10 +31,7 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
   private bucketName: string;
   private storage: Storage;
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly errorService: ErrorService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   onModuleInit() {
     try {
@@ -88,7 +85,7 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
       const [exists] = await file.exists();
       if (exists) await file.delete();
     } catch (error) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.AUDIO_DELETION_FAILED,
         `Failed to delete audio from storage at path: "${storagePath}"`,
         error,
@@ -119,9 +116,9 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
 
       return { audioUrl, expiresAt: oneMonthFromNow.toISOString() };
     } catch (error) {
-      this.errorService.handle(
-        AppErrorCode.AUDIO_UPLOAD_FAILED,
-        `Failed to save audio to storage at path: "${storagePath}"`,
+      throw AppException.create(
+        AppErrorCode.AUDIO_RETRIEVAL_FAILED,
+        `Failed to retrieve audio from storage at path: "${storagePath}"`,
         error,
       );
     }
@@ -154,7 +151,7 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
         expiresAt,
       };
     } catch (error) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.AUDIO_UPLOAD_FAILED,
         `Failed to upload audio to storage for text: "${text}"`,
         error,
@@ -185,7 +182,7 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
         expiresAt,
       };
     } catch (error) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.AUDIO_UPLOAD_FAILED,
         `Failed to upload flashcard question audio for ID: "${flashcardId}"`,
         error,
@@ -203,7 +200,7 @@ export class FirebaseStorageAdapter implements OnModuleInit, AudioStoragePort {
         `Successfully deleted flashcard question audio: ${storagePath}`,
       );
     } catch (error) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.AUDIO_DELETION_FAILED,
         `Failed to delete flashcard question audio for ID: "${flashcardId}"`,
         error,

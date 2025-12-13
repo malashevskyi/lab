@@ -1,4 +1,4 @@
-import { ApiError } from '../../../../services/ApiError';
+import { fromUnknown } from "../../../../services/errorUtils";
 
 const PUNCTUATION_AND_SPACE_REGEX = /[.,:;!?\s]/;
 
@@ -25,8 +25,8 @@ export const expandSelectionAcrossNodes = (selection: Selection): Selection => {
     return selection;
   }
 
-  const startTextContent = startContainer.textContent || '';
-  const endTextContent = endContainer.textContent || '';
+  const startTextContent = startContainer.textContent || "";
+  const endTextContent = endContainer.textContent || "";
 
   let newStartOffset = startOffset;
   let newEndOffset = endOffset;
@@ -50,7 +50,7 @@ export const expandSelectionAcrossNodes = (selection: Selection): Selection => {
     const nextChar = startTextContent[newStartOffset + 1];
 
     // If the same punctuation repeats, don't skip it
-    if (currentChar === nextChar && currentChar !== ' ') {
+    if (currentChar === nextChar && currentChar !== " ") {
       break;
     }
 
@@ -78,9 +78,10 @@ export const expandSelectionAcrossNodes = (selection: Selection): Selection => {
     selection.removeAllRanges();
     selection.addRange(newRange);
   } catch (error) {
-    ApiError.fromUnknown(error, {
-      clientMessage: 'Error creating expanded range.',
-    }).notify();
+    fromUnknown(error, {
+      clientMessage: "Error creating expanded range.",
+    });
+
     selection.removeAllRanges();
     selection.addRange(range);
   }

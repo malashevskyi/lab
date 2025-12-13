@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import type { AxiosError } from 'axios';
 import type { ZodError } from 'zod';
 import { useAppStore } from '../store';
@@ -35,9 +35,10 @@ export function useTextAnalysis(): {
   });
 
   if (query.error) {
-    ApiError.fromUnknown(query.error, {
+    fromUnknown(query.error, {
       clientMessage: 'Failed to analyze the selected text.',
-    }).notify();
+      notify: true,
+    });
   }
 
   return {

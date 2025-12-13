@@ -1,16 +1,15 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 
-import { ErrorService } from '../../errors/errors.service.js';
-import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
+import { AppException } from 'src/shared/exceptions/AppException.js';
+import { StacksService } from '../../stacks/stacks.service';
 import {
   AiFlashcardGeneratorPort,
   GenerateFlashcardResponse,
   generateFlashcardResponseSchema,
 } from '../ports/ai-generate-flashcard.port.js';
 import { sanitizeResponse } from './utils/sanitizeResponse.js';
-import { StacksService } from '../../stacks/stacks.service';
 
 const getFlashCardPrompt = () => `
 You are an expert assistant that generates high-quality study flashcards.
@@ -133,7 +132,6 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly errorService: ErrorService,
     private readonly stacksService: StacksService,
   ) {
     const apiKey = this.configService.getOrThrow<string>('OPENAI_API_KEY');
@@ -188,11 +186,9 @@ export class OpenAiFlashcardAdapter implements AiFlashcardGeneratorPort {
 
       return generateFlashcardResponseSchema.parse(processedResponse);
     } catch (error) {
-      this.errorService.handle(
-        AppErrorCode.AI_RESPONSE_INVALID,
+      throw AppException.aiResponseInvalid(
         'Failed to generate a flashcard from the provided chunks.',
         error,
-        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -2,7 +2,7 @@
  * Module for adding and managing the delete chat button in Gemini interface
  */
 
-import { ApiError } from '../../services/ApiError';
+import { fromUnknown, notifyAndCapture } from "../../services/errorUtils";
 
 interface WaitForElementOptions {
   timeout?: number;
@@ -68,20 +68,20 @@ function waitForElement<T extends HTMLElement = HTMLElement>(
   });
 }
 
-const DELETE_BUTTON_ID = 'assistant-gemini-delete-button';
-const SPINNER_ID = 'assistant-delete-spinner';
+const DELETE_BUTTON_ID = "assistant-gemini-delete-button";
+const SPINNER_ID = "assistant-delete-spinner";
 
 /**
  * Creates a delete button with Google Material Design styling
  */
 function createDeleteButton(): HTMLButtonElement {
-  const button = document.createElement('button');
+  const button = document.createElement("button");
   button.id = DELETE_BUTTON_ID;
   button.className =
-    'mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-unthemed assistant-delete-chat-button';
-  button.setAttribute('mat-icon-button', '');
-  button.setAttribute('aria-label', 'Delete current chat');
-  button.setAttribute('title', 'Delete chat');
+    "mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-unthemed assistant-delete-chat-button";
+  button.setAttribute("mat-icon-button", "");
+  button.setAttribute("aria-label", "Delete current chat");
+  button.setAttribute("title", "Delete chat");
   button.style.cssText = `
     margin-right: 8px;
     color: #5f6368;
@@ -89,27 +89,27 @@ function createDeleteButton(): HTMLButtonElement {
   `;
 
   // Create button structure matching Material Design
-  const ripple = document.createElement('span');
-  ripple.className = 'mat-mdc-button-persistent-ripple mdc-icon-button__ripple';
+  const ripple = document.createElement("span");
+  ripple.className = "mat-mdc-button-persistent-ripple mdc-icon-button__ripple";
 
-  const iconContainer = document.createElement('div');
+  const iconContainer = document.createElement("div");
 
   // Create delete icon using Material Symbols
-  const icon = document.createElement('mat-icon');
-  icon.setAttribute('role', 'img');
-  icon.setAttribute('fonticon', 'delete');
+  const icon = document.createElement("mat-icon");
+  icon.setAttribute("role", "img");
+  icon.setAttribute("fonticon", "delete");
   icon.className =
-    'mat-icon notranslate icon-filled gds-icon-l google-symbols mat-ligature-font mat-icon-no-color';
-  icon.setAttribute('aria-hidden', 'true');
-  icon.textContent = 'delete';
+    "mat-icon notranslate icon-filled gds-icon-l google-symbols mat-ligature-font mat-icon-no-color";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = "delete";
 
   iconContainer.appendChild(icon);
 
-  const focusIndicator = document.createElement('span');
-  focusIndicator.className = 'mat-focus-indicator';
+  const focusIndicator = document.createElement("span");
+  focusIndicator.className = "mat-focus-indicator";
 
-  const touchTarget = document.createElement('span');
-  touchTarget.className = 'mat-mdc-button-touch-target';
+  const touchTarget = document.createElement("span");
+  touchTarget.className = "mat-mdc-button-touch-target";
 
   button.appendChild(ripple);
   button.appendChild(iconContainer);
@@ -117,11 +117,11 @@ function createDeleteButton(): HTMLButtonElement {
   button.appendChild(touchTarget);
 
   // Hover effects
-  button.addEventListener('mouseenter', () => {
-    button.style.backgroundColor = 'rgba(95, 99, 104, 0.08)';
+  button.addEventListener("mouseenter", () => {
+    button.style.backgroundColor = "rgba(95, 99, 104, 0.08)";
   });
-  button.addEventListener('mouseleave', () => {
-    button.style.backgroundColor = 'transparent';
+  button.addEventListener("mouseleave", () => {
+    button.style.backgroundColor = "transparent";
   });
 
   return button;
@@ -131,7 +131,7 @@ function createDeleteButton(): HTMLButtonElement {
  * Creates a loading spinner
  */
 function createSpinner(): HTMLElement {
-  const spinner = document.createElement('div');
+  const spinner = document.createElement("div");
   spinner.id = SPINNER_ID;
   spinner.style.cssText = `
     display: inline-block;
@@ -145,9 +145,9 @@ function createSpinner(): HTMLElement {
   `;
 
   // Add keyframes if not already present
-  if (!document.querySelector('#assistant-spinner-keyframes')) {
-    const style = document.createElement('style');
-    style.id = 'assistant-spinner-keyframes';
+  if (!document.querySelector("#assistant-spinner-keyframes")) {
+    const style = document.createElement("style");
+    style.id = "assistant-spinner-keyframes";
     style.textContent = `
       @keyframes assistant-spin {
         to { transform: rotate(360deg); }
@@ -193,8 +193,8 @@ async function clickDeleteInMenu(): Promise<boolean> {
     );
 
     if (!menuButton) {
-      ApiError.notifyAndCapture('Actions menu button not found', {
-        context: 'clickDeleteInMenu',
+      notifyAndCapture("Actions menu button not found", {
+        context: "clickDeleteInMenu",
       });
       return false;
     }
@@ -209,8 +209,8 @@ async function clickDeleteInMenu(): Promise<boolean> {
     );
 
     if (!deleteButton) {
-      ApiError.notifyAndCapture('Delete button not found in menu', {
-        context: 'clickDeleteInMenu',
+      notifyAndCapture("Delete button not found in menu", {
+        context: "clickDeleteInMenu",
       });
       return false;
     }
@@ -219,9 +219,9 @@ async function clickDeleteInMenu(): Promise<boolean> {
     deleteButton.click();
     return true;
   } catch (error) {
-    ApiError.notifyAndCapture('Error clicking delete in menu', {
-      context: 'clickDeleteInMenu',
-      error,
+    fromUnknown(error, {
+      context: "clickDeleteInMenu",
+      clientMessage: "Error clicking delete in menu",
     });
     return false;
   }
@@ -239,8 +239,8 @@ async function autoConfirmDelete(): Promise<boolean> {
     );
 
     if (!confirmButton) {
-      ApiError.notifyAndCapture('Confirm button not found in dialog', {
-        context: 'autoConfirmDelete',
+      notifyAndCapture("Confirm button not found in dialog", {
+        context: "autoConfirmDelete",
       });
       return false;
     }
@@ -252,9 +252,9 @@ async function autoConfirmDelete(): Promise<boolean> {
     confirmButton.click();
     return true;
   } catch (error) {
-    ApiError.notifyAndCapture('Error confirming delete', {
-      context: 'autoConfirmDelete',
-      error,
+    fromUnknown(error, {
+      context: "autoConfirmDelete",
+      clientMessage: "Error confirming delete dialog",
     });
     return false;
   }
@@ -272,7 +272,7 @@ async function waitForDeletionComplete(): Promise<boolean> {
       let elapsed = 0;
 
       const interval = setInterval(() => {
-        const dialog = document.querySelector('mat-dialog-container');
+        const dialog = document.querySelector("mat-dialog-container");
 
         if (!dialog) {
           clearInterval(interval);
@@ -290,9 +290,9 @@ async function waitForDeletionComplete(): Promise<boolean> {
 
     return dialogGone;
   } catch (error) {
-    ApiError.notifyAndCapture('Error waiting for deletion', {
-      context: 'waitForDeletionComplete',
-      error,
+    fromUnknown(error, {
+      context: "waitForDeletionComplete",
+      clientMessage: "Error waiting for deletion to complete",
     });
     return false;
   }
@@ -312,8 +312,8 @@ async function handleDeleteChat(container: HTMLElement): Promise<void> {
     // Step 1: Click delete in menu
     const deleteClicked = await clickDeleteInMenu();
     if (!deleteClicked) {
-      ApiError.notifyAndCapture('Failed to click delete button', {
-        context: 'handleDeleteChat',
+      notifyAndCapture("Failed to click delete button", {
+        context: "handleDeleteChat",
       });
       removeSpinner(container);
       // Re-insert the delete button
@@ -324,8 +324,8 @@ async function handleDeleteChat(container: HTMLElement): Promise<void> {
     // Step 2: Auto-confirm the dialog
     const confirmed = await autoConfirmDelete();
     if (!confirmed) {
-      ApiError.notifyAndCapture('Failed to confirm deletion', {
-        context: 'handleDeleteChat',
+      notifyAndCapture("Failed to confirm deletion", {
+        context: "handleDeleteChat",
       });
       removeSpinner(container);
       // Re-insert the delete button
@@ -337,12 +337,9 @@ async function handleDeleteChat(container: HTMLElement): Promise<void> {
     const deletionComplete = await waitForDeletionComplete();
 
     if (!deletionComplete) {
-      ApiError.notifyAndCapture(
-        'Deletion may not have completed, but continuing...',
-        {
-          context: 'handleDeleteChat',
-        }
-      );
+      notifyAndCapture("Deletion may not have completed, but continuing...", {
+        context: "handleDeleteChat",
+      });
     }
 
     // Step 4: Remove spinner
@@ -351,9 +348,9 @@ async function handleDeleteChat(container: HTMLElement): Promise<void> {
     // Re-insert the button for next time
     await insertDeleteButton();
   } catch (error) {
-    ApiError.notifyAndCapture('Error in delete chat flow', {
-      context: 'handleDeleteChat',
-      error,
+    fromUnknown(error, {
+      context: "handleDeleteChat",
+      clientMessage: "Error in deleting chat flow",
     });
 
     // Always remove spinner on error
@@ -403,7 +400,7 @@ export async function insertDeleteButton(): Promise<boolean> {
 
     // Wait for the trailing actions wrapper (where model picker and mic button are)
     const trailingActionsWrapper = await waitForElement<HTMLElement>(
-      '.trailing-actions-wrapper',
+      ".trailing-actions-wrapper",
       { timeout: 10000 }
     );
 
@@ -414,7 +411,7 @@ export async function insertDeleteButton(): Promise<boolean> {
     // Find the input buttons wrapper (contains mic and send buttons)
     const inputButtonsWrapper =
       trailingActionsWrapper.querySelector<HTMLElement>(
-        '.input-buttons-wrapper-bottom'
+        ".input-buttons-wrapper-bottom"
       );
 
     if (!inputButtonsWrapper) {
@@ -425,7 +422,7 @@ export async function insertDeleteButton(): Promise<boolean> {
     const deleteButton = createDeleteButton();
 
     // Add click handler
-    deleteButton.addEventListener('click', (e) => {
+    deleteButton.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       void handleDeleteChat(inputButtonsWrapper);
@@ -439,9 +436,9 @@ export async function insertDeleteButton(): Promise<boolean> {
 
     return true;
   } catch (error) {
-    ApiError.notifyAndCapture('Error inserting delete button', {
-      context: 'insertDeleteButton',
-      error,
+    fromUnknown(error, {
+      context: "insertDeleteButton",
+      clientMessage: "Error inserting delete button",
     });
     return false;
   }
@@ -518,7 +515,7 @@ export function observeAndInsertDeleteButton(): void {
   });
 
   // Observe document title and body changes (Gemini is SPA)
-  urlObserver.observe(document.querySelector('title') || document.head, {
+  urlObserver.observe(document.querySelector("title") || document.head, {
     childList: true,
     subtree: true,
   });
@@ -530,7 +527,7 @@ export function observeAndInsertDeleteButton(): void {
   });
 
   // Also listen to popstate events
-  window.addEventListener('popstate', () => {
+  window.addEventListener("popstate", () => {
     currentUrl = window.location.href;
 
     const oldButton = document.querySelector(`#${DELETE_BUTTON_ID}`);

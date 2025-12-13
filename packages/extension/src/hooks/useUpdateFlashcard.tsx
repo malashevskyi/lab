@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import type { FlashcardType } from '@lab/types/assistant/flashcards';
 import { SINGLE_FLASHCARD_QUERY_KEY } from './useGetFlashcardsByUrl';
 import { STACKS_QUERY_KEY } from './useGetStacks';
@@ -21,7 +21,7 @@ export const useUpdateFlashcard = () => {
 
   const mutation = useMutation<
     FlashcardType,
-    ApiError,
+    unknown,
     { id: string; data: UpdateFlashcardDto },
     MutationContext
   >({
@@ -91,9 +91,10 @@ export const useUpdateFlashcard = () => {
         );
       }
 
-      ApiError.fromUnknown(error, {
+      fromUnknown(error, {
         clientMessage: 'Failed to update the flashcard.',
-      }).notify();
+        notify: true,
+      });
     },
   });
 

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import {
   SINGLE_FLASHCARD_QUERY_KEY,
   FLASHCARDS_BY_URL_QUERY_KEY,
@@ -16,7 +16,7 @@ export const useDeleteFlashcard = () => {
   const queryClient = useQueryClient();
   const lastFlashcard = useAppStore((state) => state.lastFlashcard);
 
-  const mutation = useMutation<void, ApiError, string>({
+  const mutation = useMutation<void, unknown, string>({
     mutationFn: async (flashcardId: string) => {
       await assistantApi.delete(`/flashcards/${flashcardId}`);
     },
@@ -45,9 +45,10 @@ export const useDeleteFlashcard = () => {
       });
     },
     onError: (error) => {
-      ApiError.fromUnknown(error, {
+      fromUnknown(error, {
         clientMessage: 'Failed to delete the flashcard.',
-      }).notify();
+        notify: true,
+      });
     },
   });
 

@@ -1,19 +1,18 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
-import { useEffect } from 'react';
-import { SINGLE_FLASHCARD_QUERY_KEY } from './useGetFlashcardsByUrl';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { assistantApi } from "../services/api";
+import { useEffect } from "react";
+import { SINGLE_FLASHCARD_QUERY_KEY } from "./useGetFlashcardsByUrl";
 
-export const TODAY_COUNT_QUERY_KEY = 'todayFlashcardsCount';
+export const TODAY_COUNT_QUERY_KEY = "todayFlashcardsCount";
 
 export const useGetTodayFlashcardsCount = () => {
   const queryClient = useQueryClient();
 
-  const query = useQuery<number, ApiError>({
+  const query = useQuery<number, unknown>({
     queryKey: [TODAY_COUNT_QUERY_KEY],
     queryFn: async () => {
       const response = await assistantApi.get<{ count: number }>(
-        '/flashcards/today/count'
+        "/flashcards/today/count"
       );
       return response.data.count;
     },

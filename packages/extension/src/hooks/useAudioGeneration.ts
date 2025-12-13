@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { assistantApi } from '../services/api';
 import type { ZodError } from 'zod';
 import type { AxiosError } from 'axios';
-import { ApiError } from '../services/ApiError';
-import { toast } from 'sonner';
+import { fromUnknown } from '../services/errorUtils';
 import { useEffect } from 'react';
 import {
   generateAudioResponseSchema,
@@ -30,12 +29,14 @@ export function useAudioGeneration(text: string | undefined): {
     staleTime: Infinity,
   });
 
-  const audioError = query.error ? ApiError.fromUnknown(query.error) : null;
-
   useEffect(() => {
-    if (audioError)
-      toast.error(`Failed to generate audio: ${audioError.message}`);
-  }, [audioError]);
+    if (query.error) {
+      fromUnknown(query.error, {
+        clientMessage: 'Failed to generate audio.',
+        notify: true,
+      });
+    }
+  }, [query.error]);
 
   return {
     audioUrl: query.data?.audioUrl,

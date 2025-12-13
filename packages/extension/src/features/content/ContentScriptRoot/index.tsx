@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react';
-import { usePrevious } from 'react-use';
+import React, { useEffect } from "react";
+import { usePrevious } from "react-use";
 
-import { ExplainSelection } from '../../../components/explain/ExplainSelection';
-import { MainPopup } from '../../../components/popup/MainPopup';
-import { useAppStore } from '../../../store';
-import { doRangesIntersect } from '../../../utils/doRangesIntersect';
-import { captureError } from '../../../utils/sentry';
-import { HIGHLIGHT_KEYS } from '../../../constants/highlights';
-import { expandSelectionAcrossNodes } from './utils/expandSelectionAcrossNodes';
-import { expandSelectionToFullWords } from './utils/expandSelectionToFullWords';
-import { getWordOrPhraseContextForSelection } from './utils/getWordOrPhraseContextForSelection';
-import { ApiError } from '../../../services/ApiError';
-import { toast } from 'sonner';
-import { MessageType } from '../../../types/sentry-messages';
+import { ExplainSelection } from "../../../components/explain/ExplainSelection";
+import { MainPopup } from "../../../components/popup/MainPopup";
+import { useAppStore } from "../../../store";
+import { doRangesIntersect } from "../../../utils/doRangesIntersect";
+import { captureError } from "../../../utils/sentry";
+import { HIGHLIGHT_KEYS } from "../../../constants/highlights";
+import { expandSelectionAcrossNodes } from "./utils/expandSelectionAcrossNodes";
+import { expandSelectionToFullWords } from "./utils/expandSelectionToFullWords";
+import { getWordOrPhraseContextForSelection } from "./utils/getWordOrPhraseContextForSelection";
+import { notifyAndCapture } from "../../../services/errorUtils";
+import { toast } from "sonner";
+import { MessageType } from "../../../types/sentry-messages";
 
-window.addEventListener('error', (event) => {
+window.addEventListener("error", (event) => {
   captureError(event.error, {
-    type: 'window.error',
+    type: "window.error",
     message: event.message,
   });
 });
 
-window.addEventListener('unhandledrejection', (event) => {
+window.addEventListener("unhandledrejection", (event) => {
   captureError(event.reason, {
-    type: 'unhandledRejection',
+    type: "unhandledRejection",
   });
 });
 
@@ -63,13 +63,12 @@ const ContentScriptRoot: React.FC = () => {
    * based on the modifier key pressed (`Alt` for analysis, `Shift` for flashcard chunking).
    */
   const handleMouseUp = (event: MouseEvent) => {
-    console.log('🚀 ~ event:', event);
     if (!event.altKey && !event.shiftKey) return;
 
     // Ensure content script is ready before processing selection
     if (!isContentScriptReady) {
       toast.warning(
-        'Extension is still loading, please try again in a moment.'
+        "Extension is still loading, please try again in a moment."
       );
       return;
     }
@@ -78,7 +77,7 @@ const ContentScriptRoot: React.FC = () => {
 
     if (event.target instanceof HTMLElement === false) return;
     // ignore if clicked inside the sidebar
-    if (event.target.closest('#assistant-root')) return;
+    if (event.target.closest("#assistant-root")) return;
 
     let selection = window.getSelection();
 
@@ -89,7 +88,9 @@ const ContentScriptRoot: React.FC = () => {
       range.startContainer.nodeType !== Node.TEXT_NODE ||
       range.endContainer.nodeType !== Node.TEXT_NODE
     ) {
-      ApiError.notifyAndCapture('Non-text selection detected');
+      notifyAndCapture("Non-text selection detected", {
+        nodeType: range.startContainer.nodeType,
+      });
       selection.removeAllRanges();
       return;
     }
@@ -146,11 +147,11 @@ const ContentScriptRoot: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Content script ready state:');
-    document.addEventListener('mouseup', handleMouseUp);
+    console.log("Content script ready state:");
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [handleMouseUp]);
 

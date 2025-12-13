@@ -1,5 +1,5 @@
-import axios, { AxiosError } from 'axios';
-import { ApiError } from './ApiError';
+import axios, { AxiosError } from "axios";
+import { setupErrorInterceptor } from "./errorUtils";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,5 +9,7 @@ export const assistantApi = axios.create({
 
 assistantApi.interceptors.response.use(
   (res) => res,
-  (error: AxiosError) => Promise.reject(ApiError.fromAxiosError(error))
+  (error: AxiosError) => {
+    return setupErrorInterceptor(error);
+  }
 );

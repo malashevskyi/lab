@@ -4,7 +4,6 @@ import { AppService } from './app.service.js';
 import { AiModule } from './ai/ai.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { TtsModule } from './tts/tts.module.js';
-import { ErrorsModule } from './errors/errors.module.js';
 import { validationSchema } from './config/validation.schema.js';
 import getTypeOrmConfig from './shared/configs/typeorm.config.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -34,7 +33,6 @@ import ormConfig from './shared/configs/orm.config.js';
       },
     }),
     TypeOrmModule.forRootAsync(getTypeOrmConfig()),
-    ErrorsModule,
     AiModule,
     TtsModule,
     AudioRecordsModule,

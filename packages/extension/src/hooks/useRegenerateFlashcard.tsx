@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import {
   createFlashcardBodySchema,
   type CreateFlashcardBodyType,
 } from '@lab/types/assistant/flashcards/index.js';
-import type { ZodError } from 'zod';
 import { useEffect } from 'react';
 import { useAppStore } from '../store';
 import { normalizeUrl } from '../utils/normalizeUrl';
@@ -24,7 +23,7 @@ export const useRegenerateFlashcard = () => {
 
   const mutation = useMutation<
     { id: string },
-    ApiError | ZodError,
+    unknown,
     CreateFlashcardBodyType
   >({
     mutationFn: async (flashcardData) => {
@@ -51,17 +50,14 @@ export const useRegenerateFlashcard = () => {
     },
   });
 
-  const regenerationError = mutation.error
-    ? ApiError.fromUnknown(mutation.error, {
-        clientMessage: 'Failed to regenerate the flashcard.',
-      })
-    : undefined;
-
   useEffect(() => {
-    if (regenerationError) {
-      regenerationError.notify();
+    if (mutation.error) {
+      fromUnknown(mutation.error, {
+        clientMessage: 'Failed to regenerate the flashcard.',
+        notify: true,
+      });
     }
-  }, [regenerationError]);
+  }, [mutation.error]);
 
   const regenerateFlashcard = () => {
     if (!lastFlashcard.id || !lastFlashcard.chunks.length) {
@@ -79,9 +75,10 @@ export const useRegenerateFlashcard = () => {
     try {
       mutation.mutate(createFlashcardBodySchema.parse(data));
     } catch (error) {
-      ApiError.fromUnknown(error, {
+      fromUnknown(error, {
         clientMessage: 'Invalid data provided for flashcard regeneration.',
-      }).notify();
+        notify: true,
+      });
     }
   };
 

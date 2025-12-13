@@ -1,10 +1,3 @@
-import { Injectable, UsePipes } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ZodValidationPipe } from 'nestjs-zod';
-import { DataSource, Repository } from 'typeorm';
-import { AudioRecordsService } from '../audio-records/audio-records.service.js';
-import { CreateEntryWithExampleDto } from './dto/create-entry-with-example.dto.js';
-import { DictionaryEntry } from './entities/dictionary-entry.entity.js';
 import {
   createDictionaryEntryWithExampleResponseSchema,
   type CreateEntryWithExampleResponseType,
@@ -13,11 +6,17 @@ import {
   getDictionaryEntryWithExamplesByTextResponseSchema,
   type GetDictionaryEntryWithExamplesByTextResponseType,
 } from '@lab/types/assistant/dictionary-entries/index.js';
-import { ErrorService } from '../errors/errors.service.js';
+import { GetDictionaryExampleResponseType } from '@lab/types/assistant/dictionary-examples/index.js';
+import { Injectable, UsePipes } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ZodValidationPipe } from 'nestjs-zod';
+import { AppException } from 'src/shared/exceptions/AppException.js';
+import { DataSource, Repository } from 'typeorm';
+import { AudioRecordsService } from '../audio-records/audio-records.service.js';
 import { AudioRecord } from '../audio-records/entities/audio-record.entity.js';
 import { DictionaryExample } from '../dictionary-examples/entities/dictionary-example.entity.js';
-import { AppErrorCode } from '../shared/exceptions/AppErrorCode.js';
-import { GetDictionaryExampleResponseType } from '@lab/types/assistant/dictionary-examples/index.js';
+import { CreateEntryWithExampleDto } from './dto/create-entry-with-example.dto.js';
+import { DictionaryEntry } from './entities/dictionary-entry.entity.js';
 
 @Injectable()
 @UsePipes(ZodValidationPipe)
@@ -27,7 +26,6 @@ export class DictionaryEntriesService {
     private readonly dictionaryEntriesRepository: Repository<DictionaryEntry>,
     private readonly audioRecordsService: AudioRecordsService,
     private readonly dataSource: DataSource,
-    private readonly errorService: ErrorService,
   ) {}
 
   /**
@@ -116,11 +114,7 @@ export class DictionaryEntriesService {
     );
 
     if (!createdOrUpdateEntry) {
-      this.errorService.handle(
-        AppErrorCode.UNKNOWN_ERROR,
-        'Failed to retrieve entry after transaction.',
-        null,
-      );
+      throw AppException.unknown('Failed to retrieve entry after transaction.');
     }
 
     return createDictionaryEntryWithExampleResponseSchema.parse({

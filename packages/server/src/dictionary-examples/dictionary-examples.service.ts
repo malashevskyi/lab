@@ -1,17 +1,15 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AppException } from 'src/shared/exceptions/AppException.js';
 import { Repository } from 'typeorm';
-import { DictionaryExample } from './entities/dictionary-example.entity.js';
 import { CreateDictionaryExampleDto } from './dto/create-dictionary-example.dto.js';
-import { ErrorService } from '../errors/errors.service.js';
-import { AppErrorCode } from '../shared/exceptions/AppErrorCode.js';
+import { DictionaryExample } from './entities/dictionary-example.entity.js';
 
 @Injectable()
 export class DictionaryExamplesService {
   constructor(
     @InjectRepository(DictionaryExample)
     private readonly exampleRepository: Repository<DictionaryExample>,
-    private readonly errorService: ErrorService,
   ) {}
 
   /**
@@ -30,11 +28,8 @@ export class DictionaryExamplesService {
     });
 
     if (existingExample) {
-      this.errorService.handle(
-        AppErrorCode.CONFLICT_EXCEPTION,
+      throw AppException.conflict(
         `Example for accent "${dto.accent}" in sentence "${dto.example}" already exists.`,
-        null,
-        HttpStatus.CONFLICT,
       );
     }
 

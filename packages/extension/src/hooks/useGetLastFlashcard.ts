@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import type { ZodError } from 'zod';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import {
   getLastFlashcardResponseSchema,
   type GetLastFlashcardResponseType,
@@ -56,9 +56,10 @@ export const useGetLastFlashcard = () => {
 
   useEffect(() => {
     if (query.error) {
-      ApiError.fromUnknown(query.error, {
+      fromUnknown(query.error, {
         clientMessage: 'Failed to fetch the last flashcard.',
-      }).notify();
+        notify: true,
+      });
     }
   }, [query.error]);
 

@@ -1,23 +1,21 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AudioRecord } from './entities/audio-record.entity.js';
 import { CreateAudioRecordDto } from './dto/create-audio-record.dto.js';
-
-import { ErrorService } from '../errors/errors.service.js';
-import { AppErrorCode } from '../shared/exceptions/AppErrorCode.js';
 import {
   createAudioRecordSchema,
   updateAudioRecordSchema,
 } from '@lab/types/assistant/audio-records/index.js';
 import type { UpdateAudioRecordType } from '@lab/types/assistant/audio-records/index.js';
+import { AppException } from 'src/shared/exceptions/AppException.js';
+import { AppErrorCode } from 'src/shared/exceptions/AppErrorCode.js';
 
 @Injectable()
 export class AudioRecordsService {
   constructor(
     @InjectRepository(AudioRecord)
     private readonly audioRecordRepository: Repository<AudioRecord>,
-    private readonly errorService: ErrorService,
   ) {}
 
   /**
@@ -49,11 +47,9 @@ export class AudioRecordsService {
     });
 
     if (!existingRecord) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.AUDIO_RECORD_NOT_FOUND,
-        `AudioRecord with ID "${id}" not found.`,
-        null,
-        HttpStatus.NOT_FOUND,
+        `Audio record with ID "${id}" not found.`,
       );
     }
 
@@ -101,11 +97,9 @@ export class AudioRecordsService {
     const record = await this.audioRecordRepository.findOneBy({ id });
 
     if (!record) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.AUDIO_RECORD_NOT_FOUND,
-        `AudioRecord with ID "${id}" not found.`,
-        null,
-        404,
+        `Audio record with ID "${id}" not found.`,
       );
     }
 

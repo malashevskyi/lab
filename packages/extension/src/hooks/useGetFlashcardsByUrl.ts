@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import type { ZodError } from 'zod';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import {
   getLastFlashcardResponseSchema,
   type FlashcardType,
@@ -62,9 +62,10 @@ export const useGetFlashcardsByUrl = () => {
 
   useEffect(() => {
     if (query.error) {
-      ApiError.fromUnknown(query.error, {
+      fromUnknown(query.error, {
         clientMessage: 'Failed to fetch flashcards for this URL.',
-      }).notify();
+        notify: true,
+      });
     }
   }, [query.error]);
 

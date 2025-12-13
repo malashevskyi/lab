@@ -3,8 +3,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { googleServiceAccountSchema } from '@lab/types/assistant/tts/index.js';
 import { TextToSpeechPort } from '../ports/tts.port.js';
-import { ErrorService } from '../../errors/errors.service.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
+import { AppException } from 'src/shared/exceptions/AppException.js';
 
 const AUDIO_ENCODING = 'MP3' as const;
 
@@ -19,10 +19,7 @@ enum VoiceNameMap {
 export class GoogleTtsAdapter implements OnModuleInit, TextToSpeechPort {
   private ttsClient: TextToSpeechClient;
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly errorService: ErrorService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   onModuleInit() {
     const credentialsJson = this.configService.get<string>(
@@ -54,9 +51,9 @@ export class GoogleTtsAdapter implements OnModuleInit, TextToSpeechPort {
 
       return audioBuffer;
     } catch (error) {
-      this.errorService.handle(
+      throw AppException.create(
         AppErrorCode.TTS_GENERATION_FAILED,
-        `Failed to generate audio for text: "${text}"`,
+        'TTS generation failed.',
         error,
       );
     }

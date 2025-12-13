@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 import type { ZodError } from 'zod';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import {
   createDictionaryEntryWithExampleBodySchema,
   createDictionaryEntryWithExampleResponseSchema,
@@ -33,13 +33,11 @@ export function useSaveToDictionary() {
     },
   });
 
-  const saveError = mutation.error
-    ? ApiError.fromUnknown(mutation.error)
-    : null;
-
   useEffect(() => {
-    if (saveError) toast.error(`Failed to save: ${saveError.message}`);
-  }, [saveError]);
+    if (mutation.error) {
+      fromUnknown(mutation.error, { notify: true });
+    }
+  }, [mutation.error]);
 
   const saveWordWithExample = (
     args: CreateDictionaryEntryWithExampleBodyType
@@ -50,9 +48,10 @@ export function useSaveToDictionary() {
         body: createDictionaryEntryWithExampleBodySchema.parse(args),
       });
     } catch (error) {
-      ApiError.fromUnknown(error, {
+      fromUnknown(error, {
         clientMessage: 'Failed to save the word with example.',
-      }).notify();
+        notify: true,
+      });
     }
   };
 

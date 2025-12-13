@@ -1,4 +1,4 @@
-import { ApiError } from '../../services/ApiError';
+import { fromUnknown, notifyAndCapture } from '../../services/errorUtils';
 import { insertTextIntoGeminiInput } from '../../utils/gemini-input';
 import { observeAndInsertDeleteButton } from './delete-chat-button';
 
@@ -37,9 +37,10 @@ const getStoredPrompt = async (): Promise<string | null> => {
 
     return mostRecentPrompt;
   } catch (error) {
-    ApiError.fromUnknown(error, {
+    fromUnknown(error, {
       clientMessage: 'Failed to retrieve stored prompt for Gemini AI.',
-    }).notify();
+      notify: true,
+    });
     return null;
   }
 };
@@ -55,7 +56,7 @@ const findAndFillInput = (prompt: string) => {
     const sendButton = document.querySelector('button.send-button');
 
     if (sendButton && !(sendButton instanceof HTMLButtonElement)) {
-      ApiError.notifyAndCapture('Send button is not an HTMLButtonElement');
+      notifyAndCapture('Send button is not an HTMLButtonElement');
       return false;
     }
 

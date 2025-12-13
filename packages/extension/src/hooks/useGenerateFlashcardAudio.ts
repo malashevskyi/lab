@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { assistantApi } from '../services/api';
-import { ApiError } from '../services/ApiError';
+import { fromUnknown } from '../services/errorUtils';
 import { toast } from 'sonner';
 import {
   generateAudioResponseSchema,
@@ -12,7 +12,7 @@ import { SINGLE_FLASHCARD_QUERY_KEY } from './useGetFlashcardsByUrl';
 export function useGenerateFlashcardAudio(flashcardId: string) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<GenerateAudioResponse, ApiError, string>({
+  const mutation = useMutation<GenerateAudioResponse, unknown, string>({
     mutationFn: async (id: string) => {
       const response = await assistantApi.post<GenerateAudioResponse>(
         `/flashcards/${id}/generate-question-audio`
@@ -36,9 +36,10 @@ export function useGenerateFlashcardAudio(flashcardId: string) {
       );
     },
     onError: (error) => {
-      ApiError.fromUnknown(error, {
+      fromUnknown(error, {
         clientMessage: 'Failed to generate audio for flashcard question.',
-      }).notify();
+        notify: true,
+      });
     },
   });
 

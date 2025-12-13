@@ -1,13 +1,12 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
+import { AppException } from 'src/shared/exceptions/AppException.js';
 import {
   AiAnalysisPort,
   AiStructuredResponse,
   AiStructuredResponseSchema,
 } from '../ports/ai-analysis.port.js';
-import { ErrorService } from '../../errors/errors.service.js';
-import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
 
 const OpenAIPrompt = `You are an advanced language analysis tool. Your task is to analyze a selected text/word/phrase within a given context.
 Respond ONLY with a valid JSON object in the following format:
@@ -42,10 +41,7 @@ Input: 'GOOGLE' (stylistic) -> Output: 'Google'",
 export class OpenAiAdapter implements AiAnalysisPort {
   private readonly openai: OpenAI;
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly errorService: ErrorService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     const apiKey = this.configService.getOrThrow<string>('OPENAI_API_KEY');
     const projectId = this.configService.get<string>('OPENAI_PROJECT_ID');
     this.openai = new OpenAI({ apiKey, project: projectId || undefined });
@@ -76,11 +72,9 @@ export class OpenAiAdapter implements AiAnalysisPort {
 
       return AiStructuredResponseSchema.parse(JSON.parse(responseContent));
     } catch (error) {
-      this.errorService.handle(
-        AppErrorCode.AI_RESPONSE_INVALID,
+      throw AppException.aiResponseInvalid(
         'Failed to get a valid structured analysis from OpenAI.',
         error,
-        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -31,6 +31,9 @@ export const ChunkInput: React.FC<ChunkInputRowProps> = ({
               field.onChange(e);
               onTextChange?.(e.target.value);
             }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
           />
         )}
       </Field>

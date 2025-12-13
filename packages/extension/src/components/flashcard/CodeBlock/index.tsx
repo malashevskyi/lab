@@ -61,6 +61,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
     // Save on Shift+Enter or Escape
     if ((e.key === 'Enter' && e.shiftKey) || e.key === 'Escape') {
       e.preventDefault();
@@ -111,6 +112,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       <Editor
         value={localCode}
         onValueChange={editable ? setLocalCode : () => {}}
+        onKeyDown={handleKeyDown}
         highlight={(code) =>
           highlight(code, languages[highlightLanguage], highlightLanguage)
         }

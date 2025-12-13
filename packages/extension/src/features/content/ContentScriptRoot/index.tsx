@@ -5,7 +5,6 @@ import { ExplainSelection } from "../../../components/explain/ExplainSelection";
 import { MainPopup } from "../../../components/popup/MainPopup";
 import { useAppStore } from "../../../store";
 import { doRangesIntersect } from "../../../utils/doRangesIntersect";
-import { captureError } from "../../../utils/sentry";
 import { HIGHLIGHT_KEYS } from "../../../constants/highlights";
 import { expandSelectionAcrossNodes } from "./utils/expandSelectionAcrossNodes";
 import { expandSelectionToFullWords } from "./utils/expandSelectionToFullWords";
@@ -15,15 +14,15 @@ import { toast } from "sonner";
 import { MessageType } from "../../../types/sentry-messages";
 
 window.addEventListener("error", (event) => {
-  captureError(event.error, {
-    type: "window.error",
+  notifyAndCapture(event.error, {
+    context: "window.error",
     message: event.message,
   });
 });
 
 window.addEventListener("unhandledrejection", (event) => {
-  captureError(event.reason, {
-    type: "unhandledRejection",
+  notifyAndCapture(event.reason, {
+    context: "unhandledRejection",
   });
 });
 

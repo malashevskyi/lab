@@ -55,7 +55,7 @@ export function fromUnknown(
   error: unknown,
   extra?: {
     clientMessage?: string;
-    details?: Record<string, unknown> | null;
+    details?: Record<string, unknown> | string | null;
     notify?: boolean;
     context?: string;
   }

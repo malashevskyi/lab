@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { googleServiceAccountSchema } from '@lab/types/assistant/tts/index.js';
 import { TextToSpeechPort } from '../ports/tts.port.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
-import { AppException } from 'src/shared/exceptions/AppException.js';
+import { AppException } from '../../shared/exceptions/AppException.js';
 
 const AUDIO_ENCODING = 'MP3' as const;
 

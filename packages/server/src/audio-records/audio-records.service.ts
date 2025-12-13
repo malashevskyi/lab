@@ -8,8 +8,8 @@ import {
   updateAudioRecordSchema,
 } from '@lab/types/assistant/audio-records/index.js';
 import type { UpdateAudioRecordType } from '@lab/types/assistant/audio-records/index.js';
-import { AppException } from 'src/shared/exceptions/AppException.js';
-import { AppErrorCode } from 'src/shared/exceptions/AppErrorCode.js';
+import { AppException } from '../shared/exceptions/AppException.js';
+import { AppErrorCode } from 'src/shared/exceptions/AppErrorCode';
 
 @Injectable()
 export class AudioRecordsService {

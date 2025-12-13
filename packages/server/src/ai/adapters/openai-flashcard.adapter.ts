@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 
-import { AppException } from 'src/shared/exceptions/AppException.js';
+import { AppException } from '../../shared/exceptions/AppException.js';
 import { StacksService } from '../../stacks/stacks.service';
 import {
   AiFlashcardGeneratorPort,

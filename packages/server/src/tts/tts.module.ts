@@ -6,10 +6,9 @@ import { AudioStoragePort } from './ports/audio-storage.port.js';
 import { FirebaseStorageAdapter } from './adapters/firebase-storage.adapter.js';
 import { TtsController } from './tts.controller.js';
 import { AudioRecordsModule } from '../audio-records/audio-records.module.js';
-import { ErrorsModule } from '../errors/errors.module.js';
 
 @Module({
-  imports: [AudioRecordsModule, ErrorsModule],
+  imports: [AudioRecordsModule],
   providers: [
     TtsService,
     GoogleTtsAdapter,

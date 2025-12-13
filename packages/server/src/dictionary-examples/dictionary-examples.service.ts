@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AppException } from 'src/shared/exceptions/AppException.js';
+import { AppException } from '../shared/exceptions/AppException.js';
 import { Repository } from 'typeorm';
 import { CreateDictionaryExampleDto } from './dto/create-dictionary-example.dto.js';
 import { DictionaryExample } from './entities/dictionary-example.entity.js';

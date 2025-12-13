@@ -10,7 +10,7 @@ import { GetDictionaryExampleResponseType } from '@lab/types/assistant/dictionar
 import { Injectable, UsePipes } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { AppException } from 'src/shared/exceptions/AppException.js';
+import { AppException } from '../shared/exceptions/AppException.js';
 import { DataSource, Repository } from 'typeorm';
 import { AudioRecordsService } from '../audio-records/audio-records.service.js';
 import { AudioRecord } from '../audio-records/entities/audio-record.entity.js';

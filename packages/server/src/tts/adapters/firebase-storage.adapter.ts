@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import { App } from 'firebase-admin/app';
 import { getStorage, Storage } from 'firebase-admin/storage';
-import { AppException } from 'src/shared/exceptions/AppException.js';
+import { AppException } from '../../shared/exceptions/AppException.js';
 import { AppErrorCode } from '../../shared/exceptions/AppErrorCode.js';
 import { AudioStoragePort } from '../ports/audio-storage.port.js';
 

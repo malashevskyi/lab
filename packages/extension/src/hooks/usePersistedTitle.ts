@@ -3,9 +3,12 @@ import { fromUnknown } from "../services/errorUtils";
 import type { FormikValues } from "formik/dist/types";
 import { useAppStore } from "../store";
 import { normalizeUrl } from "../utils/normalizeUrl";
+import { useGetFlashcardGroupUrls } from "./useGetFlashcardGroupUrls";
 
-const getStorageKey = (): string =>
-  `assistant_title_${normalizeUrl(window.location.href)}`;
+/**
+ * Builds a storage key for the current page using normalized URL.
+ * Note: we compute it inside the hook because hooks cannot be called at module scope.
+ */
 
 /**
  * @function usePersistedTitle
@@ -18,6 +21,7 @@ export const usePersistedTitle = (
   values: FormikValues,
   setFieldValue: (field: string, value: any) => void
 ) => {
+  const { groupUrls } = useGetFlashcardGroupUrls();
   const flashcardCreatorTitle = useAppStore(
     (state) => state.flashcardCreator.title
   );
@@ -35,7 +39,10 @@ export const usePersistedTitle = (
   }, [setFlashcardCreatorTitle]);
 
   useEffect(() => {
-    const key = getStorageKey();
+    const key = `assistant_title_${normalizeUrl(
+      window.location.href,
+      groupUrls
+    )}`;
     chrome.storage.local.get(key, (result) => {
       if (chrome.runtime.lastError) {
         fromUnknown(chrome.runtime.lastError, { notify: true });
@@ -48,7 +55,10 @@ export const usePersistedTitle = (
   }, [setFieldValue]);
 
   useEffect(() => {
-    const key = getStorageKey();
+    const key = `assistant_title_${normalizeUrl(
+      window.location.href,
+      groupUrls
+    )}`;
     const titleToSave = values.title;
 
     if (titleToSave && titleToSave !== flashcardCreatorTitle) {

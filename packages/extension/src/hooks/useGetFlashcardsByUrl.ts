@@ -9,6 +9,7 @@ import {
 } from "@lab/types/assistant/flashcards";
 import { useEffect } from "react";
 import { normalizeUrl } from "../utils/normalizeUrl";
+import { useGetFlashcardGroupUrls } from "./useGetFlashcardGroupUrls";
 import { useAppStore } from "../store";
 
 export const FLASHCARDS_BY_URL_QUERY_KEY = "flashcardsByUrl";
@@ -22,7 +23,9 @@ export const useGetFlashcardsByUrl = () => {
   const activeTab = useAppStore((state) => state.popup.activeTab);
   const queryClient = useQueryClient();
 
-  const normalizedUrl = normalizeUrl(window.location.href);
+  const { groupUrls } = useGetFlashcardGroupUrls();
+
+  const normalizedUrl = normalizeUrl(window.location.href, groupUrls);
 
   const { data: flashcardIds } = useQuery<FlashcardType["id"][]>({
     queryKey: [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, "ids"],

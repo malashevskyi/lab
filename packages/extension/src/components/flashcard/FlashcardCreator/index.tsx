@@ -1,18 +1,19 @@
-import React from 'react';
-import { useAppStore } from '../../../store';
-import { FaPlus } from 'react-icons/fa';
+import React from "react";
+import { useAppStore } from "../../../store";
+import { FaPlus } from "react-icons/fa";
 import {
   Field,
   Form,
   FormikProvider,
   useFormik,
   type FieldProps,
-} from 'formik';
-import { ChunkInput } from '../ChunkInput';
-import { usePersistedTitle } from '../../../hooks/usePersistedTitle';
-import { useCreateFlashcard } from '../../../hooks/useCreateFlashcard';
-import TextareaAutosize from 'react-textarea-autosize';
-import { normalizeUrl } from '../../../utils/normalizeUrl';
+} from "formik";
+import { ChunkInput } from "../ChunkInput";
+import { usePersistedTitle } from "../../../hooks/usePersistedTitle";
+import { useCreateFlashcard } from "../../../hooks/useCreateFlashcard";
+import TextareaAutosize from "react-textarea-autosize";
+import { normalizeUrl } from "../../../utils/normalizeUrl";
+import { useGetFlashcardGroupUrls } from "../../../hooks/useGetFlashcardGroupUrls";
 
 interface FormValues {
   chunks: Array<{ text: string }>;
@@ -35,6 +36,7 @@ export const FlashcardCreator: React.FC = () => {
     (state) => state.updateFlashcardChunkText
   );
   const { createFlashcard, isCreating } = useCreateFlashcard();
+  const { groupUrls } = useGetFlashcardGroupUrls();
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -46,7 +48,7 @@ export const FlashcardCreator: React.FC = () => {
       createFlashcard({
         title: values.title,
         chunks: values.chunks.map((c) => c.text),
-        sourceUrl: normalizeUrl(window.location.href),
+        sourceUrl: normalizeUrl(window.location.href, groupUrls),
       });
     },
   });
@@ -69,7 +71,7 @@ export const FlashcardCreator: React.FC = () => {
               disabled={isCreating}
             >
               <span className="whitespace-nowrap">
-                {isCreating ? 'Creating...' : 'Create Card'}
+                {isCreating ? "Creating..." : "Create Card"}
               </span>
             </button>
 

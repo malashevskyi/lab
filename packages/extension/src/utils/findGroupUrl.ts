@@ -1,9 +1,6 @@
-import { GROUP_FLASHCARDS_URLS } from "../config/constants";
-
-export function findGroupUrl(url: string): string | null {
-  const matchingUrl = GROUP_FLASHCARDS_URLS.find((groupUrl) =>
-    url.startsWith(groupUrl)
-  );
+export function findGroupUrl(url: string, groupUrls: string[]): string | null {
+  if (!groupUrls.length) return null;
+  const matchingUrl = groupUrls.find((groupUrl) => url.startsWith(groupUrl));
 
   if (matchingUrl) return matchingUrl;
 

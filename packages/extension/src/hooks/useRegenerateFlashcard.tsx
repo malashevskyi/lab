@@ -1,16 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { assistantApi } from '../services/api';
-import { fromUnknown } from '../services/errorUtils';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { assistantApi } from "../services/api";
+import { fromUnknown } from "../services/errorUtils";
 import {
   createFlashcardBodySchema,
   type CreateFlashcardBodyType,
-} from '@lab/types/assistant/flashcards/index.js';
-import { useEffect } from 'react';
-import { useAppStore } from '../store';
-import { normalizeUrl } from '../utils/normalizeUrl';
-import { GET_LAST_FLASHCARD_QUERY_KEY } from './useGetLastFlashcard';
-import { LoadingButton } from '../components/ui/LoadingButton';
+} from "@lab/types/assistant/flashcards/index.js";
+import { useEffect } from "react";
+import { useAppStore } from "../store";
+import { normalizeUrl } from "../utils/normalizeUrl";
+import { useGetFlashcardGroupUrls } from "./useGetFlashcardGroupUrls";
+import { GET_LAST_FLASHCARD_QUERY_KEY } from "./useGetLastFlashcard";
+import { LoadingButton } from "../components/ui/LoadingButton";
 
 export const useRegenerateFlashcard = () => {
   const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ export const useRegenerateFlashcard = () => {
     (state) => state.saveLastFlashcardChunks
   );
 
+  const { groupUrls } = useGetFlashcardGroupUrls();
   const mutation = useMutation<
     { id: string },
     unknown,
@@ -28,7 +30,7 @@ export const useRegenerateFlashcard = () => {
   >({
     mutationFn: async (flashcardData) => {
       const validatedData = createFlashcardBodySchema.parse(flashcardData);
-      const response = await assistantApi.post('/flashcards', validatedData);
+      const response = await assistantApi.post("/flashcards", validatedData);
       return response.data;
     },
     onSuccess: (data) => {
@@ -46,14 +48,14 @@ export const useRegenerateFlashcard = () => {
 
       toast.success(`Flashcard regenerated successfully!`);
       // Switch to last-flashcard tab to show the updated card
-      setActiveTab('last-flashcard');
+      setActiveTab("last-flashcard");
     },
   });
 
   useEffect(() => {
     if (mutation.error) {
       fromUnknown(mutation.error, {
-        clientMessage: 'Failed to regenerate the flashcard.',
+        clientMessage: "Failed to regenerate the flashcard.",
         notify: true,
       });
     }
@@ -61,14 +63,14 @@ export const useRegenerateFlashcard = () => {
 
   const regenerateFlashcard = () => {
     if (!lastFlashcard.id || !lastFlashcard.chunks.length) {
-      toast.error('No flashcard data available for regeneration');
+      toast.error("No flashcard data available for regeneration");
       return;
     }
 
     const data: CreateFlashcardBodyType = {
       title: lastFlashcard.title,
       chunks: lastFlashcard.chunks.map((chunk) => chunk.text),
-      sourceUrl: normalizeUrl(window.location.href),
+      sourceUrl: normalizeUrl(window.location.href, groupUrls),
       id: lastFlashcard.id, // Include the ID for regeneration
     };
 
@@ -76,7 +78,7 @@ export const useRegenerateFlashcard = () => {
       mutation.mutate(createFlashcardBodySchema.parse(data));
     } catch (error) {
       fromUnknown(error, {
-        clientMessage: 'Invalid data provided for flashcard regeneration.',
+        clientMessage: "Invalid data provided for flashcard regeneration.",
         notify: true,
       });
     }
@@ -85,7 +87,7 @@ export const useRegenerateFlashcard = () => {
   const regenerateFlashcardButton = () => {
     const canRegenerate =
       lastFlashcard.id !== null && lastFlashcard.chunks.length > 0;
-    if (!canRegenerate || activeTab !== 'last-flashcard') return null;
+    if (!canRegenerate || activeTab !== "last-flashcard") return null;
 
     return (
       <LoadingButton

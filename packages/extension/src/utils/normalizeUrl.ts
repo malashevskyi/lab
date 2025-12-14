@@ -11,11 +11,11 @@ import { findGroupUrl } from "./findGroupUrl";
  * @param url - The URL to normalize
  * @returns The normalized URL
  */
-export function normalizeUrl(url: string): string {
+export function normalizeUrl(url: string, groupUrls: string[]): string {
   try {
     const urlObj = new URL(url);
 
-    const groupUrl = findGroupUrl(url);
+    const groupUrl = findGroupUrl(url, groupUrls);
 
     if (groupUrl) return groupUrl;
 

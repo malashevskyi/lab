@@ -1,3 +1,5 @@
+import { findGroupUrl } from "./findGroupUrl";
+
 /**
  * Normalizes URLs for specific platforms to group related content together.
  *
@@ -13,8 +15,12 @@ export function normalizeUrl(url: string): string {
   try {
     const urlObj = new URL(url);
 
+    const groupUrl = findGroupUrl(url);
+
+    if (groupUrl) return groupUrl;
+
     // Udemy: remove everything after /course/{course-name}
-    if (urlObj.hostname.includes('udemy.com')) {
+    if (urlObj.hostname.includes("udemy.com")) {
       const pathMatch = urlObj.pathname.match(/^(\/course\/[^/]+)/);
       if (pathMatch) {
         return `${urlObj.origin}${pathMatch[1]}`;

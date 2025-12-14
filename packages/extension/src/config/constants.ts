@@ -19,3 +19,5 @@ export const ALLOWED_COPY_NODE_TYPES: number[] = [
   Node.ELEMENT_NODE,
   Node.TEXT_NODE,
 ];
+
+export const GROUP_FLASHCARDS_URLS = ["https://code.visualstudio.com/api"];

@@ -1,18 +1,18 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
-import type { ZodError } from 'zod';
-import { assistantApi } from '../services/api';
-import { fromUnknown } from '../services/errorUtils';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import type { ZodError } from "zod";
+import { assistantApi } from "../services/api";
+import { fromUnknown } from "../services/errorUtils";
 import {
   getLastFlashcardResponseSchema,
   type FlashcardType,
-} from '@lab/types/assistant/flashcards';
-import { useEffect } from 'react';
-import { normalizeUrl } from '../utils/normalizeUrl';
-import { useAppStore } from '../store';
+} from "@lab/types/assistant/flashcards";
+import { useEffect } from "react";
+import { normalizeUrl } from "../utils/normalizeUrl";
+import { useAppStore } from "../store";
 
-export const FLASHCARDS_BY_URL_QUERY_KEY = 'flashcardsByUrl';
-export const SINGLE_FLASHCARD_QUERY_KEY = 'flashcard';
+export const FLASHCARDS_BY_URL_QUERY_KEY = "flashcardsByUrl";
+export const SINGLE_FLASHCARD_QUERY_KEY = "flashcard";
 
 /**
  * @function useGetFlashcardsByUrl
@@ -24,8 +24,8 @@ export const useGetFlashcardsByUrl = () => {
 
   const normalizedUrl = normalizeUrl(window.location.href);
 
-  const { data: flashcardIds } = useQuery<FlashcardType['id'][]>({
-    queryKey: [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, 'ids'],
+  const { data: flashcardIds } = useQuery<FlashcardType["id"][]>({
+    queryKey: [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, "ids"],
     enabled: false,
   });
 
@@ -52,7 +52,7 @@ export const useGetFlashcardsByUrl = () => {
     const cards = query.data;
 
     queryClient.setQueryData(
-      [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, 'ids'],
+      [FLASHCARDS_BY_URL_QUERY_KEY, normalizedUrl, "ids"],
       cards.map((c) => c.id)
     );
     cards.forEach((card) => {
@@ -63,14 +63,14 @@ export const useGetFlashcardsByUrl = () => {
   useEffect(() => {
     if (query.error) {
       fromUnknown(query.error, {
-        clientMessage: 'Failed to fetch flashcards for this URL.',
+        clientMessage: "Failed to fetch flashcards for this URL.",
         notify: true,
       });
     }
   }, [query.error]);
 
   useEffect(() => {
-    if (activeTab === 'flashcards') void query.refetch();
+    if (activeTab === "flashcards") void query.refetch();
   }, [activeTab]);
 
   return {

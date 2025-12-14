@@ -1,8 +1,8 @@
 import {
   MessageType,
   type SentryCaptureMessage,
-} from '../types/sentry-messages';
-import { AxiosError } from 'axios';
+} from "../types/sentry-messages";
+import { AxiosError } from "axios";
 
 export function captureError(error: unknown, extra?: Record<string, any>) {
   let errorMessage: string;
@@ -27,10 +27,10 @@ export function captureError(error: unknown, extra?: Record<string, any>) {
       ...errorExtra,
       errorName: error.name,
     };
-  } else if (typeof error === 'string') {
+  } else if (typeof error === "string") {
     errorMessage = error;
   } else {
-    errorMessage = 'Unknown error';
+    errorMessage = "Unknown error";
     errorExtra = {
       ...errorExtra,
       rawError: String(error),
@@ -47,17 +47,17 @@ export function captureError(error: unknown, extra?: Record<string, any>) {
   try {
     chrome.runtime.sendMessage(message, () => {
       if (chrome.runtime.lastError) {
-        console.error('Failed to send to Sentry:', chrome.runtime.lastError);
+        console.error("Failed to send to Sentry:", chrome.runtime.lastError);
       }
     });
   } catch (e) {
-    console.error('Exception sending to Sentry:', e);
+    console.error("Exception sending to Sentry:", e);
   }
 }
 
 export function captureMessage(
   message: string,
-  level: 'info' | 'warning' | 'error' = 'info',
+  level: "info" | "warning" | "error" = "info",
   extra?: Record<string, any>
 ) {
   try {
@@ -71,13 +71,13 @@ export function captureMessage(
       () => {
         if (chrome.runtime.lastError) {
           console.error(
-            'Failed to send message to Sentry:',
+            "Failed to send message to Sentry:",
             chrome.runtime.lastError
           );
         }
       }
     );
   } catch (e) {
-    console.error('Exception sending message to Sentry:', e);
+    console.error("Exception sending message to Sentry:", e);
   }
 }

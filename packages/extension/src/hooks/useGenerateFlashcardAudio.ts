@@ -1,13 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { assistantApi } from '../services/api';
-import { fromUnknown } from '../services/errorUtils';
-import { toast } from 'sonner';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { assistantApi } from "../services/api";
+import { fromUnknown } from "../services/errorUtils";
+import { toast } from "sonner";
 import {
   generateAudioResponseSchema,
   type GenerateAudioResponse,
-} from '@lab/types/assistant/tts';
-import type { FlashcardType } from '@lab/types/assistant/flashcards';
-import { SINGLE_FLASHCARD_QUERY_KEY } from './useGetFlashcardsByUrl';
+} from "@lab/types/assistant/tts";
+import type { FlashcardType } from "@lab/types/assistant/flashcards";
+import { SINGLE_FLASHCARD_QUERY_KEY } from "./useGetFlashcardsByUrl";
 
 export function useGenerateFlashcardAudio(flashcardId: string) {
   const queryClient = useQueryClient();
@@ -20,7 +20,7 @@ export function useGenerateFlashcardAudio(flashcardId: string) {
       return generateAudioResponseSchema.parse(response.data);
     },
     onSuccess: (data) => {
-      toast.success('Audio generated successfully!');
+      toast.success("Audio generated successfully!");
 
       const updatedFlashcard = queryClient.getQueryData<FlashcardType>([
         SINGLE_FLASHCARD_QUERY_KEY,
@@ -37,7 +37,7 @@ export function useGenerateFlashcardAudio(flashcardId: string) {
     },
     onError: (error) => {
       fromUnknown(error, {
-        clientMessage: 'Failed to generate audio for flashcard question.',
+        clientMessage: "Failed to generate audio for flashcard question.",
         notify: true,
       });
     },

@@ -1,16 +1,16 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
-import type { ZodError } from 'zod';
-import { assistantApi } from '../services/api';
-import { fromUnknown } from '../services/errorUtils';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import type { ZodError } from "zod";
+import { assistantApi } from "../services/api";
+import { fromUnknown } from "../services/errorUtils";
 import {
   getLastFlashcardResponseSchema,
   type GetLastFlashcardResponseType,
-} from '@lab/types/assistant/flashcards';
-import { useEffect } from 'react';
-import { SINGLE_FLASHCARD_QUERY_KEY } from './useGetFlashcardsByUrl';
+} from "@lab/types/assistant/flashcards";
+import { useEffect } from "react";
+import { SINGLE_FLASHCARD_QUERY_KEY } from "./useGetFlashcardsByUrl";
 
-export const GET_LAST_FLASHCARD_QUERY_KEY = 'lastFlashcard';
+export const GET_LAST_FLASHCARD_QUERY_KEY = "lastFlashcard";
 
 /**
  * @function useGetLastFlashcard
@@ -24,7 +24,7 @@ export const useGetLastFlashcard = () => {
   const query = useQuery<GetLastFlashcardResponseType, AxiosError | ZodError>({
     queryKey: [GET_LAST_FLASHCARD_QUERY_KEY],
     queryFn: async () => {
-      const response = await assistantApi.get('/flashcards/last');
+      const response = await assistantApi.get("/flashcards/last");
       if (!response.data) return null;
       return getLastFlashcardResponseSchema.parse(response.data);
     },
@@ -45,7 +45,7 @@ export const useGetLastFlashcard = () => {
   useEffect(() => {
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
       if (
-        event.type === 'removed' &&
+        event.type === "removed" &&
         event.query.queryKey[0] === SINGLE_FLASHCARD_QUERY_KEY
       ) {
         void query.refetch();
@@ -57,7 +57,8 @@ export const useGetLastFlashcard = () => {
   useEffect(() => {
     if (query.error) {
       fromUnknown(query.error, {
-        clientMessage: 'Failed to fetch the last flashcard.',
+        clientMessage: "Failed to fetch the last flashcard.",
+        context: "useGetLastFlashcard",
         notify: true,
       });
     }

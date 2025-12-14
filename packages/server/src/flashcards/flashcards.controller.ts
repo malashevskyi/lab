@@ -19,6 +19,7 @@ import { GetFlashcardsByUrlDocs } from './decorators/get-flashcards-by-url.docs.
 import { GenerateFlashcardQuestionAudioDocs } from './decorators/generate-flashcard-question-audio.docs.decorator';
 import { DeleteFlashcardDocs } from './decorators/delete-flashcard.docs.decorator';
 import { GetTodayCountDocs } from './decorators/get-today-count.docs.decorator';
+import { GetFlashcardGroupUrlsDocs } from './decorators/get-flashcard-group-urls.docs.decorator';
 import { FlashcardEntity } from './entities/flashcard.entity';
 import { CreateFlashcardResponseType } from '@lab/types/assistant/flashcards/index.js';
 import { GenerateAudioResponseDto } from './dto/generate-audio.response.dto';
@@ -55,6 +56,12 @@ export class FlashcardsController {
   async getTodayCount(): Promise<{ count: number }> {
     const count = await this.flashcardsService.countTodayFlashcards();
     return { count };
+  }
+
+  @Get('group-urls')
+  @GetFlashcardGroupUrlsDocs()
+  async getFlashcardGroupURLs(): Promise<string[]> {
+    return this.flashcardsService.getFlashcardGroupURLs();
   }
 
   @Put(':id')

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
 import { FlashcardEntity } from './entities/flashcard.entity';
+import { FlashcardGroupUrlEntity } from './entities/flashcard-group-url.entity';
 import { AiService } from '../ai/ai.service';
 import { TtsService } from '../tts/tts.service';
 import { StacksService } from '../stacks/stacks.service';
@@ -16,6 +17,8 @@ export class FlashcardsService {
   constructor(
     @InjectRepository(FlashcardEntity)
     private readonly flashcardsRepository: Repository<FlashcardEntity>,
+    @InjectRepository(FlashcardGroupUrlEntity)
+    private readonly flashcardGroupUrlsRepository: Repository<FlashcardGroupUrlEntity>,
     private readonly aiService: AiService,
     private readonly ttsService: TtsService,
     private readonly stacksService: StacksService,
@@ -51,6 +54,20 @@ export class FlashcardsService {
 
     const savedFlashcard = await this.flashcardsRepository.save(newFlashcard);
     return { id: savedFlashcard.id };
+  }
+
+  /**
+   * Returns all flashcard group URLs from the database.
+   * Each row contains a single `id` column which is the URL string.
+   */
+  async getFlashcardGroupURLs(): Promise<string[]> {
+    const rows = await this.flashcardGroupUrlsRepository.find({
+      order: {
+        id: 'ASC',
+      },
+    });
+
+    return rows.map((r) => r.id);
   }
 
   /**

@@ -9,22 +9,24 @@ import { HIGHLIGHT_KEYS } from "../../../constants/highlights";
 import { expandSelectionAcrossNodes } from "./utils/expandSelectionAcrossNodes";
 import { expandSelectionToFullWords } from "./utils/expandSelectionToFullWords";
 import { getWordOrPhraseContextForSelection } from "./utils/getWordOrPhraseContextForSelection";
-import { notifyAndCapture } from "../../../services/errorUtils";
+import { fromUnknown, notifyAndCapture } from "../../../services/errorUtils";
 import { toast } from "sonner";
 import { MessageType } from "../../../types/sentry-messages";
 
 window.addEventListener("error", (event) => {
-  notifyAndCapture(event.error, {
+  fromUnknown(event.error, {
     context: "window.error",
-    message: event.message,
+    clientMessage: event.message,
   });
 });
 
-window.addEventListener("unhandledrejection", (event) => {
-  notifyAndCapture(event.reason, {
-    context: "unhandledRejection",
-  });
-});
+// ! it lead to infinite loop in some cases on some ai chat pages while chat responding
+// window.addEventListener("unhandledrejection", (event) => {
+//   fromUnknown(event.reason, {
+//     clientMessage: `${event.reason}`,
+//     context: "unhandledRejection",
+//   });
+// });
 
 const highlightApiSupported = CSS.highlights !== undefined;
 

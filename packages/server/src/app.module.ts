@@ -12,6 +12,7 @@ import { DictionaryEntriesModule } from './dictionary-entries/dictionary-entries
 import { DictionaryExamplesModule } from './dictionary-examples/dictionary-examples.module.js';
 import { FlashcardsModule } from './flashcards/flashcards.module';
 import { StacksModule } from './stacks/stacks.module';
+import { ChunksModule } from './chunks/chunks.module';
 import ormConfig from './shared/configs/orm.config.js';
 
 @Module({
@@ -40,6 +41,7 @@ import ormConfig from './shared/configs/orm.config.js';
     DictionaryExamplesModule,
     FlashcardsModule,
     StacksModule,
+    ChunksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

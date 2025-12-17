@@ -14,6 +14,14 @@ export interface ChunkType {
    * @maxLength 10
    */
   lang: string;
+  /**
+   * @format 'date-time'
+   */
+  createdAt: string;
+  /**
+   * @format 'date-time'
+   */
+  updatedAt: string;
 }
 
 export interface CreateChunkType {

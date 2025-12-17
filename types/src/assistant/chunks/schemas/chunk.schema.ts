@@ -5,6 +5,8 @@ export const chunkTypeSchema = z.object({
   id: z.uuid(),
   text: z.string().min(1, "Text cannot be empty."),
   lang: z.string().min(2).max(10),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 export const createChunkTypeSchema = z.object({

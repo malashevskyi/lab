@@ -14,6 +14,8 @@ import { sanitizeResponse } from './utils/sanitizeResponse.js';
 const getFlashCardPrompt = () => `
 You are an expert assistant that generates high-quality study flashcards.
 
+Respond ONLY in English (ignore chunks language).
+
 I want to create a lot of flashcards for an article based on its content chunks step by step.
 Your task to create only one flashcard at a time from the provided content chunks.
 You will receive the title of the article to understand the context better.

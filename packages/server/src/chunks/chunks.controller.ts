@@ -6,10 +6,11 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ChunksService } from './chunks.service';
 import { CreateChunksDto } from './dto/create-chunks.dto';
+import { CreateChunksDocs } from './decorators/create-chunks.docs.decorator';
 
 @ApiTags('Chunks')
 @UsePipes(ZodValidationPipe)
@@ -19,15 +20,7 @@ export class ChunksController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create multiple chunks' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'The chunks have been successfully created.',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data.',
-  })
+  @CreateChunksDocs()
   async createChunks(@Body() createChunksDto: CreateChunksDto): Promise<void> {
     return this.chunksService.createMany(createChunksDto);
   }

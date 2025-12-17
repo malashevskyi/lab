@@ -4,32 +4,37 @@
  */
 export default [
   {
-    name: 'stack',
-    input: 'src/assistant/stack/interfaces/stack.interface.ts',
-    output: 'src/assistant/stack/schemas/stack.schema.ts',
+    name: "flashcard",
+    input: "src/assistant/flashcards/interfaces/flashcard.interface.ts",
+    output: "src/assistant/flashcards/schemas/flashcard.schema.ts",
   },
   {
-    name: 'flashcard',
-    input: 'src/assistant/flashcards/interfaces/flashcard.interface.ts',
-    output: 'src/assistant/flashcards/schemas/flashcard.schema.ts',
-  },
-  {
-    name: 'dictionaryExample',
+    name: "dictionaryExample",
     input:
-      'src/assistant/dictionary-examples/interfaces/dictionary-example.interface.ts',
+      "src/assistant/dictionary-examples/interfaces/dictionary-example.interface.ts",
     output:
-      'src/assistant/dictionary-examples/schemas/dictionary-example.schema.ts',
+      "src/assistant/dictionary-examples/schemas/dictionary-example.schema.ts",
   },
   {
-    name: 'audioRecord',
-    input: 'src/assistant/audio-records/interfaces/audio-record.interface.ts',
-    output: 'src/assistant/audio-records/schemas/audio-record.schema.ts',
+    name: "audioRecord",
+    input: "src/assistant/audio-records/interfaces/audio-record.interface.ts",
+    output: "src/assistant/audio-records/schemas/audio-record.schema.ts",
   },
   {
-    name: 'dictionaryEntry',
+    name: "chunk",
+    input: "src/assistant/chunks/interfaces/chunk.interface.ts",
+    output: "src/assistant/chunks/schemas/chunk.schema.ts",
+  },
+  {
+    name: "dictionaryEntry",
     input:
-      'src/assistant/dictionary-entries/interfaces/dictionary-entry.interface.ts',
+      "src/assistant/dictionary-entries/interfaces/dictionary-entry.interface.ts",
     output:
-      'src/assistant/dictionary-entries/schemas/dictionary-entry.schema.ts',
+      "src/assistant/dictionary-entries/schemas/dictionary-entry.schema.ts",
+  },
+  {
+    name: "stack",
+    input: "src/assistant/stack/interfaces/stack.interface.ts",
+    output: "src/assistant/stack/schemas/stack.schema.ts",
   },
 ];

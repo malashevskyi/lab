@@ -11,6 +11,7 @@ import {
 import { ChunkInput } from "../ChunkInput";
 import { usePersistedTitle } from "../../../hooks/usePersistedTitle";
 import { useCreateFlashcard } from "../../../hooks/useCreateFlashcard";
+import { useSaveChunks } from "../../../hooks/useSaveChunks";
 import TextareaAutosize from "react-textarea-autosize";
 import { normalizeUrl } from "../../../utils/normalizeUrl";
 import { useGetFlashcardGroupUrls } from "../../../hooks/useGetFlashcardGroupUrls";
@@ -36,6 +37,7 @@ export const FlashcardCreator: React.FC = () => {
     (state) => state.updateFlashcardChunkText
   );
   const { createFlashcard, isCreating } = useCreateFlashcard();
+  const { saveChunks, isSaving } = useSaveChunks();
   const { groupUrls } = useGetFlashcardGroupUrls();
 
   const formik = useFormik<FormValues>({
@@ -64,6 +66,18 @@ export const FlashcardCreator: React.FC = () => {
       <FormikProvider value={formik}>
         <Form className="space-y-3">
           <div className="flex gap-2 flex-nowrap items-start">
+            <button
+              type="button"
+              onClick={saveChunks}
+              className="px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded flex items-center gap-2 transition-colors"
+              title="Save chunks to database"
+              disabled={isSaving || rawChunks.length === 0}
+            >
+              <span className="whitespace-nowrap">
+                {isSaving ? "Saving..." : "Save Chunks"}
+              </span>
+            </button>
+
             <button
               type="submit"
               className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded flex items-center gap-2 transition-colors"

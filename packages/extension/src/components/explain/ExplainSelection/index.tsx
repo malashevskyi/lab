@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { GeminiButton } from '../GeminiButton';
-import { SearchGoogleButton } from '../SearchGoogleButton';
-import { calculatePosition } from './calculatePosition';
+import React, { useEffect, useState } from "react";
+import { GeminiButton } from "../GeminiButton";
+import { SearchGoogleButton } from "../SearchGoogleButton";
+import { SaveChunkButton } from "../SaveChunkButton";
+import { calculatePosition } from "./calculatePosition";
 
 export const ExplainSelection: React.FC = () => {
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
-  const [selectedText, setSelectedText] = useState('');
-  const [pageTitle, setPageTitle] = useState('');
+  const [selectedText, setSelectedText] = useState("");
+  const [pageTitle, setPageTitle] = useState("");
 
   const showActionButton = (position: { x: number; y: number }) => {
     setButtonPosition(position);
@@ -17,14 +18,14 @@ export const ExplainSelection: React.FC = () => {
   const hideActionButton = () => {
     setIsButtonVisible(false);
     setButtonPosition({ x: 0, y: 0 });
-    setSelectedText('');
-    setPageTitle('');
+    setSelectedText("");
+    setPageTitle("");
   };
 
   const handleRegularSelection = (event: MouseEvent) => {
     if (event.target instanceof HTMLElement === false) return;
     // ignore if clicked inside the sidebar or existing UI
-    if (event.target.closest('#assistant-root')) return;
+    if (event.target.closest("#assistant-root")) return;
 
     // ignore clicks on interactive elements like buttons, links, headings in accordions, etc.
     if (
@@ -37,7 +38,7 @@ export const ExplainSelection: React.FC = () => {
     // ignore clicks on media elements (images, videos, etc.) and other non-text elements
     if (
       event.target.closest(
-        'img, video, audio, canvas, svg, iframe, object, embed'
+        "img, video, audio, canvas, svg, iframe, object, embed"
       )
     )
       return;
@@ -63,10 +64,10 @@ export const ExplainSelection: React.FC = () => {
     const rect = range.getBoundingClientRect();
 
     // Get page title (h1 tag or document.title)
-    const h1Element = document.querySelector('h1');
+    const h1Element = document.querySelector("h1");
 
     const currentPageTitle = h1Element
-      ? h1Element.textContent?.trim() || ''
+      ? h1Element.textContent?.trim() || ""
       : document.title;
 
     // Calculate position ensuring it stays within viewport bounds
@@ -78,10 +79,10 @@ export const ExplainSelection: React.FC = () => {
   };
 
   useEffect(() => {
-    document.addEventListener('mouseup', handleRegularSelection);
+    document.addEventListener("mouseup", handleRegularSelection);
 
     return () => {
-      document.removeEventListener('mouseup', handleRegularSelection);
+      document.removeEventListener("mouseup", handleRegularSelection);
     };
   }, [handleRegularSelection]);
 
@@ -110,17 +111,17 @@ export const ExplainSelection: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (event.target instanceof HTMLElement === false) return;
       // Don't hide if clicking on the action buttons container
-      if (event.target.closest('[data-action-buttons-container]')) return;
+      if (event.target.closest("[data-action-buttons-container]")) return;
 
       handleSelectionChange();
     };
 
-    document.addEventListener('click', handleClickOutside);
-    document.addEventListener('selectionchange', handleSelectionChange);
+    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("selectionchange", handleSelectionChange);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('selectionchange', handleSelectionChange);
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("selectionchange", handleSelectionChange);
     };
   }, [hideActionButton]);
 
@@ -144,6 +145,7 @@ export const ExplainSelection: React.FC = () => {
             selectedText={selectedText}
             onHide={hideActionButton}
           />
+          <SaveChunkButton onHide={hideActionButton} />
         </div>
       )}
     </>

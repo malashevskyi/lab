@@ -40,4 +40,9 @@ export interface CreateChunkType {
 
 export interface CreateChunksBodyType {
   chunks: CreateChunkType[];
+  /**
+   * Whether to adjust the chunks with AI before saving
+   * (add capitalization, punctuation, minimal grammar fixes)
+   */
+  adjust?: boolean;
 }

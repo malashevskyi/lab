@@ -16,4 +16,5 @@ export const createChunkTypeSchema = z.object({
 
 export const createChunksBodyTypeSchema = z.object({
   chunks: z.array(createChunkTypeSchema),
+  adjust: z.boolean().optional(),
 });

@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 export interface SidebarState {
   isVisible: boolean;
@@ -8,10 +8,11 @@ export interface SidebarState {
 }
 
 export type PopupTab =
-  | 'new-flashcard'
-  | 'last-flashcard'
-  | 'flashcards'
-  | 'analysis';
+  | "new-flashcard"
+  | "last-flashcard"
+  | "flashcards"
+  | "analysis"
+  | "admin";
 
 export interface PopupState {
   position: { x: number; y: number };
@@ -89,30 +90,30 @@ export interface AppActions {
 const initialState: AppState = {
   sidebar: {
     isVisible: false,
-    selectedText: '',
-    context: '',
+    selectedText: "",
+    context: "",
   },
   flashcardCreator: {
     chunks: [],
-    title: '',
+    title: "",
   },
   lastFlashcard: {
     chunks: [],
-    title: '',
+    title: "",
     id: null,
     hasChanges: false,
-    editedQuestion: '',
-    editedAnswer: '',
+    editedQuestion: "",
+    editedAnswer: "",
   },
   popup: {
     position: { x: 0, y: 0 },
     isOpen: false,
-    activeTab: 'new-flashcard',
+    activeTab: "new-flashcard",
   },
   analysis: {
-    selectedText: '',
-    context: '',
-    normalizedText: '',
+    selectedText: "",
+    context: "",
+    normalizedText: "",
   },
 };
 
@@ -144,7 +145,7 @@ export const useAppStore = create(
         popup: {
           ...state.popup,
           isOpen: true,
-          activeTab: 'new-flashcard',
+          activeTab: "new-flashcard",
         },
       })),
 
@@ -153,7 +154,7 @@ export const useAppStore = create(
         // Create a dummy range for the empty chunk
         const dummyRange = document.createRange();
         const emptyChunk: FlashcardChunk = {
-          text: '',
+          text: "",
           range: dummyRange,
         };
 
@@ -176,7 +177,7 @@ export const useAppStore = create(
     clearFlashcardChunks: () =>
       set((state) => {
         state.flashcardCreator.chunks = [];
-        state.flashcardCreator.title = '';
+        state.flashcardCreator.title = "";
       }),
 
     /**
@@ -231,7 +232,7 @@ export const useAppStore = create(
     clearLastFlashcardChunks: () =>
       set((state) => {
         state.lastFlashcard.chunks = [];
-        state.lastFlashcard.title = '';
+        state.lastFlashcard.title = "";
         state.lastFlashcard.id = null;
       }),
 
@@ -272,7 +273,7 @@ export const useAppStore = create(
       set((state) => {
         state.popup.isOpen = false;
         state.flashcardCreator.chunks = [];
-        state.flashcardCreator.title = '';
+        state.flashcardCreator.title = "";
       }),
 
     /**
@@ -291,7 +292,7 @@ export const useAppStore = create(
     openAnalysis: (selectedText, context) =>
       set((state) => {
         state.popup.isOpen = true;
-        state.popup.activeTab = 'analysis';
+        state.popup.activeTab = "analysis";
         state.analysis.selectedText = selectedText;
         state.analysis.context = context;
       }),

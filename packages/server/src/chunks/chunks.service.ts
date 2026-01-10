@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import { CreateChunksDto } from './dto/create-chunks.dto';
 import { ChunkEntity } from './entities/chunk.entity';
 import { AiChunkProcessorPort } from '../ai/ports/ai-chunk-adjuster.port.js';
@@ -56,5 +56,59 @@ export class ChunksService {
     );
 
     await this.chunksRepository.save(chunks);
+  }
+
+  /**
+   * Process existing chunks that don't have translation or audio.
+   * This is an admin/temporary endpoint to populate existing data.
+   * @returns statistics about processed chunks
+   */
+  async processExistingChunks(): Promise<{
+    total: number;
+    processed: number;
+    errors: number;
+  }> {
+    // Find chunks without translation or audio
+    const chunksToProcess = await this.chunksRepository.find({
+      where: [{ uk: IsNull() }, { chunkAudio: IsNull() }],
+    });
+
+    let processed = 0;
+    let errors = 0;
+
+    for (const chunk of chunksToProcess) {
+      try {
+        // Process with AI to get adjusted text and translation
+        const { adjustedText, translation } =
+          await this.aiChunkProcessor.processChunk(chunk.text, chunk.lang);
+
+        // Generate audio for the adjusted text
+        const audioBuffer = await this.ttsPort.generateAudioBuffer(
+          adjustedText,
+          chunk.lang,
+        );
+        const { audioUrl } = await this.audioStoragePort.uploadAudio(
+          audioBuffer,
+          adjustedText,
+        );
+
+        // Update the chunk with new data
+        chunk.text = adjustedText;
+        chunk.uk = translation;
+        chunk.chunkAudio = audioUrl;
+
+        await this.chunksRepository.save(chunk);
+        processed++;
+      } catch (error) {
+        console.error(`Failed to process chunk ${chunk.id}:`, error);
+        errors++;
+      }
+    }
+
+    return {
+      total: chunksToProcess.length,
+      processed,
+      errors,
+    };
   }
 }

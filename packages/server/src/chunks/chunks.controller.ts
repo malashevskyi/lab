@@ -24,4 +24,14 @@ export class ChunksController {
   async createChunks(@Body() createChunksDto: CreateChunksDto): Promise<void> {
     return this.chunksService.createMany(createChunksDto);
   }
+
+  @Post('process-existing')
+  @HttpCode(HttpStatus.OK)
+  async processExistingChunks(): Promise<{
+    total: number;
+    processed: number;
+    errors: number;
+  }> {
+    return this.chunksService.processExistingChunks();
+  }
 }

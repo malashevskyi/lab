@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { useAppStore } from '../../../store';
-import { FlashcardCreator } from '../../flashcard/FlashcardCreator';
-import { LastFlashcardTab } from '../../flashcard/LastFlashcardTab';
-import { FlashcardsTab } from '../../flashcard/FlashcardsTab';
-import { AnalysisTab } from '../../analysis/AnalysisTab';
-import { TabsNavigation } from '../TabsNavigation';
-import { MarkdownToolbar } from '../../markdown/MarkdownToolbar';
-import { useRegenerateFlashcard } from '../../../hooks/useRegenerateFlashcard';
-import { usePreventHostKeyboardEvents } from './usePreventHostKeyboardEvents';
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useAppStore } from "../../../store";
+import { FlashcardCreator } from "../../flashcard/FlashcardCreator";
+import { LastFlashcardTab } from "../../flashcard/LastFlashcardTab";
+import { FlashcardsTab } from "../../flashcard/FlashcardsTab";
+import { AnalysisTab } from "../../analysis/AnalysisTab";
+import { AdminTab } from "../../admin/AdminTab";
+import { TabsNavigation } from "../TabsNavigation";
+import { MarkdownToolbar } from "../../markdown/MarkdownToolbar";
+import { useRegenerateFlashcard } from "../../../hooks/useRegenerateFlashcard";
+import { usePreventHostKeyboardEvents } from "./usePreventHostKeyboardEvents";
 
 const MIN_POPUP_HEIGHT = 350;
 
@@ -97,8 +98,8 @@ export const MainPopup: React.FC = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [isDragging, isAtBottom, lastScrollY, scrollTriggerY]);
 
   // Mouse event handlers for dragging
@@ -142,14 +143,14 @@ export const MainPopup: React.FC = () => {
   // Attach global mouse events for dragging
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.body.style.userSelect = 'none';
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "none";
 
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        document.body.style.userSelect = '';
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.body.style.userSelect = "";
       };
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
@@ -162,8 +163,8 @@ export const MainPopup: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isDragging, isAtBottom]);
 
   if (!isPopupOpen) return null;
@@ -172,15 +173,15 @@ export const MainPopup: React.FC = () => {
     <div
       ref={popupRef}
       className={`fixed bg-white rounded-lg shadow-xl border border-solid border-gray-300 z-[999] w-[98%] max-w-[800px] h-[35%] min-h-[350px] grid grid-rows-[auto_auto_1fr] ${
-        isDragging ? 'cursor-grabbing' : 'cursor-default'
+        isDragging ? "cursor-grabbing" : "cursor-default"
       } ${
         isDragging || !isInitialized
-          ? ''
-          : 'transition-[top] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)]'
+          ? ""
+          : "transition-[top] duration-[600ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
       }`}
       style={{
-        left: '50%',
-        transform: 'translate(-50%, 0)',
+        left: "50%",
+        transform: "translate(-50%, 0)",
         top: `${position.y}px`,
       }}
       onMouseDown={handleMouseDown}
@@ -189,7 +190,7 @@ export const MainPopup: React.FC = () => {
       <div
         ref={headerRef}
         className={`flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50 rounded-t-lg select-none ${
-          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          isDragging ? "cursor-grabbing" : "cursor-grab"
         }`}
       >
         <div className="flex items-center space-x-2">
@@ -225,10 +226,11 @@ export const MainPopup: React.FC = () => {
 
       <div className="overflow-hidden">
         <div className="h-full overflow-y-auto p-4">
-          {activeTab === 'new-flashcard' && <FlashcardCreator />}
-          {activeTab === 'last-flashcard' && <LastFlashcardTab />}
-          {activeTab === 'flashcards' && <FlashcardsTab />}
-          {activeTab === 'analysis' && <AnalysisTab />}
+          {activeTab === "new-flashcard" && <FlashcardCreator />}
+          {activeTab === "last-flashcard" && <LastFlashcardTab />}
+          {activeTab === "flashcards" && <FlashcardsTab />}
+          {activeTab === "analysis" && <AnalysisTab />}
+          {activeTab === "admin" && <AdminTab />}
         </div>
       </div>
     </div>

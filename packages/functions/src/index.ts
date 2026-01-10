@@ -1,3 +1,4 @@
 import "./bootstrap";
 
-export { default as refreshSignedUrls } from "./audio/refreshSignedUrls";
+export { default as refreshAudioRecordsSignedUrls } from "./audio/refreshAudioRecordsSignedUrls";
+export { default as refreshFlashcardsSignedUrls } from "./audio/refreshFlashcardsSignedUrls";

@@ -2,19 +2,21 @@
 import { z } from "zod";
 
 export const chunkTypeSchema = z.object({
-  id: z.uuid(),
-  text: z.string().min(1, "Text cannot be empty."),
-  lang: z.string().min(2).max(10),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
+    id: z.uuid(),
+    text: z.string().min(1, "Text cannot be empty."),
+    lang: z.string().min(2).max(10),
+    uk: z.string().nullable(),
+    chunkAudio: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime()
 });
 
 export const createChunkTypeSchema = z.object({
-  text: z.string().min(1, "Text cannot be empty."),
-  lang: z.string().min(2).max(10).optional(),
+    text: z.string().min(1, "Text cannot be empty."),
+    lang: z.string().min(2).max(10).optional()
 });
 
 export const createChunksBodyTypeSchema = z.object({
-  chunks: z.array(createChunkTypeSchema),
-  adjust: z.boolean().optional(),
+    chunks: z.array(createChunkTypeSchema),
+    adjust: z.boolean().optional()
 });

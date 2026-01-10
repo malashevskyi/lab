@@ -22,7 +22,7 @@ import { AudioRecordsModule } from '../audio-records/audio-records.module.js';
       useClass: FirebaseStorageAdapter,
     },
   ],
-  exports: [TtsService],
+  exports: [TtsService, TextToSpeechPort, AudioStoragePort],
   controllers: [TtsController],
 })
 export class TtsModule {}

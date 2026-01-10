@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import type { ChunkType } from '@lab/types/assistant/chunks/index.js';
+import { DEFAULT_LANGUAGE } from '../../shared/constants/languages.js';
 
 @Entity('chunks')
 export class ChunkEntity implements ChunkType {
@@ -15,8 +16,14 @@ export class ChunkEntity implements ChunkType {
   @Column({ type: 'text' })
   text: string;
 
-  @Column({ type: 'varchar', default: 'en' })
+  @Column({ type: 'varchar', default: DEFAULT_LANGUAGE })
   lang: string;
+
+  @Column({ type: 'text', nullable: true })
+  uk: string | null;
+
+  @Column({ type: 'text', nullable: true, name: 'chunk_audio' })
+  chunkAudio: string | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: string;

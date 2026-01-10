@@ -40,8 +40,9 @@ export const useSaveChunks = () => {
       const chunksData: CreateChunksBodyType = {
         chunks: flashcardChunks.map((chunk) => ({
           text: chunk.text,
-          lang: "en", // Default language
+          lang: DEFAULT_LANGUAGE, // Default language
         })),
+        adjust: true, // Enable AI processing, translation, and audio generation
       };
       mutation.mutate(createChunksBodyTypeSchema.parse(chunksData));
     } catch (error) {

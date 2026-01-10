@@ -3,14 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateChunksDto } from './dto/create-chunks.dto';
 import { ChunkEntity } from './entities/chunk.entity';
-import { AiChunkAdjusterPort } from '../ai/ports/ai-chunk-adjuster.port.js';
+import { AiChunkProcessorPort } from '../ai/ports/ai-chunk-adjuster.port.js';
+import { TextToSpeechPort } from '../tts/ports/tts.port.js';
+import { AudioStoragePort } from '../tts/ports/audio-storage.port.js';
+import { DEFAULT_LANGUAGE } from '../shared/constants/languages.js';
 
 @Injectable()
 export class ChunksService {
   constructor(
     @InjectRepository(ChunkEntity)
     private readonly chunksRepository: Repository<ChunkEntity>,
-    private readonly aiChunkAdjuster: AiChunkAdjusterPort,
+    private readonly aiChunkProcessor: AiChunkProcessorPort,
+    private readonly ttsPort: TextToSpeechPort,
+    private readonly audioStoragePort: AudioStoragePort,
   ) {}
 
   /**
@@ -22,14 +27,31 @@ export class ChunksService {
     const chunks = await Promise.all(
       createChunksDto.chunks.map(async (chunk) => {
         let text = chunk.text;
-        const lang = chunk.lang || 'en';
+        let uk: string | null = null;
+        let chunkAudio: string | null = null;
+        const lang = chunk.lang || DEFAULT_LANGUAGE;
 
-        // Adjust chunk with AI if requested
+        // Process chunk with AI if requested (adjust + translate + generate audio)
         if (createChunksDto.adjust) {
-          text = await this.aiChunkAdjuster.adjustChunk(text, lang);
+          const { adjustedText, translation } =
+            await this.aiChunkProcessor.processChunk(text, lang);
+
+          text = adjustedText;
+          uk = translation;
+
+          // Generate audio for the adjusted English text
+          const audioBuffer = await this.ttsPort.generateAudioBuffer(
+            adjustedText,
+            lang,
+          );
+          const { audioUrl } = await this.audioStoragePort.uploadAudio(
+            audioBuffer,
+            adjustedText,
+          );
+          chunkAudio = audioUrl;
         }
 
-        return this.chunksRepository.create({ text, lang });
+        return this.chunksRepository.create({ text, lang, uk, chunkAudio });
       }),
     );
 

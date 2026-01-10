@@ -15,6 +15,16 @@ export interface ChunkType {
    */
   lang: string;
   /**
+   * Ukrainian translation of the chunk
+   * @format 'string'
+   */
+  uk: string | null;
+  /**
+   * URL to the audio file for the chunk (English pronunciation)
+   * @format 'string'
+   */
+  chunkAudio: string | null;
+  /**
    * @format 'date-time'
    */
   createdAt: string;

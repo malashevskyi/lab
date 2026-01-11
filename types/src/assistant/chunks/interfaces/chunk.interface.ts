@@ -25,6 +25,11 @@ export interface ChunkType {
    */
   chunkAudio: string | null;
   /**
+   * Whether this chunk has been synced to the old project
+   * @format 'boolean'
+   */
+  synced: boolean;
+  /**
    * @format 'date-time'
    */
   createdAt: string;

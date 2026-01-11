@@ -7,6 +7,7 @@ export const chunkTypeSchema = z.object({
     lang: z.string().min(2).max(10),
     uk: z.string().nullable(),
     chunkAudio: z.string().nullable(),
+    synced: z.boolean(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime()
 });

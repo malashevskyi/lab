@@ -205,7 +205,10 @@ export default onSchedule(
 
           logger.info(`Successfully synced chunk ${chunk.id}`);
         } catch (error) {
-          if (error instanceof Error && error.code !== "23505") {
+          if (
+            error instanceof Error &&
+            (error as { code?: string }).code !== "23505"
+          ) {
             logger.info(`Error syncing chunk ${chunk.id}: ${error.message}`);
             Sentry.captureException(error, {
               tags: { function: "syncChunksToOldProject", chunkId: chunk.id },

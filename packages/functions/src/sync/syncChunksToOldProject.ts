@@ -68,6 +68,7 @@ interface ChunkRow {
   lang: string;
   uk: string | null;
   chunk_audio: string | null;
+  chunk_audio_expires_at: string | null;
 }
 
 export default onSchedule(
@@ -142,12 +143,12 @@ export default onSchedule(
             continue;
           }
 
-          // Prepare sentence data for old project
           const sentenceData = {
             en: chunk.text,
             ua: chunk.uk,
             new_word: null,
             en_audio_url: chunk.chunk_audio,
+            en_audio_url_expires_at: chunk.chunk_audio_expires_at,
             ua_audio_url: null,
             meaning: null,
             answers: null,
@@ -164,10 +165,10 @@ export default onSchedule(
           // Insert into old Supabase sentences table using direct SQL
           const insertQuery = `
             INSERT INTO sentences (
-              en, ua, new_word, en_audio_url, ua_audio_url, meaning, answers,
+              en, ua, new_word, en_audio_url, en_audio_url_expires_at, ua_audio_url, meaning, answers,
               clip_id, is_question, video_id, verified_words, verified_translation,
               topic, topic_page, audio_update
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
             ON CONFLICT (en) DO NOTHING;
           `;
 
@@ -176,6 +177,7 @@ export default onSchedule(
             sentenceData.ua,
             sentenceData.new_word,
             sentenceData.en_audio_url,
+            sentenceData.en_audio_url_expires_at,
             sentenceData.ua_audio_url,
             sentenceData.meaning,
             sentenceData.answers,

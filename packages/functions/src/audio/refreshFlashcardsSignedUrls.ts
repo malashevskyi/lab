@@ -53,7 +53,8 @@ export default onSchedule(
           SELECT id, question_audio_url 
           FROM flashcards 
           WHERE question_audio_url IS NOT NULL 
-            AND question_audio_url != '';
+            AND question_audio_url != ''
+          LIMIT 1000;
       `;
       const { rows: flashcards } = await client.query(flashcardsQuery);
 
@@ -88,32 +89,30 @@ export default onSchedule(
         }
 
         const file = bucket.file(storagePath);
-        const [exists] = await file.exists();
 
-        if (!exists) {
-          // File doesn't exist - clear the question_audio_url
+        try {
+          // Generate new signed URL - if file doesn't exist, this will throw an error
+          const [newUrl] = await file.getSignedUrl({
+            action: "read",
+            expires: oneMonthFromNow,
+          });
+
+          await client.query(
+            "UPDATE flashcards SET question_audio_url = $1 WHERE id = $2",
+            [newUrl, id]
+          );
+
+          logger.info(`Updated flashcard ${id} with new signed URL.`);
+        } catch (error) {
+          // File doesn't exist or other error - clear the question_audio_url
           await client.query(
             "UPDATE flashcards SET question_audio_url = NULL WHERE id = $1",
             [id]
           );
           logger.warn(
-            `Cleared question_audio_url for flashcard ${id} - file does not exist at path: ${storagePath}`
+            `Cleared question_audio_url for flashcard ${id} - error generating signed URL: ${error}`
           );
-          continue;
         }
-
-        // File exists - generate new signed URL
-        const [newUrl] = await file.getSignedUrl({
-          action: "read",
-          expires: oneMonthFromNow,
-        });
-
-        await client.query(
-          "UPDATE flashcards SET question_audio_url = $1 WHERE id = $2",
-          [newUrl, id]
-        );
-
-        logger.info(`Updated flashcard ${id} with new signed URL.`);
       }
 
       logger.info(

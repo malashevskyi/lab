@@ -52,7 +52,8 @@ export default onSchedule(
           SELECT id, storage_path 
           FROM audio_records 
           WHERE audio_url_expires_at IS NULL 
-             OR audio_url_expires_at < NOW() + interval '3 day';
+             OR audio_url_expires_at < NOW() + interval '7 day'
+          LIMIT 2000;
       `;
       const { rows: audioRecords } = await client.query(audioRecordsQuery);
 
@@ -81,32 +82,30 @@ export default onSchedule(
         }
 
         const file = bucket.file(storagePath);
-        const [exists] = await file.exists();
 
-        if (!exists) {
-          // File doesn't exist - clear the audio_url and storage_path
+        try {
+          // Generate new signed URL - if file doesn't exist, this will throw an error
+          const [newUrl] = await file.getSignedUrl({
+            action: "read",
+            expires: oneMonthFromNow,
+          });
+
+          await client.query(
+            "UPDATE audio_records SET audio_url = $1, audio_url_expires_at = $2 WHERE id = $3",
+            [newUrl, oneMonthFromNow.toISOString(), id]
+          );
+
+          logger.info(`Updated audio_record ${id} with new signed URL.`);
+        } catch (error) {
+          // File doesn't exist or other error - clear the audio_url and storage_path
           await client.query(
             "UPDATE audio_records SET audio_url = NULL, storage_path = NULL, audio_url_expires_at = NULL WHERE id = $1",
             [id]
           );
           logger.warn(
-            `Cleared audio_url and storage_path for audio_record ${id} - file does not exist at path: ${storagePath}`
+            `Cleared audio_url and storage_path for audio_record ${id} - error generating signed URL: ${error}`
           );
-          continue;
         }
-
-        // File exists - generate new signed URL
-        const [newUrl] = await file.getSignedUrl({
-          action: "read",
-          expires: oneMonthFromNow,
-        });
-
-        await client.query(
-          "UPDATE audio_records SET audio_url = $1, audio_url_expires_at = $2 WHERE id = $3",
-          [newUrl, oneMonthFromNow.toISOString(), id]
-        );
-
-        logger.info(`Updated audio_record ${id} with new signed URL.`);
       }
 
       logger.info(

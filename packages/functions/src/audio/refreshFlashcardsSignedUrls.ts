@@ -93,30 +93,17 @@ export default onSchedule(
 
         const file = bucket.file(storagePath);
 
-        try {
-          // Generate new signed URL - if file doesn't exist, this will throw an error
-          const [newUrl] = await file.getSignedUrl({
-            action: "read",
-            expires: oneMonthFromNow,
-          });
+        const [newUrl] = await file.getSignedUrl({
+          action: "read",
+          expires: oneMonthFromNow,
+        });
 
-          await client.query(
-            "UPDATE flashcards SET question_audio_url = $1, question_audio_url_expires_at = $2 WHERE id = $3",
-            [newUrl, oneMonthFromNow.toISOString(), id]
-          );
+        await client.query(
+          "UPDATE flashcards SET question_audio_url = $1, question_audio_url_expires_at = $2 WHERE id = $3",
+          [newUrl, oneMonthFromNow.toISOString(), id]
+        );
 
-          logger.info(`Updated flashcard ${id} with new signed URL.`);
-        } catch (error) {
-          // File doesn't exist or other error
-          // TODO: consider clearing the question_audio_url and question_audio_url_expires_at
-          // await client.query(
-          //   "UPDATE flashcards SET question_audio_url = NULL, question_audio_url_expires_at = NULL WHERE id = $1",
-          //   [id]
-          // );
-          logger.warn(
-            `Failed to refresh URL for flashcard ${id} - error: ${error}. URL NOT cleared to prevent data loss.`
-          );
-        }
+        logger.info(`Updated flashcard ${id} with new signed URL.`);
       }
 
       logger.info(

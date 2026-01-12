@@ -97,13 +97,14 @@ export default onSchedule(
 
           logger.info(`Updated audio_record ${id} with new signed URL.`);
         } catch (error) {
-          // File doesn't exist or other error - clear the audio_url and storage_path
-          await client.query(
-            "UPDATE audio_records SET audio_url = NULL, storage_path = NULL, audio_url_expires_at = NULL WHERE id = $1",
-            [id]
-          );
+          // File doesn't exist or other error
+          // TODO: consider clearing the audio_url and storage_path
+          // await client.query(
+          //   "UPDATE audio_records SET audio_url = NULL, storage_path = NULL, audio_url_expires_at = NULL WHERE id = $1",
+          //   [id]
+          // );
           logger.warn(
-            `Cleared audio_url and storage_path for audio_record ${id} - error generating signed URL: ${error}`
+            `Failed to refresh URL for audio_record ${id} - error: ${error}. URL NOT cleared to prevent data loss.`
           );
         }
       }

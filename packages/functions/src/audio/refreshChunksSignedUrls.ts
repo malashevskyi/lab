@@ -54,7 +54,10 @@ export default onSchedule(
           FROM chunks 
           WHERE chunk_audio IS NOT NULL 
             AND chunk_audio != ''
-          LIMIT 2000;
+            AND (chunk_audio_expires_at IS NULL 
+                 OR chunk_audio_expires_at < NOW() + interval '7 day')
+          ORDER BY chunk_audio_expires_at ASC NULLS FIRST
+          LIMIT 1000;
       `;
       const { rows: chunks } = await client.query(chunksQuery);
 
@@ -98,19 +101,20 @@ export default onSchedule(
           });
 
           await client.query(
-            "UPDATE chunks SET chunk_audio = $1 WHERE id = $2",
-            [newUrl, id]
+            "UPDATE chunks SET chunk_audio = $1, chunk_audio_expires_at = $2 WHERE id = $3",
+            [newUrl, oneMonthFromNow.toISOString(), id]
           );
 
           logger.info(`Updated chunk ${id} with new signed URL.`);
         } catch (error) {
-          // File doesn't exist or other error - clear the chunk_audio
-          await client.query(
-            "UPDATE chunks SET chunk_audio = NULL WHERE id = $1",
-            [id]
-          );
+          // File doesn't exist or other error
+          // TODO: consider clearing the chunk_audio and chunk_audio_expires_at
+          // await client.query(
+          //   "UPDATE chunks SET chunk_audio = NULL, chunk_audio_expires_at = NULL WHERE id = $1",
+          //   [id]
+          // );
           logger.warn(
-            `Cleared chunk_audio for chunk ${id} - error generating signed URL: ${error}`
+            `Failed to refresh URL for chunk ${id} - error: ${error}. URL NOT cleared to prevent data loss.`
           );
         }
       }

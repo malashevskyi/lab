@@ -54,6 +54,9 @@ export default onSchedule(
           FROM flashcards 
           WHERE question_audio_url IS NOT NULL 
             AND question_audio_url != ''
+            AND (question_audio_url_expires_at IS NULL 
+                 OR question_audio_url_expires_at < NOW() + interval '7 day')
+          ORDER BY question_audio_url_expires_at ASC NULLS FIRST
           LIMIT 1000;
       `;
       const { rows: flashcards } = await client.query(flashcardsQuery);
@@ -98,19 +101,20 @@ export default onSchedule(
           });
 
           await client.query(
-            "UPDATE flashcards SET question_audio_url = $1 WHERE id = $2",
-            [newUrl, id]
+            "UPDATE flashcards SET question_audio_url = $1, question_audio_url_expires_at = $2 WHERE id = $3",
+            [newUrl, oneMonthFromNow.toISOString(), id]
           );
 
           logger.info(`Updated flashcard ${id} with new signed URL.`);
         } catch (error) {
-          // File doesn't exist or other error - clear the question_audio_url
-          await client.query(
-            "UPDATE flashcards SET question_audio_url = NULL WHERE id = $1",
-            [id]
-          );
+          // File doesn't exist or other error
+          // TODO: consider clearing the question_audio_url and question_audio_url_expires_at
+          // await client.query(
+          //   "UPDATE flashcards SET question_audio_url = NULL, question_audio_url_expires_at = NULL WHERE id = $1",
+          //   [id]
+          // );
           logger.warn(
-            `Cleared question_audio_url for flashcard ${id} - error generating signed URL: ${error}`
+            `Failed to refresh URL for flashcard ${id} - error: ${error}. URL NOT cleared to prevent data loss.`
           );
         }
       }

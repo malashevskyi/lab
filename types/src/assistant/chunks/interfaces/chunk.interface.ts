@@ -25,6 +25,11 @@ export interface ChunkType {
    */
   chunkAudio: string | null;
   /**
+   * Expiration date for the chunk audio signed URL
+   * @format 'date-time'
+   */
+  chunkAudioExpiresAt: string | null;
+  /**
    * Whether this chunk has been synced to the old project
    * @format 'boolean'
    */

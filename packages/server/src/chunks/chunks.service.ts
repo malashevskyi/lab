@@ -29,6 +29,7 @@ export class ChunksService {
         let text = chunk.text;
         let uk: string | null = null;
         let chunkAudio: string | null = null;
+        let chunkAudioExpiresAt: Date | null = null;
         const lang = chunk.lang || DEFAULT_LANGUAGE;
 
         // Process chunk with AI if requested (adjust + translate + generate audio)
@@ -49,9 +50,19 @@ export class ChunksService {
             adjustedText,
           );
           chunkAudio = audioUrl;
+
+          // Set expiration date to 1 month from now
+          chunkAudioExpiresAt = new Date();
+          chunkAudioExpiresAt.setMonth(chunkAudioExpiresAt.getMonth() + 1);
         }
 
-        return this.chunksRepository.create({ text, lang, uk, chunkAudio });
+        return this.chunksRepository.create({
+          text,
+          lang,
+          uk,
+          chunkAudio,
+          chunkAudioExpiresAt,
+        });
       }),
     );
 
@@ -92,10 +103,15 @@ export class ChunksService {
           adjustedText,
         );
 
+        // Set expiration date to 1 month from now
+        const expiresAt = new Date();
+        expiresAt.setMonth(expiresAt.getMonth() + 1);
+
         // Update the chunk with new data
         chunk.text = adjustedText;
         chunk.uk = translation;
         chunk.chunkAudio = audioUrl;
+        chunk.chunkAudioExpiresAt = expiresAt;
 
         await this.chunksRepository.save(chunk);
         processed++;

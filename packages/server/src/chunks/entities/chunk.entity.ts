@@ -25,6 +25,13 @@ export class ChunkEntity implements ChunkType {
   @Column({ type: 'text', nullable: true, name: 'chunk_audio' })
   chunkAudio: string | null;
 
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+    name: 'chunk_audio_expires_at',
+  })
+  chunkAudioExpiresAt: Date | null;
+
   @Column({ type: 'boolean', default: false })
   synced: boolean;
 

@@ -45,6 +45,13 @@ export class FlashcardEntity implements FlashcardType {
   @Column({ name: 'question_audio_url', type: 'text', nullable: true })
   questionAudioUrl: string | null;
 
+  @Column({
+    name: 'question_audio_url_expires_at',
+    type: 'timestamptz',
+    nullable: true,
+  })
+  questionAudioUrlExpiresAt: Date | null;
+
   @Column({ name: 'next_review_date', type: 'timestamptz', nullable: true })
   nextReviewDate: string | null;
 

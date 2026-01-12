@@ -26,23 +26,29 @@ export function extractStoragePath(signedUrl: string): string | null {
       return null;
     }
 
+    let resultPath: string | null = null;
+
     // Try REST API format first: /bucket/o/{encodedPath} or /o/{encodedPath}
     const restApiMatch = urlObj.pathname.match(/\/o\/(.+?)(?:\?|$)/);
     if (restApiMatch && restApiMatch[1]) {
-      return decodeURIComponent(restApiMatch[1]);
+      resultPath = decodeURIComponent(restApiMatch[1]);
+    } else {
+      // Try direct format: /bucket.domain/path/to/file
+      // The bucket name contains a dot (like bucket.firebasestorage.app)
+      const pathParts = urlObj.pathname.split("/").filter(Boolean);
+
+      // First segment should be bucket name with domain (contains dot)
+      if (pathParts.length >= 2 && pathParts[0].includes(".")) {
+        // Skip the first segment (bucket name) and join the rest
+        resultPath = decodeURIComponent(pathParts.slice(1).join("/"));
+      }
     }
 
-    // Try direct format: /bucket.domain/path/to/file
-    // The bucket name contains a dot (like bucket.firebasestorage.app)
-    const pathParts = urlObj.pathname.split("/").filter(Boolean);
-
-    // First segment should be bucket name with domain (contains dot)
-    if (pathParts.length >= 2 && pathParts[0].includes(".")) {
-      // Skip the first segment (bucket name) and join the rest
-      return pathParts.slice(1).join("/");
+    while (resultPath && resultPath.includes("%")) {
+      resultPath = decodeURIComponent(resultPath);
     }
 
-    return null;
+    return resultPath;
   } catch (error) {
     return null;
   }

@@ -36,6 +36,7 @@ export default onSchedule(
   {
     schedule: "every 24 hours",
     region: "europe-west1",
+    timeoutSeconds: 540,
     secrets: [supabaseUrlParam, bucketNameParam],
   },
   async () => {

@@ -75,6 +75,7 @@ export default onSchedule(
   {
     schedule: "every 10 minutes",
     region: "europe-west1",
+    timeoutSeconds: 540,
     secrets: [newSupabaseUrlParam, oldSupabaseUrlParam],
   },
   async () => {

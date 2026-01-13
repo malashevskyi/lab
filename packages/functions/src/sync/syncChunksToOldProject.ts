@@ -109,12 +109,13 @@ export default onSchedule(
         throw connectionError;
       }
 
-      // Query unsynced chunks (limit 50)
+      // for now all chunks must have chunk_audio; we are not going to sync chunks without audio because it will be hard to generate audio for those chunks in the old project
       const chunksQuery = `
         SELECT id, text, lang, uk, chunk_audio
         FROM chunks
         WHERE synced = false
           AND uk IS NOT NULL
+          AND chunk_audio is NOT NULL
         LIMIT 50;
       `;
 

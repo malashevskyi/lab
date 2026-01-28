@@ -30,7 +30,7 @@ export class ChunkEntity implements ChunkType {
     nullable: true,
     name: 'chunk_audio_expires_at',
   })
-  chunkAudioExpiresAt: Date | null;
+  chunkAudioExpiresAt: string | null;
 
   @Column({ type: 'boolean', default: false })
   synced: boolean;
